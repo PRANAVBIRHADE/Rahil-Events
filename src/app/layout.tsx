@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import IntroSequence from "@/components/ui/IntroSequence";
 import Navbar from "@/components/layout/Navbar";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import Footer from "@/components/layout/Footer";
@@ -17,6 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col pt-32 font-sans selection:bg-primary-container selection:text-on-primary-container">
+        <IntroSequence />
         <div className="fixed top-0 w-full z-50">
           <Navbar />
           <AnnouncementBar />
