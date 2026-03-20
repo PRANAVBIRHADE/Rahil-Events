@@ -195,6 +195,8 @@ export async function updateUser(formData: FormData) {
   } catch (e) { console.error(e); }
 }
 
+import { redirect } from 'next/navigation';
+
 export async function completeProfile(formData: FormData) {
   const email = formData.get('email') as string;
   const college = formData.get('college') as string;
@@ -202,15 +204,15 @@ export async function completeProfile(formData: FormData) {
   const phone = formData.get('phone') as string;
   
   if (!email || !college || !branch || !phone) {
-    return { error: 'Missing mandatory clearance parameters.' };
+    return;
   }
 
   try {
     await db.update(users).set({ college, branch, phone }).where(eq(users.email, email));
     revalidatePath('/dashboard');
-    return { success: true };
   } catch (e) {
     console.error(e);
-    return { error: 'Identity parameter overwrite failed.' };
   }
+  
+  redirect('/dashboard');
 }
