@@ -2,6 +2,7 @@ import React from 'react';
 import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalInput from '@/components/ui/BrutalInput';
 import BrutalButton from '@/components/ui/BrutalButton';
+import BrutalQRCode from '@/components/ui/BrutalQRCode';
 
 const StepHeader = ({ number, title }: { number: string; title: string }) => (
   <div className="relative mb-8">
@@ -13,7 +14,7 @@ const StepHeader = ({ number, title }: { number: string; title: string }) => (
 );
 
 import { db } from '@/db';
-import { events } from '@/db/schema';
+import { events, registrations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 
@@ -26,10 +27,14 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
     notFound();
   }
 
+  const dbRegistrations = await db.select({ id: registrations.id }).from(registrations).where(eq(registrations.eventId, event.id));
+  const activeCount = dbRegistrations.length;
+
   const eventData = {
     name: event.name,
     fee: event.fee,
-    upiId: 'kratos2026@upi',
+    upiId: '9834147160@kotak811',
+    upiURI: `upi://pay?pa=9834147160@kotak811&pn=Kratos%202026&cu=INR&am=${event.fee}`,
   };
 
   return (
@@ -77,19 +82,15 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
             <StepHeader number="02" title="Payment Terminal" />
             <div className="flex flex-col md:flex-row gap-8 items-center bg-surface-container-low p-6 brutal-border">
               <div className="w-48 h-48 bg-white p-2 border-2 border-on-surface flex items-center justify-center relative overflow-hidden">
-                <img 
-                  alt="UPI QR Code" 
-                  className="w-full h-full grayscale contrast-125" 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7OiOl_9ZP7IfhmzheBnHhbjzA8WMcMZxci_-YJpqXYxbtMAxid1UnVoTwO1XNmxDeKKjzOz3bX8t5ueAodb4TVMbWMKHQb7jY6F38zEmHVElOIt8jkdxJAwtwVsNs1aSRKqw9pv1V8Uei-4zXJt7WzWKOvdyYLXFs8U9XJJpzRWJ_vL4M_KI6KfzQyF9ZWPSWWkILPrEusStxF3E-AAsvlumANAk6f7ABRHZRJQwdOCBaGZQsqIijnpEYjmPrMzVBlqhirGG4FEY" 
-                />
+                <BrutalQRCode data={eventData.upiURI} size={160} className="w-full h-full" />
               </div>
               <div className="flex-1 space-y-4">
                 <div>
-                  <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60">UPI ID</p>
+                  <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60">Official UPI ID</p>
                   <p className="text-2xl font-black tracking-tighter uppercase">{eventData.upiId}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60">Amount to Pay</p>
+                  <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60">Amount Required</p>
                   <p className="text-4xl font-black text-primary" style={{ textShadow: '2px 2px 0px #F9F9F9' }}>₹ {eventData.fee}.00</p>
                 </div>
               </div>
@@ -130,18 +131,16 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
                 <span className="bg-primary-container text-on-primary-container px-3 py-1 font-bold text-xs uppercase not-italic">Initial Phase</span>
               </div>
               <div className="flex items-center justify-between border-b border-surface/20 pb-4">
-                <span className="font-display text-sm uppercase opacity-60">Team Capacity</span>
-                <span className="font-bold">01 / 04</span>
+                <span className="font-display text-sm uppercase opacity-60">Max Capacity</span>
+                <span className="font-bold">{event.teamSize || 1} Members</span>
               </div>
               <div className="flex items-center justify-between border-b border-surface/20 pb-4">
                 <span className="font-display text-sm uppercase opacity-60">Registration Fee</span>
                 <span className="font-black text-primary-container">₹ {eventData.fee}</span>
               </div>
-              <div className="pt-4 flex items-center gap-4">
-                <div className="w-full h-2 bg-surface/10">
-                  <div className="w-1/3 h-full bg-primary-container"></div>
-                </div>
-                <span className="font-display font-bold text-xs">33%</span>
+              <div className="pt-4 flex items-center justify-between">
+                 <span className="font-display font-bold text-xs uppercase text-primary-container tracking-widest">Active Fleet Formations</span>
+                 <span className="font-black text-lg">{activeCount} TEAMS</span>
               </div>
             </div>
           </div>

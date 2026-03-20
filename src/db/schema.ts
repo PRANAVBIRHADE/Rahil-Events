@@ -27,6 +27,7 @@ export const events = pgTable('events', {
   branch: text('branch'),
   isTeam: boolean('is_team').default(false),
   isCommon: boolean('is_common').default(false),
+  teamSize: integer('team_size').default(1),
   createdAt: timestamp('created_at').defaultNow(),
 });
 

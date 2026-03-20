@@ -15,6 +15,7 @@ export async function createEvent(formData: FormData) {
   const branch = formData.get('branch') as string;
   const isTeam = formData.get('isTeam') === 'true';
   const isCommon = formData.get('isCommon') === 'on';
+  const teamSize = parseInt(formData.get('teamSize') as string) || 1;
 
   const slug = name.toLowerCase().replace(/\s+/g, '-');
 
@@ -29,6 +30,7 @@ export async function createEvent(formData: FormData) {
       branch,
       isTeam,
       isCommon,
+      teamSize,
     });
     revalidatePath('/');
     revalidatePath('/admin/dashboard');

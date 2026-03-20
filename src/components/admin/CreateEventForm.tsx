@@ -58,7 +58,7 @@ export default function CreateEventForm() {
 
         <BrutalInput label="Tagline" name="tagline" placeholder="Engineering the future..." />
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <BrutalInput label="Fee (INR)" name="fee" type="number" placeholder="499" required />
           <div className="flex flex-col gap-2">
             <label className="text-sm font-display font-bold uppercase tracking-widest text-on-surface">Format</label>
@@ -67,6 +67,7 @@ export default function CreateEventForm() {
               <option value="true">TEAM PARTICIPATION</option>
             </select>
           </div>
+          <BrutalInput label="Max Team Size" name="teamSize" type="number" min="1" max="4" defaultValue="1" />
           <div className="flex items-center gap-3 h-full pt-6">
             <input type="checkbox" name="isCommon" id="isCommon" className="w-5 h-5 accent-primary-container brutal-border cursor-pointer" />
             <label htmlFor="isCommon" className="text-sm font-display font-black uppercase tracking-widest cursor-pointer leading-tight">
