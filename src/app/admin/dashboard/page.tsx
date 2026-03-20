@@ -135,6 +135,18 @@ export default async function AdminDashboard() {
                   Download All Proofs
                 </BrutalButton>
               </Link>
+              <Link href="/admin/users" className="w-full">
+                <BrutalButton className="w-full justify-start text-blue-800 border-blue-800 bg-blue-100" variant="secondary">
+                  <span className="material-symbols-outlined mr-3">manage_accounts</span>
+                  Manage Personnel
+                </BrutalButton>
+              </Link>
+              <Link href="/admin/events" className="w-full">
+                <BrutalButton className="w-full justify-start text-red-800 border-red-800 bg-red-100" variant="secondary">
+                  <span className="material-symbols-outlined mr-3">dangerous</span>
+                  Manage Modules
+                </BrutalButton>
+              </Link>
             </div>
           </BrutalCard>
           

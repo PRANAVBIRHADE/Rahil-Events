@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@/db';
-import { users, events, announcements } from '@/db/schema';
+import { users, events, announcements, registrations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
@@ -151,4 +151,46 @@ export async function updateSchedules(formData: FormData) {
   } catch (e) {
     console.error(e);
   }
+}
+
+export async function deleteEvent(formData: FormData) {
+  const id = formData.get('id') as string;
+  try {
+    await db.delete(registrations).where(eq(registrations.eventId, id));
+    await db.delete(events).where(eq(events.id, id));
+    revalidatePath('/admin/events');
+    revalidatePath('/admin/dashboard');
+  } catch(e) { console.error(e); }
+}
+
+export async function updateEvent(formData: FormData) {
+  const id = formData.get('id') as string;
+  const fee = parseInt(formData.get('fee') as string);
+  const teamSize = parseInt(formData.get('teamSize') as string);
+  try {
+    await db.update(events).set({ fee, teamSize }).where(eq(events.id, id));
+    revalidatePath('/admin/events');
+    revalidatePath('/admin/dashboard');
+  } catch (e) { console.error(e); }
+}
+
+export async function deleteUser(formData: FormData) {
+  const id = formData.get('id') as string;
+  try {
+    await db.delete(registrations).where(eq(registrations.userId, id));
+    await db.delete(users).where(eq(users.id, id));
+    revalidatePath('/admin/users');
+  } catch(e) { console.error(e); }
+}
+
+export async function updateUser(formData: FormData) {
+  const id = formData.get('id') as string;
+  const name = formData.get('name') as string;
+  const college = formData.get('college') as string;
+  const branch = formData.get('branch') as string;
+  const phone = formData.get('phone') as string;
+  try {
+    await db.update(users).set({ name, college, branch, phone }).where(eq(users.id, id));
+    revalidatePath('/admin/users');
+  } catch (e) { console.error(e); }
 }
