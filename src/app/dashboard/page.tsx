@@ -36,6 +36,10 @@ export default async function DashboardPage() {
     redirect('/auth/login');
   }
 
+  if (!dbUser.college || !dbUser.branch || !dbUser.phone) {
+    redirect('/profile/complete');
+  }
+
   // Fetch active registrations joined with event info
   const dbRegistrations = await db.select({
     id: registrations.id,

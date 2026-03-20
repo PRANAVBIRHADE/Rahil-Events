@@ -14,13 +14,24 @@ const StepHeader = ({ number, title }: { number: string; title: string }) => (
 );
 
 import { db } from '@/db';
-import { events, registrations } from '@/db/schema';
+import { events, registrations, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
+import { auth } from '@/auth';
 
 export default async function RegistrationPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   
+  const session = await auth();
+  if (!session?.user?.email) redirect('/auth/login');
+
+  const [dbUser] = await db.select().from(users).where(eq(users.email, session.user.email));
+  if (!dbUser) redirect('/auth/login');
+
+  if (!dbUser.college || !dbUser.branch || !dbUser.phone) {
+    redirect('/profile/complete');
+  }
+
   const [event] = await db.select().from(events).where(eq(events.slug, slug));
 
   if (!event) {
