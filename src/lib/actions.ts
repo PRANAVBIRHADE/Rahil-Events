@@ -146,9 +146,7 @@ export async function updateSchedules(formData: FormData) {
     revalidatePath('/');
     revalidatePath('/admin/dashboard');
     revalidatePath('/admin/schedule');
-    return { success: true };
   } catch (e) {
     console.error(e);
-    return { error: 'Failed to synchronize timelines.' };
   }
 }
