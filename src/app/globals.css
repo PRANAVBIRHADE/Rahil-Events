@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+@layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+  :root {
+    --background: #F9F9F9;
+    --foreground: #1A1C1C;
+    --primary-container: #FFD700;
+    --on-primary-container: #705E00;
+    --secondary-container: #E5E2E1;
+    --surface-container-low: #F3F3F3;
+    --outline: #7E775F;
+    --primary: #705D00;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-headline {
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.05em;
+  }
+}
+
+@theme {
+  --color-primary: var(--primary);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-surface: var(--background);
+  --color-on-surface: var(--foreground);
+  --color-secondary-container: var(--secondary-container);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-outline: var(--outline);
+
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+
+  --radius-none: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-full: 9999px;
+
+  --border-width-2: 2px;
+}
+
+@utility brutal-border {
+  border: 2px solid var(--foreground);
+}
+
+@utility hard-shadow {
+  box-shadow: 4px 4px 0px 0px var(--foreground);
+}
+
+@utility hard-shadow-gold {
+  box-shadow: 6px 6px 0px 0px var(--primary-container);
+}
+
+@utility tactile-click {
+  transition: all 0.1s ease;
+  &:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px 0px var(--foreground);
+  }
+}
+
+@utility material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@utility animate-marquee {
+  animation: marquee 25s linear infinite;
+}
