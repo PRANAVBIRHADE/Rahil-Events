@@ -9,10 +9,10 @@ const Footer = () => {
           KRATOS 2026
         </div>
         <div className="flex flex-wrap justify-center gap-8 font-sans text-sm tracking-wide">
-          <Link href="/contact" className="text-on-surface/70 hover:text-primary transition-colors duration-200">Contact Us</Link>
-          <Link href="/privacy" className="text-on-surface/70 hover:text-primary transition-colors duration-200">Privacy Policy</Link>
-          <Link href="/terms" className="text-on-surface/70 hover:text-primary transition-colors duration-200">Terms of Service</Link>
-          <Link href="/sponsorships" className="text-on-surface/70 hover:text-primary transition-colors duration-200">Sponsorships</Link>
+          <Link href="#" className="text-on-surface/70 hover:text-primary transition-colors duration-200">Contact Us</Link>
+          <Link href="#" className="text-on-surface/70 hover:text-primary transition-colors duration-200">Privacy Policy</Link>
+          <Link href="#" className="text-on-surface/70 hover:text-primary transition-colors duration-200">Terms of Service</Link>
+          <Link href="#" className="text-on-surface/70 hover:text-primary transition-colors duration-200">Sponsorships</Link>
         </div>
         <div className="text-on-surface/70 text-xs font-sans uppercase tracking-widest text-center md:text-right">
           © 2026 KRATOS TECHNICAL FESTIVAL. ENGINEERED FOR PRECISION.
