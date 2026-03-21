@@ -6,21 +6,10 @@ import { users, registrations, events } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalButton from '@/components/ui/BrutalButton';
-import BrutalQRCode from '@/components/ui/BrutalQRCode';
 import LogoutButton from '@/components/dashboard/LogoutButton';
+import TicketCard from '@/components/dashboard/TicketCard';
 
-const StatusBadge = ({ status }: { status: string }) => {
-  const styles: Record<string, string> = {
-    APPROVED: 'bg-green-100 text-green-800 border-green-800',
-    PENDING: 'bg-yellow-100 text-yellow-800 border-yellow-800',
-    REJECTED: 'bg-red-100 text-red-800 border-red-800',
-  };
-  return (
-    <span className={`px-2 py-0.5 border-2 text-[10px] font-black uppercase tracking-tighter ${styles[status] || styles['PENDING']}`}>
-      {status}
-    </span>
-  );
-};
+
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -46,6 +35,7 @@ export default async function DashboardPage() {
     status: registrations.status,
     teamName: registrations.teamName,
     eventName: events.name,
+    eventSlug: events.slug,
     format: events.format,
   })
   .from(registrations)
@@ -95,29 +85,7 @@ export default async function DashboardPage() {
 
             <div className="space-y-6">
               {dbRegistrations.map((reg) => (
-                <div key={reg.id} className="flex flex-col md:flex-row justify-between items-start md:items-center p-6 brutal-border bg-surface-container-low gap-4">
-                  <div>
-                    <div className="flex items-center gap-3 mb-1">
-                      <h3 className="text-xl font-black uppercase">{reg.eventName}</h3>
-                      <StatusBadge status={reg.status || 'PENDING'} />
-                    </div>
-                    <p className="text-xs font-sans opacity-70 italic">
-                      FORMAT: {reg.format === 'TEAM' || reg.format === 'SOLO_TEAM' || reg.format === 'SOLO_PAIR' ? `TEAM/SOLO/PAIR (${reg.teamName || 'NO NAME'})` : 'SOLO'} | REF: <span className="font-mono">{reg.id.substring(0,8)}</span>
-                    </p>
-                  </div>
-                  <div className="flex gap-3 w-full md:w-auto">
-                    {reg.status === 'APPROVED' ? (
-                      <div className="flex flex-col md:flex-row items-center gap-4">
-                        <BrutalQRCode data={reg.id} size={60} className="hidden md:block" />
-                        <BrutalButton size="sm" className="w-full md:w-auto">Download ID Card</BrutalButton>
-                      </div>
-                    ) : (
-                       <BrutalButton size="sm" variant="outline" className="w-full md:w-auto" disabled={reg.status === 'REJECTED'}>
-                          {reg.status === 'REJECTED' ? 'REJECTED' : 'Proof Processing...'}
-                       </BrutalButton>
-                    )}
-                  </div>
-                </div>
+                <TicketCard key={reg.id} reg={reg} userName={dbUser.name} college={dbUser.college} />
               ))}
               {dbRegistrations.length === 0 && (
                  <div className="text-center py-12 border-2 border-dashed border-on-surface/20">

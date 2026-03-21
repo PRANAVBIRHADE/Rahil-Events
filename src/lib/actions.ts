@@ -243,7 +243,15 @@ export async function createRegistration(formData: FormData) {
 
   // Check existing registration
   const existing = await db.select().from(registrations).where(and(eq(registrations.eventId, eventId), eq(registrations.userId, dbUser.id)));
-  if (existing.length > 0) return { error: 'You have already deployed a packet for this module.' };
+  
+  if (existing.length > 0) {
+    if (existing[0].status === 'REJECTED') {
+      // OVERWRITE PROTOCOL: Delete the rejected packet so they can retry smoothly.
+      await db.delete(registrations).where(eq(registrations.id, existing[0].id));
+    } else {
+      return { error: 'You have already deployed a packet for this module.' };
+    }
+  }
 
   try {
     await db.insert(registrations).values({
