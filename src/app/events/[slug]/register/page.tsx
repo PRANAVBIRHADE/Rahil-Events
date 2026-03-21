@@ -48,6 +48,9 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
     upiURI: `upi://pay?pa=9834147160@kotak811&pn=Kratos%202026&cu=INR&am=${event.fee}`,
   };
 
+  const isTeamFormat = event.format === 'TEAM' || event.format === 'SOLO_TEAM';
+  const isTeamRequired = event.format === 'TEAM';
+
   return (
     <div className="max-w-[1440px] mx-auto px-6 py-12">
       <header className="mb-16">
@@ -65,7 +68,7 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
           
           {/* STEP 1: Details */}
           <BrutalCard shadow={true}>
-            <StepHeader number="01" title={event.isTeam ? "Team Roster Specification" : "User Specification"} />
+            <StepHeader number="01" title={isTeamFormat ? "Team Roster Specification" : "User Specification"} />
             <form className="space-y-6">
               <div className="bg-primary/10 border-2 border-primary p-6 mb-8">
                 <h3 className="font-display font-black tracking-tighter uppercase mb-2">Primary Commander</h3>
@@ -76,10 +79,13 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
                 </div>
               </div>
 
-              {event.isTeam && (
+              {isTeamFormat && (
                 <div className="space-y-6 mt-8 pt-8 border-t-2 border-on-surface">
                   <h3 className="font-display text-2xl font-black tracking-tighter uppercase mb-4">Platoon Configuration</h3>
-                  <BrutalInput label="Squadron / Team Name" name="teamName" placeholder="e.g. NEURAL SYNDICATE" required />
+                  {event.format === 'SOLO_TEAM' && (
+                    <p className="text-xs font-bold opacity-60 italic mb-4">Note: Team Details are optional for Solo/Team format events. Fill only if participating as a team.</p>
+                  )}
+                  <BrutalInput label="Squadron / Team Name" name="teamName" placeholder="e.g. NEURAL SYNDICATE" required={isTeamRequired} />
                   
                   <div className="space-y-6 mt-4">
                     {Array.from({ length: Math.max(0, (event.teamSize || 1) - 1) }).map((_, i) => (
@@ -88,8 +94,8 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
                           Operator 0{i + 2}
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
-                           <BrutalInput name={`member_${i}_name`} label="Full Name" placeholder={`Operator ${i + 2} Name`} required />
-                           <BrutalInput name={`member_${i}_phone`} label="Contact Sequence" placeholder="+91 00000 00000" required />
+                           <BrutalInput name={`member_${i}_name`} label="Full Name" placeholder={`Operator ${i + 2} Name`} required={isTeamRequired} />
+                           <BrutalInput name={`member_${i}_phone`} label="Contact Sequence" placeholder="+91 00000 00000" required={isTeamRequired} />
                         </div>
                       </div>
                     ))}

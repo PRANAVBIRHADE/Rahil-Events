@@ -62,9 +62,11 @@ export default function CreateEventForm() {
           <BrutalInput label="Fee (INR)" name="fee" type="number" placeholder="499" required />
           <div className="flex flex-col gap-2">
             <label className="text-sm font-display font-bold uppercase tracking-widest text-on-surface">Format</label>
-            <select name="isTeam" className="brutal-border bg-surface p-3 outline-none focus:border-primary font-display font-bold uppercase text-xs h-[46px]">
-              <option value="false">SOLO PARTICIPATION</option>
-              <option value="true">TEAM PARTICIPATION</option>
+            <select name="format" className="brutal-border bg-surface p-3 outline-none focus:border-primary font-display font-bold uppercase text-xs h-[46px]">
+              <option value="SOLO">SOLO</option>
+              <option value="TEAM">TEAM</option>
+              <option value="SOLO_TEAM">SOLO / TEAM BOTH</option>
+              <option value="SOLO_TEAM_ASSIGNED">SOLO (TEAM ASSIGNED)</option>
             </select>
           </div>
           <BrutalInput label="Max Team Size" name="teamSize" type="number" min="1" max="4" defaultValue="1" />

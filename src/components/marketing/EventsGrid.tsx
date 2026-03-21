@@ -15,6 +15,16 @@ const ICON_MAP: Record<string, string> = {
   'Other': 'settings_input_component',
 };
 
+const getFormatLabel = (format: string | null) => {
+  switch(format) {
+    case 'TEAM': return 'TEAM FORMAT';
+    case 'SOLO_TEAM': return 'SOLO/TEAM FORMAT';
+    case 'SOLO_TEAM_ASSIGNED': return 'SOLO (TEAM ASSIGNED)';
+    case 'SOLO':
+    default: return 'SOLO FORMAT';
+  }
+};
+
 const EventsGrid = async () => {
   const dbEvents = await db.select().from(eventsTable).orderBy(desc(eventsTable.createdAt));
   
@@ -58,7 +68,7 @@ const EventsGrid = async () => {
                       public
                     </span>
                     <span className="text-[10px] font-black uppercase tracking-widest border-2 border-on-surface px-2 py-1">
-                      {event.isTeam ? 'TEAM FORMAT' : 'SOLO FORMAT'}
+                      {getFormatLabel(event.format)}
                     </span>
                   </div>
                   <h3 className="text-3xl font-black uppercase mb-4 leading-none">{event.name}</h3>
@@ -90,7 +100,7 @@ const EventsGrid = async () => {
                       {ICON_MAP[branch] || 'settings_input_component'}
                     </span>
                     <span className="text-[10px] font-black uppercase tracking-widest border-2 border-on-surface px-2 py-1">
-                      {event.isTeam ? 'TEAM FORMAT' : 'SOLO FORMAT'}
+                      {getFormatLabel(event.format)}
                     </span>
                   </div>
                   <h3 className="text-3xl font-black uppercase mb-4 leading-none">{event.name}</h3>
