@@ -105,9 +105,9 @@ export default function TicketCard({ reg, userName, college }: TicketCardProps) 
       
       {/* Hidden printable Ticket element for html2canvas */}
       <div className="absolute opacity-0 pointer-events-none z-[-1]" style={{ top: 0, left: 0 }}>
-        <div ref={ticketRef} className="w-[800px] h-[300px] bg-[#F9F9F9] border-4 border-black p-0 flex relative overflow-hidden font-sans">
+        <div ref={ticketRef} className="w-[800px] h-[300px] bg-[#F9F9F9] border-4 border-[#000000] p-0 flex relative overflow-hidden font-sans text-[#1A1C1C]">
           {/* Left Tear Section */}
-          <div className="w-16 border-r-4 border-black border-dashed flex items-center justify-center relative bg-primary-container">
+          <div className="w-16 border-r-4 border-[#000000] border-dashed flex items-center justify-center relative bg-[#FFD700]">
              <p className="transform -rotate-90 whitespace-nowrap font-black uppercase text-xl font-display tracking-widest">
                KRATOS 2026 OFFICIAL
              </p>
@@ -118,9 +118,9 @@ export default function TicketCard({ reg, userName, college }: TicketCardProps) 
             <div>
               <div className="flex justify-between items-start mb-2">
                  <h2 className="text-4xl font-black uppercase italic tracking-tighter leading-none">{reg.eventName}</h2>
-                 <span className="bg-black text-white px-2 py-1 font-black text-xs uppercase tracking-widest">ADMIT ONE</span>
+                 <span className="bg-[#000000] text-[#FFFFFF] px-2 py-1 font-black text-xs uppercase tracking-widest">ADMIT ONE</span>
               </div>
-              <p className="font-display font-bold uppercase text-primary text-sm tracking-widest">{isTeam ? 'Squadron Command Pass' : 'Solo Operative Pass'}</p>
+              <p className="font-display font-bold uppercase text-[#705D00] text-sm tracking-widest">{isTeam ? 'Squadron Command Pass' : 'Solo Operative Pass'}</p>
             </div>
             
             <div className="mt-6 flex justify-between items-end">
@@ -136,26 +136,26 @@ export default function TicketCard({ reg, userName, college }: TicketCardProps) 
                 {isTeam && (
                   <div>
                     <p className="text-[10px] font-bold uppercase opacity-50">SQUADRON</p>
-                    <p className="text-sm font-bold uppercase text-primary-container bg-black px-1 inline-block">{reg.teamName}</p>
+                    <p className="text-sm font-bold uppercase text-[#FFD700] bg-[#000000] px-1 inline-block">{reg.teamName}</p>
                   </div>
                 )}
               </div>
               <div className="text-right">
                   <p className="text-[10px] font-bold uppercase opacity-50 mb-1">VERIFICATION CODE</p>
-                  <p className="font-mono text-sm font-bold bg-gray-200 px-2 py-1">{reg.id.substring(0,18)}</p>
+                  <p className="font-mono text-sm font-bold bg-[#E5E7EB] text-[#1A1C1C] px-2 py-1">{reg.id.substring(0,18)}</p>
               </div>
             </div>
           </div>
           
           {/* Right QR Section */}
-          <div className="w-[250px] border-l-4 border-black p-6 flex flex-col items-center justify-center bg-white relative">
+          <div className="w-[250px] border-l-4 border-[#000000] p-6 flex flex-col items-center justify-center bg-[#FFFFFF] relative">
             <div className="absolute top-2 left-2 right-2 flex justify-between">
-               <span className="w-2 h-2 bg-black rounded-full block"></span>
-               <span className="w-2 h-2 bg-black rounded-full block"></span>
+               <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
+               <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
             </div>
             <div className="absolute bottom-2 left-2 right-2 flex justify-between">
-               <span className="w-2 h-2 bg-black rounded-full block"></span>
-               <span className="w-2 h-2 bg-black rounded-full block"></span>
+               <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
+               <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
             </div>
             <p className="text-[10px] font-black uppercase tracking-widest mb-4">MANDATORY SCAN</p>
             <BrutalQRCode data={verifyUrl} size={150} />
