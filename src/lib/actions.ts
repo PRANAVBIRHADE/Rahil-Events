@@ -158,6 +158,7 @@ export async function deleteEvent(formData: FormData) {
   try {
     await db.delete(registrations).where(eq(registrations.eventId, id));
     await db.delete(events).where(eq(events.id, id));
+    revalidatePath('/');
     revalidatePath('/admin/events');
     revalidatePath('/admin/dashboard');
   } catch(e) { console.error(e); }
@@ -169,6 +170,7 @@ export async function updateEvent(formData: FormData) {
   const teamSize = parseInt(formData.get('teamSize') as string);
   try {
     await db.update(events).set({ fee, teamSize }).where(eq(events.id, id));
+    revalidatePath('/');
     revalidatePath('/admin/events');
     revalidatePath('/admin/dashboard');
   } catch (e) { console.error(e); }

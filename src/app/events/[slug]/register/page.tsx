@@ -65,26 +65,37 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
           
           {/* STEP 1: Details */}
           <BrutalCard shadow={true}>
-            <StepHeader number="01" title="User / Team Details" />
+            <StepHeader number="01" title={event.isTeam ? "Team Roster Specification" : "User Specification"} />
             <form className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <BrutalInput label="Full Name / Team Leader" placeholder="e.g. MARCUS AURELIUS" required />
-                <BrutalInput label="Email Address" type="email" placeholder="commander@kratos.fest" required />
-              </div>
-              <BrutalInput label="College / Institution" placeholder="Imperial Institute of Technology" required />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-display font-bold uppercase tracking-widest text-on-surface">Branch / Specialization</label>
-                  <select className="brutal-border bg-surface p-3 outline-none focus:border-primary font-display font-bold uppercase">
-                    <option>Mechanical Engineering</option>
-                    <option>Computer Science</option>
-                    <option>Robotics & AI</option>
-                    <option>Aerospace</option>
-                    <option>Other</option>
-                  </select>
+              <div className="bg-primary/10 border-2 border-primary p-6 mb-8">
+                <h3 className="font-display font-black tracking-tighter uppercase mb-2">Primary Commander</h3>
+                <p className="text-xs font-bold font-sans opacity-70 mb-4">Your core user identity is already verified for this transmission.</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-60 pointer-events-none">
+                  <BrutalInput label="Verified Name" defaultValue={dbUser.name} required />
+                  <BrutalInput label="Verified Contact" defaultValue={dbUser.phone || ''} required />
                 </div>
-                <BrutalInput label="Contact Number" type="tel" placeholder="+91 00000 00000" required />
               </div>
+
+              {event.isTeam && (
+                <div className="space-y-6 mt-8 pt-8 border-t-2 border-on-surface">
+                  <h3 className="font-display text-2xl font-black tracking-tighter uppercase mb-4">Platoon Configuration</h3>
+                  <BrutalInput label="Squadron / Team Name" name="teamName" placeholder="e.g. NEURAL SYNDICATE" required />
+                  
+                  <div className="space-y-6 mt-4">
+                    {Array.from({ length: Math.max(0, (event.teamSize || 1) - 1) }).map((_, i) => (
+                      <div key={i} className="p-6 border-2 border-on-surface bg-surface-container-low relative">
+                        <div className="absolute -top-3 left-4 bg-on-surface text-surface px-3 py-1 text-[10px] font-black tracking-widest uppercase">
+                          Operator 0{i + 2}
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                           <BrutalInput name={`member_${i}_name`} label="Full Name" placeholder={`Operator ${i + 2} Name`} required />
+                           <BrutalInput name={`member_${i}_phone`} label="Contact Sequence" placeholder="+91 00000 00000" required />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </form>
           </BrutalCard>
 

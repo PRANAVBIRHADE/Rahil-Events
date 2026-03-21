@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, boolean, pgEnum, uuid } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, integer, boolean, pgEnum, uuid, json } from 'drizzle-orm/pg-core';
 
 export const userRoleEnum = pgEnum('user_role', ['PARTICIPANT', 'ADMIN']);
 export const registrationStatusEnum = pgEnum('registration_status', ['PENDING', 'APPROVED', 'REJECTED']);
@@ -36,6 +36,7 @@ export const registrations = pgTable('registrations', {
   userId: uuid('user_id').references(() => users.id).notNull(),
   eventId: uuid('event_id').references(() => events.id).notNull(),
   teamName: text('team_name'),
+  members: json('members'),
   paymentScreenshot: text('payment_screenshot'),
   transactionId: text('transaction_id'),
   status: registrationStatusEnum('status').default('PENDING'),
