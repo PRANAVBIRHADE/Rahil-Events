@@ -3,6 +3,7 @@ import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalInput from '@/components/ui/BrutalInput';
 import BrutalButton from '@/components/ui/BrutalButton';
 import BrutalQRCode from '@/components/ui/BrutalQRCode';
+import RegistrationClientForm from '@/components/marketing/RegistrationClientForm';
 
 const StepHeader = ({ number, title }: { number: string; title: string }) => (
   <div className="relative mb-8">
@@ -66,86 +67,15 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
         {/* Left Column: Form Steps */}
         <div className="lg:col-span-7 space-y-16">
           
-          {/* STEP 1: Details */}
-          <BrutalCard shadow={true}>
-            <StepHeader number="01" title={isTeamFormat ? "Team Roster Specification" : "User Specification"} />
-            <form className="space-y-6">
-              <div className="bg-primary/10 border-2 border-primary p-6 mb-8">
-                <h3 className="font-display font-black tracking-tighter uppercase mb-2">Primary Commander</h3>
-                <p className="text-xs font-bold font-sans opacity-70 mb-4">Your core user identity is already verified for this transmission.</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-60 pointer-events-none">
-                  <BrutalInput label="Verified Name" defaultValue={dbUser.name} required />
-                  <BrutalInput label="Verified Contact" defaultValue={dbUser.phone || ''} required />
-                </div>
-              </div>
-
-              {isTeamFormat && (
-                <div className="space-y-6 mt-8 pt-8 border-t-2 border-on-surface">
-                  <h3 className="font-display text-2xl font-black tracking-tighter uppercase mb-4">Platoon Configuration</h3>
-                  {(event.format === 'SOLO_TEAM' || event.format === 'SOLO_PAIR') && (
-                    <p className="text-xs font-bold opacity-60 italic mb-4">Note: Team Details are optional for Solo/Team format events. Fill only if participating as a team.</p>
-                  )}
-                  <BrutalInput label="Squadron / Team Name" name="teamName" placeholder="e.g. NEURAL SYNDICATE" required={isTeamRequired} />
-                  
-                  <div className="space-y-6 mt-4">
-                    {Array.from({ length: Math.max(0, (event.teamSize || 1) - 1) }).map((_, i) => (
-                      <div key={i} className="p-6 border-2 border-on-surface bg-surface-container-low relative">
-                        <div className="absolute -top-3 left-4 bg-on-surface text-surface px-3 py-1 text-[10px] font-black tracking-widest uppercase">
-                          Operator 0{i + 2}
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
-                           <BrutalInput name={`member_${i}_name`} label="Full Name" placeholder={`Operator ${i + 2} Name`} required={isTeamRequired} />
-                           <BrutalInput name={`member_${i}_phone`} label="Contact Sequence" placeholder="+91 00000 00000" required={isTeamRequired} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </form>
-          </BrutalCard>
-
-          {/* STEP 2: Payment */}
-          <BrutalCard shadow={true}>
-            <StepHeader number="02" title="Payment Terminal" />
-            <div className="flex flex-col md:flex-row gap-8 items-center bg-surface-container-low p-6 brutal-border">
-              <div className="w-48 h-48 bg-white p-2 border-2 border-on-surface flex items-center justify-center relative overflow-hidden">
-                <BrutalQRCode data={eventData.upiURI} size={160} className="w-full h-full" />
-              </div>
-              <div className="flex-1 space-y-4">
-                <div>
-                  <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60">Official UPI ID</p>
-                  <p className="text-2xl font-black tracking-tighter uppercase">{eventData.upiId}</p>
-                </div>
-                <div>
-                  <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60">Amount Required</p>
-                  <p className="text-4xl font-black text-primary" style={{ textShadow: '2px 2px 0px #F9F9F9' }}>₹ {eventData.fee}.00</p>
-                </div>
-              </div>
-            </div>
-          </BrutalCard>
-
-          {/* STEP 3: Upload */}
-          <BrutalCard shadow={true} shadowColor="gold">
-            <StepHeader number="03" title="Validation & Evidence" />
-            <div className="border-2 border-dashed border-on-surface/30 p-12 text-center hover:border-primary transition-colors group cursor-pointer bg-surface-container-low">
-              <span className="material-symbols-outlined text-6xl text-on-surface/20 group-hover:text-primary mb-4 transition-colors">cloud_upload</span>
-              <p className="font-display font-bold uppercase tracking-tighter text-lg">Upload Payment Screenshot</p>
-              <p className="text-sm opacity-40 mt-1">JPEG, PNG or PDF (Max 5MB)</p>
-              <input className="hidden" type="file" />
-            </div>
-            
-            <div className="mt-8 flex items-start gap-4 p-4 brutal-border bg-surface-container-low">
-              <input className="mt-1 w-5 h-5 brutal-border rounded-none checked:bg-primary accent-primary focus:ring-0" id="terms" type="checkbox" />
-              <label className="text-sm font-bold leading-tight opacity-70 uppercase tracking-tight" htmlFor="terms">
-                I verify that all technical details provided are accurate and the payment proof is authentic. I agree to the <span className="underline border-b-2 border-primary-container">Precision Code of Conduct</span>.
-              </label>
-            </div>
-
-            <BrutalButton className="w-full mt-10" size="xl">
-              Complete Registration
-            </BrutalButton>
-          </BrutalCard>
+          <RegistrationClientForm 
+            eventId={event.id}
+            eventFormat={event.format || 'SOLO'}
+            isTeamFormat={isTeamFormat}
+            isTeamRequired={isTeamRequired}
+            teamSize={event.teamSize || 1}
+            eventData={eventData}
+            dbUser={{ name: dbUser.name, phone: dbUser.phone }}
+          />
         </div>
 
         {/* Right Column: Status & Sidebar */}

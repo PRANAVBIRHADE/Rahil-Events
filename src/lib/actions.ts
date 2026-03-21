@@ -2,9 +2,10 @@
 
 import { db } from '@/db';
 import { users, events, announcements, registrations } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
+import { auth } from '@/auth';
 
 export async function createEvent(formData: FormData) {
   const name = formData.get('name') as string;
@@ -217,4 +218,48 @@ export async function completeProfile(formData: FormData) {
   }
   
   redirect('/dashboard');
+}
+
+export async function createRegistration(formData: FormData) {
+  const eventId = formData.get('eventId') as string;
+  const paymentScreenshot = formData.get('paymentScreenshot') as string;
+  const teamName = formData.get('teamName') as string || null;
+  const transactionId = formData.get('transactionId') as string || null;
+  
+  const members = [];
+  for (const [key, value] of formData.entries()) {
+    if (key.startsWith('member_') && key.endsWith('_name')) {
+      const index = key.split('_')[1];
+      const phone = formData.get(`member_${index}_phone`) as string;
+      members.push({ name: value as string, phone });
+    }
+  }
+
+  const session = await auth();
+  if (!session?.user?.email) return { error: 'Unauthorized Protocol.' };
+
+  const [dbUser] = await db.select().from(users).where(eq(users.email, session.user.email));
+  if (!dbUser) return { error: 'Identity not found in global registry.' };
+
+  // Check existing registration
+  const existing = await db.select().from(registrations).where(and(eq(registrations.eventId, eventId), eq(registrations.userId, dbUser.id)));
+  if (existing.length > 0) return { error: 'You have already deployed a packet for this module.' };
+
+  try {
+    await db.insert(registrations).values({
+      userId: dbUser.id,
+      eventId,
+      teamName,
+      transactionId,
+      members: members.length > 0 ? members : null,
+      paymentScreenshot,
+      status: 'PENDING',
+    });
+
+    revalidatePath('/dashboard');
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: 'Registration injection failed due to backend database timeout.' };
+  }
 }
