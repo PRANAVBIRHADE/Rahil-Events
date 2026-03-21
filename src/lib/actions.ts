@@ -263,3 +263,18 @@ export async function createRegistration(formData: FormData) {
     return { error: 'Registration injection failed due to backend database timeout.' };
   }
 }
+
+export async function updateRegistrationStatus(formData: FormData) {
+  const id = formData.get('id') as string;
+  const status = formData.get('status') as 'PENDING' | 'APPROVED' | 'REJECTED';
+  try {
+    await db.update(registrations).set({ status }).where(eq(registrations.id, id));
+    revalidatePath('/admin/dashboard');
+    revalidatePath('/admin/registrations');
+    revalidatePath(`/admin/verify/${id}`);
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: 'Failed to update transmission status.' };
+  }
+}

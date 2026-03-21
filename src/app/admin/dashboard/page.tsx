@@ -33,6 +33,7 @@ export default async function AdminDashboard() {
   ];
 
   const recentRegistrations = await db.select({
+    id: registrations.id,
     name: users.name,
     event: events.name,
     amount: events.fee,
@@ -104,7 +105,7 @@ export default async function AdminDashboard() {
                         </span>
                       </td>
                       <td className="p-4">
-                        <Link href={`/admin/verify/${i}`} className="text-[10px] font-black uppercase border-b-2 border-on-surface">Inspect</Link>
+                        <Link href={`/admin/verify/${reg.id}`} className="text-[10px] font-black uppercase border-b-2 border-on-surface hover:text-primary hover:border-primary transition-colors">Inspect</Link>
                       </td>
                     </tr>
                   ))}
