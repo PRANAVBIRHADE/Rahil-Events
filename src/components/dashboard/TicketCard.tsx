@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import html2canvas from 'html2canvas';
 import BrutalButton from '@/components/ui/BrutalButton';
 import BrutalQRCode from '@/components/ui/BrutalQRCode';
@@ -21,19 +21,27 @@ type TicketCardProps = {
 
 export default function TicketCard({ reg, userName, college }: TicketCardProps) {
   const ticketRef = useRef<HTMLDivElement>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const downloadTicket = async () => {
-    if (ticketRef.current) {
-      // Capture the element
-      const canvas = await html2canvas(ticketRef.current, { 
-        backgroundColor: '#F9F9F9',
-        scale: 2 // Higher resolution
-      });
-      const image = canvas.toDataURL('image/png', 1.0);
-      const link = document.createElement('a');
-      link.download = `KRATOS_TICKET_${reg.id.substring(0,8)}.png`;
-      link.href = image;
-      link.click();
+    if (ticketRef.current && !isDownloading) {
+      setIsDownloading(true);
+      try {
+        const canvas = await html2canvas(ticketRef.current, { 
+          backgroundColor: '#F9F9F9',
+          scale: 2
+        });
+        const image = canvas.toDataURL('image/png', 1.0);
+        const link = document.createElement('a');
+        link.download = `KRATOS_TICKET_${reg.id.substring(0,8)}.png`;
+        link.href = image;
+        link.click();
+      } catch (e) {
+        console.error('Failed to generate pass:', e);
+        alert('Ticket pipeline failed. Please retry.');
+      } finally {
+        setIsDownloading(false);
+      }
     }
   };
 
@@ -96,7 +104,7 @@ export default function TicketCard({ reg, userName, college }: TicketCardProps) 
     <div className="flex flex-col items-center gap-6">
       
       {/* Hidden printable Ticket element for html2canvas */}
-      <div className="absolute left-[-9999px]">
+      <div className="absolute opacity-0 pointer-events-none z-[-1]" style={{ top: 0, left: 0 }}>
         <div ref={ticketRef} className="w-[800px] h-[300px] bg-[#F9F9F9] border-4 border-black p-0 flex relative overflow-hidden font-sans">
           {/* Left Tear Section */}
           <div className="w-16 border-r-4 border-black border-dashed flex items-center justify-center relative bg-primary-container">
@@ -170,10 +178,13 @@ export default function TicketCard({ reg, userName, college }: TicketCardProps) 
           <div className="flex flex-col md:flex-row items-center gap-4 w-full">
             <button
                onClick={downloadTicket}
-               className="w-full md:w-auto px-6 py-3 bg-primary text-on-primary font-display font-black tracking-widest uppercase border-2 border-on-surface shadow-[4px_4px_0px_0px_var(--on-surface)] hover:translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_var(--on-surface)] transition-all flex items-center justify-center"
+               disabled={isDownloading}
+               className={`w-full md:w-auto px-6 py-3 bg-primary text-on-primary font-display font-black tracking-widest uppercase border-2 border-on-surface shadow-[4px_4px_0px_0px_var(--on-surface)] transition-all flex items-center justify-center ${isDownloading ? 'opacity-50' : 'hover:translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_var(--on-surface)]'}`}
             >
-              <span className="material-symbols-outlined mr-2">download</span>
-              Download Pass
+              <span className={`material-symbols-outlined mr-2 ${isDownloading ? 'animate-spin' : ''}`}>
+                 {isDownloading ? 'sync' : 'download'}
+              </span>
+              {isDownloading ? 'Encoding Image...' : 'Download Pass'}
             </button>
           </div>
         </div>
