@@ -11,7 +11,7 @@ const Navbar = () => {
   const closeMenu = () => setIsMobileMenuOpen(false);
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-surface border-b-2 border-on-surface shadow-[4px_4px_0px_0px_var(--primary-container)]">
+    <nav className="w-full bg-surface border-b-2 border-on-surface shadow-[4px_4px_0px_0px_var(--primary-container)] relative z-50">
       <div className="flex justify-between items-center w-full px-6 py-4 max-w-[1440px] mx-auto">
         <Link href="/" onClick={closeMenu} className="text-3xl font-black tracking-tighter text-on-surface uppercase font-display italic z-50">
           KRATOS 2026
@@ -62,7 +62,7 @@ const Navbar = () => {
 
       {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
-        <div className="absolute top-[74px] left-0 w-full h-[calc(100vh-74px)] bg-surface flex flex-col items-center justify-center border-b-4 border-on-surface animate-in slide-in-from-top-4 duration-300 md:hidden pb-20">
+        <div className="absolute top-full left-0 w-full h-[calc(100vh-74px)] bg-surface flex flex-col items-center justify-center border-b-4 border-on-surface animate-in slide-in-from-top-4 duration-300 md:hidden pb-20 z-40">
           <div className="flex flex-col gap-10 font-display uppercase tracking-tighter font-black text-4xl text-center w-full px-8 overflow-y-auto">
             <Link href="/#events" onClick={closeMenu} className="hover:text-primary transition-colors border-b-4 border-on-surface/10 pb-4 mt-8">Events</Link>
             <div className="grid grid-cols-2 gap-4 text-base font-bold text-left px-4 border-l-4 border-primary ml-4">
