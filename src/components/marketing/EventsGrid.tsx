@@ -19,6 +19,7 @@ const getFormatLabel = (format: string | null) => {
   switch(format) {
     case 'TEAM': return 'TEAM FORMAT';
     case 'SOLO_TEAM': return 'SOLO/TEAM FORMAT';
+    case 'SOLO_PAIR': return 'SOLO/PAIR FORMAT';
     case 'SOLO_TEAM_ASSIGNED': return 'SOLO (TEAM ASSIGNED)';
     case 'SOLO':
     default: return 'SOLO FORMAT';

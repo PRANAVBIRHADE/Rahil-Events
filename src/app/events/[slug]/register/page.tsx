@@ -48,7 +48,7 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
     upiURI: `upi://pay?pa=9834147160@kotak811&pn=Kratos%202026&cu=INR&am=${event.fee}`,
   };
 
-  const isTeamFormat = event.format === 'TEAM' || event.format === 'SOLO_TEAM';
+  const isTeamFormat = event.format === 'TEAM' || event.format === 'SOLO_TEAM' || event.format === 'SOLO_PAIR';
   const isTeamRequired = event.format === 'TEAM';
 
   return (
@@ -82,7 +82,7 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
               {isTeamFormat && (
                 <div className="space-y-6 mt-8 pt-8 border-t-2 border-on-surface">
                   <h3 className="font-display text-2xl font-black tracking-tighter uppercase mb-4">Platoon Configuration</h3>
-                  {event.format === 'SOLO_TEAM' && (
+                  {(event.format === 'SOLO_TEAM' || event.format === 'SOLO_PAIR') && (
                     <p className="text-xs font-bold opacity-60 italic mb-4">Note: Team Details are optional for Solo/Team format events. Fill only if participating as a team.</p>
                   )}
                   <BrutalInput label="Squadron / Team Name" name="teamName" placeholder="e.g. NEURAL SYNDICATE" required={isTeamRequired} />

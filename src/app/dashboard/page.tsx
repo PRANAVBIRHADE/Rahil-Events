@@ -102,7 +102,7 @@ export default async function DashboardPage() {
                       <StatusBadge status={reg.status || 'PENDING'} />
                     </div>
                     <p className="text-xs font-sans opacity-70 italic">
-                      FORMAT: {reg.format === 'TEAM' || reg.format === 'SOLO_TEAM' ? `TEAM/SOLO (${reg.teamName || 'NO NAME'})` : 'SOLO'} | REF: <span className="font-mono">{reg.id.substring(0,8)}</span>
+                      FORMAT: {reg.format === 'TEAM' || reg.format === 'SOLO_TEAM' || reg.format === 'SOLO_PAIR' ? `TEAM/SOLO/PAIR (${reg.teamName || 'NO NAME'})` : 'SOLO'} | REF: <span className="font-mono">{reg.id.substring(0,8)}</span>
                     </p>
                   </div>
                   <div className="flex gap-3 w-full md:w-auto">

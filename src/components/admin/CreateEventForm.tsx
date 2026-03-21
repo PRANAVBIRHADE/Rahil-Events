@@ -66,6 +66,7 @@ export default function CreateEventForm() {
               <option value="SOLO">SOLO</option>
               <option value="TEAM">TEAM</option>
               <option value="SOLO_TEAM">SOLO / TEAM BOTH</option>
+              <option value="SOLO_PAIR">SOLO / PAIR</option>
               <option value="SOLO_TEAM_ASSIGNED">SOLO (TEAM ASSIGNED)</option>
             </select>
           </div>
