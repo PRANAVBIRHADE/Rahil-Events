@@ -18,7 +18,7 @@ export async function createEvent(formData: FormData) {
   const isCommon = formData.get('isCommon') === 'on';
   const teamSize = parseInt(formData.get('teamSize') as string) || 1;
 
-  const slug = name.toLowerCase().replace(/\s+/g, '-');
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
   try {
     await db.insert(events).values({
