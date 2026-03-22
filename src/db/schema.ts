@@ -28,6 +28,7 @@ export const events = pgTable('events', {
   format: text('format').default('SOLO'),
   isCommon: boolean('is_common').default(false),
   teamSize: integer('team_size').default(1),
+  winners: json('winners'),
   createdAt: timestamp('created_at').defaultNow(),
 });
 
@@ -60,4 +61,11 @@ export const galleryPhotos = pgTable('gallery_photos', {
 export const systemSettings = pgTable('system_settings', {
   id: integer('id').primaryKey().default(1),
   isGalleryLocked: boolean('is_gallery_locked').default(true),
+  resultsRevealTime: timestamp('results_reveal_time'),
+  resultsVideoUrl: text('results_video_url'),
+});
+
+export const liveViewers = pgTable('live_viewers', {
+  viewerId: text('viewer_id').primaryKey(),
+  lastSeenAt: timestamp('last_seen_at').defaultNow().notNull(),
 });

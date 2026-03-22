@@ -357,3 +357,43 @@ export async function deleteGalleryPhoto(id: string) {
     return { error: 'Data purge failed.' };
   }
 }
+
+export async function updateResultsSettings(formData: FormData) {
+  const revealTimeStr = formData.get('revealTime') as string;
+  const videoUrl = formData.get('videoUrl') as string;
+  
+  const revealTime = revealTimeStr ? new Date(revealTimeStr) : null;
+
+  try {
+    const existing = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
+    if (existing.length === 0) {
+      await db.insert(systemSettings).values({ 
+        id: 1, 
+        resultsRevealTime: revealTime, 
+        resultsVideoUrl: videoUrl 
+      });
+    } else {
+      await db.update(systemSettings)
+        .set({ resultsRevealTime: revealTime, resultsVideoUrl: videoUrl })
+        .where(eq(systemSettings.id, 1));
+    }
+    revalidatePath('/admin/results');
+    revalidatePath('/leaderboard');
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: 'Failed to reprogram timeline.' };
+  }
+}
+
+export async function updateEventWinners(eventId: string, winners: any) {
+  try {
+    await db.update(events).set({ winners }).where(eq(events.id, eventId));
+    revalidatePath('/admin/results');
+    revalidatePath('/leaderboard');
+    return { success: true };
+  } catch (e) {
+    console.error(e);
+    return { error: 'Failed to inject winner data.' };
+  }
+}

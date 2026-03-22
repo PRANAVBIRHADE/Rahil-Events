@@ -2,19 +2,22 @@
 
 import React, { useState, useEffect } from 'react';
 
-const CountdownTimer = () => {
+const CountdownTimer = ({ targetDate = '2026-04-08T23:59:59', enableRefreshOnZero = false }: { targetDate?: string, enableRefreshOnZero?: boolean }) => {
   const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; seconds: number } | null>(null);
 
   useEffect(() => {
-    const targetDate = new Date('2026-04-08T23:59:59').getTime();
+    const target = new Date(targetDate).getTime();
 
     const timer = setInterval(() => {
       const now = new Date().getTime();
-      const distance = targetDate - now;
+      const distance = target - now;
 
       if (distance < 0) {
         clearInterval(timer);
         setTimeLeft(null);
+        if (enableRefreshOnZero) {
+          window.location.reload();
+        }
         return;
       }
 

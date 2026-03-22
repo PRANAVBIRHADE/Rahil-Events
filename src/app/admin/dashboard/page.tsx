@@ -146,6 +146,12 @@ export default async function AdminDashboard() {
                   Manage Personnel
                 </BrutalButton>
               </Link>
+              <Link href="/admin/results" className="w-full">
+                <BrutalButton className="w-full justify-start text-purple-800 border-purple-800 bg-purple-100" variant="secondary">
+                  <span className="material-symbols-outlined mr-3">emoji_events</span>
+                  Manage Winner Data
+                </BrutalButton>
+              </Link>
               <Link href="/admin/events" className="w-full">
                 <BrutalButton className="w-full justify-start text-red-800 border-red-800 bg-red-100" variant="secondary">
                   <span className="material-symbols-outlined mr-3">dangerous</span>
