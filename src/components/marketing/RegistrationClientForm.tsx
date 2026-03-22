@@ -46,6 +46,7 @@ export default function RegistrationClientForm({
 }: RegistrationClientFormProps) {
   const router = useRouter();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [memberCount, setMemberCount] = useState<number>(Math.max(0, (teamSize || 1) - 1));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -105,17 +106,37 @@ export default function RegistrationClientForm({
               <BrutalInput label="Squadron / Team Name" name="teamName" placeholder="e.g. NEURAL SYNDICATE" required={isTeamRequired} />
               
               <div className="space-y-6 mt-4">
-                {Array.from({ length: Math.max(0, (teamSize || 1) - 1) }).map((_, i) => (
+                {Array.from({ length: memberCount }).map((_, i) => (
                   <div key={i} className="p-6 border-2 border-on-surface bg-surface-container-low relative">
                     <div className="absolute -top-3 left-4 bg-on-surface text-surface px-3 py-1 text-[10px] font-black tracking-widest uppercase">
                       Operator 0{i + 2}
                     </div>
+                    {i > 0 && (
+                      <button 
+                        type="button" 
+                        onClick={() => setMemberCount(prev => prev - 1)}
+                        className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                      >
+                         <span className="material-symbols-outlined">close</span>
+                      </button>
+                    )}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
                        <BrutalInput name={`member_${i}_name`} label="Full Name" placeholder={`Operator ${i + 2} Name`} required={isTeamRequired} />
                        <BrutalInput name={`member_${i}_phone`} label="Contact Sequence" placeholder="+91 00000 00000" required={isTeamRequired} />
                     </div>
                   </div>
                 ))}
+              </div>
+              
+              <div className="mt-6 flex justify-center">
+                <button 
+                  type="button" 
+                  onClick={() => setMemberCount(prev => prev + 1)}
+                  className="px-6 py-2 border-2 border-dashed border-on-surface/50 text-xs font-black uppercase tracking-widest hover:bg-primary-container hover:border-primary-container transition-colors flex items-center"
+                >
+                  <span className="material-symbols-outlined mr-2 text-sm">add</span>
+                  Add Additional Operator
+                </button>
               </div>
             </div>
           )}

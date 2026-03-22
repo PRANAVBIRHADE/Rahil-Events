@@ -11,7 +11,7 @@ const ICON_MAP: Record<string, string> = {
   'Mechanical & Automation': 'precision_manufacturing',
   'Electronics & Telecom': 'cell_tower',
   'AI & Data Science': 'memory',
-  'CSE (AIML)': 'smart_toy',
+  'CSE (AIML)': 'psychology',
   'Other': 'settings_input_component',
 };
 
