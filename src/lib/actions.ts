@@ -286,3 +286,74 @@ export async function updateRegistrationStatus(formData: FormData) {
     return { error: 'Failed to update transmission status.' };
   }
 }
+
+import { systemSettings, galleryPhotos } from '@/db/schema';
+
+export async function updateGalleryLock(isGalleryLocked: boolean) {
+  try {
+    const existing = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
+    if (existing.length === 0) {
+      await db.insert(systemSettings).values({ id: 1, isGalleryLocked });
+    } else {
+      await db.update(systemSettings).set({ isGalleryLocked }).where(eq(systemSettings.id, 1));
+    }
+    revalidatePath('/admin/dashboard');
+    revalidatePath('/dashboard');
+    revalidatePath('/gallery');
+    revalidatePath('/');
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: 'Failed to flip master gallery lock.' };
+  }
+}
+
+export async function uploadGalleryPhoto(imageUrl: string) {
+  const session = await auth();
+  if (!session?.user?.email) return { error: 'Unauthorized sequence.' };
+
+  const [dbUser] = await db.select().from(users).where(eq(users.email, session.user.email));
+  if (!dbUser) return { error: 'Identity fragmented.' };
+
+  const [settings] = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
+  if (settings && settings.isGalleryLocked) {
+    return { error: 'Central Command has locked the Memory Core.' };
+  }
+
+  const existingPhotos = await db.select().from(galleryPhotos).where(eq(galleryPhotos.userId, dbUser.id));
+  if (existingPhotos.length >= 4) {
+    return { error: 'Maximum optical capacity reached (4 photos limit).' };
+  }
+
+  try {
+    await db.insert(galleryPhotos).values({
+      userId: dbUser.id,
+      imageUrl,
+    });
+    revalidatePath('/dashboard');
+    revalidatePath('/gallery');
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: 'Failed to upload photo.' };
+  }
+}
+
+export async function deleteGalleryPhoto(id: string) {
+  const session = await auth();
+  if (!session?.user?.email) return { error: 'Unauthorized sequence.' };
+
+  const [dbUser] = await db.select().from(users).where(eq(users.email, session.user.email));
+  if (!dbUser) return { error: 'Identity fragmented.' };
+
+  try {
+    // Safety check - Can only delete if user owns the photo
+    await db.delete(galleryPhotos).where(and(eq(galleryPhotos.id, id), eq(galleryPhotos.userId, dbUser.id)));
+    revalidatePath('/dashboard');
+    revalidatePath('/gallery');
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: 'Data purge failed.' };
+  }
+}

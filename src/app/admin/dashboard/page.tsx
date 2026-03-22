@@ -3,8 +3,9 @@ import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalButton from '@/components/ui/BrutalButton';
 import CreateEventForm from '@/components/admin/CreateEventForm';
 import BroadcastForm from '@/components/admin/BroadcastForm';
+import GalleryAdminToggle from '@/components/admin/GalleryAdminToggle';
 import { db } from '@/db';
-import { registrations, users, events } from '@/db/schema';
+import { registrations, users, events, systemSettings } from '@/db/schema';
 import { eq, desc, count, sum } from 'drizzle-orm';
 
 const StatCard = ({ label, value, trend }: { label: string; value: string; trend?: string }) => (
@@ -31,6 +32,9 @@ export default async function AdminDashboard() {
     { label: 'Pending Verification', value: pendingCount.value.toString() },
     { label: 'Active Modules', value: moduleCount.value.toString() },
   ];
+
+  const dbSettings = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
+  const isGalleryLocked = dbSettings.length > 0 ? dbSettings[0].isGalleryLocked ?? true : true;
 
   const recentRegistrations = await db.select({
     id: registrations.id,
@@ -152,6 +156,8 @@ export default async function AdminDashboard() {
           </BrutalCard>
           
           <BroadcastForm />
+
+          <GalleryAdminToggle isLocked={isGalleryLocked} />
           
           <div className="p-6 border-2 border-on-surface bg-primary-container italic">
             <p className="text-sm font-bold uppercase leading-tight">

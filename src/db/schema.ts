@@ -49,3 +49,15 @@ export const announcements = pgTable('announcements', {
   isActive: boolean('is_active').default(true),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
+
+export const galleryPhotos = pgTable('gallery_photos', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').references(() => users.id).notNull(),
+  imageUrl: text('image_url').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const systemSettings = pgTable('system_settings', {
+  id: integer('id').primaryKey().default(1),
+  isGalleryLocked: boolean('is_gallery_locked').default(true),
+});

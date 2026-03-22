@@ -8,8 +8,8 @@ import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalButton from '@/components/ui/BrutalButton';
 import LogoutButton from '@/components/dashboard/LogoutButton';
 import TicketCard from '@/components/dashboard/TicketCard';
-
-
+import GalleryUploadClient from '@/components/dashboard/GalleryUploadClient';
+import { systemSettings, galleryPhotos } from '@/db/schema';
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -41,6 +41,14 @@ export default async function DashboardPage() {
   .from(registrations)
   .innerJoin(events, eq(registrations.eventId, events.id))
   .where(eq(registrations.userId, dbUser.id));
+
+  const dbSettings = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
+  const isGalleryLocked = dbSettings.length > 0 ? dbSettings[0].isGalleryLocked ?? true : true;
+
+  const userPhotos = await db.select({
+    id: galleryPhotos.id,
+    imageUrl: galleryPhotos.imageUrl
+  }).from(galleryPhotos).where(eq(galleryPhotos.userId, dbUser.id));
 
   return (
     <div className="max-w-[1440px] mx-auto px-6 py-12">
@@ -98,6 +106,9 @@ export default async function DashboardPage() {
               <BrutalButton variant="outline" className="w-full">Browse More Events</BrutalButton>
             </div>
           </BrutalCard>
+
+          {/* User Gallery Photos Module */}
+          <GalleryUploadClient isLocked={isGalleryLocked} photos={userPhotos} />
 
           {/* Verification Status Notice */}
           <div className="p-6 border-2 border-on-surface bg-primary-container/10 italic">
