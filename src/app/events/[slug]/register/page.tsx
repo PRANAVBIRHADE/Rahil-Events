@@ -56,11 +56,16 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
     <div className="max-w-[1440px] mx-auto px-6 py-12">
       <header className="mb-16">
         <div className="inline-block bg-primary-container px-4 py-1 brutal-border mb-4">
-          <span className="font-display font-bold text-sm tracking-widest uppercase">Engineering Protocol 01</span>
+          <span className="font-display font-bold text-sm tracking-widest uppercase">{event.branch || 'Universal Module'}</span>
         </div>
-        <h1 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.9] text-on-surface italic">
-          Event<br />Registration
+        <h1 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.9] text-on-surface italic mb-6">
+          {event.name}
         </h1>
+        {(event.description || event.tagline) && (
+          <p className="text-xl md:text-2xl font-sans font-medium opacity-80 max-w-3xl border-l-4 border-primary pl-6">
+            {event.description || event.tagline}
+          </p>
+        )}
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
