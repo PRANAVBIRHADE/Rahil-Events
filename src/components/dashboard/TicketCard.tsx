@@ -105,74 +105,60 @@ export default function TicketCard({ reg, userName, college }: TicketCardProps) 
       
       {/* Hidden printable Ticket element for html2canvas */}
       <div className="absolute opacity-0 pointer-events-none z-[-1]" style={{ top: 0, left: 0 }}>
-        <div ref={ticketRef} className="w-[1000px] h-[400px] bg-[#FFFFFF] border-[4px] border-[#000000] p-0 relative overflow-hidden font-sans">
-          
-          {/* Base Design Layer (The Blank Template) */}
-          <div className="absolute inset-0 z-0">
-            <img 
-              src="/ticket-template.png" 
-              className="w-full h-full object-cover" 
-              alt="template"
-            />
+        <div ref={ticketRef} className="w-[800px] h-[300px] bg-[#F9F9F9] border-4 border-[#000000] p-0 flex relative overflow-hidden font-sans text-[#1A1C1C]">
+          {/* Left Tear Section */}
+          <div className="w-16 border-r-4 border-[#000000] border-dashed flex items-center justify-center relative bg-[#FFD700]">
+             <p className="transform -rotate-90 whitespace-nowrap font-black uppercase text-xl font-display tracking-widest">
+               KRATOS 2026 OFFICIAL
+             </p>
           </div>
-
-          {/* Dynamic Overlay Layer (Z-index 10) */}
-          <div className="absolute inset-0 z-10 p-0 text-[#1A1C1C]">
+          
+          {/* Main Info */}
+          <div className="flex-1 p-8 flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-start mb-2">
+                 <h2 className="text-4xl font-black uppercase italic tracking-tighter leading-none">{reg.eventName}</h2>
+                 <span className="bg-[#000000] text-[#FFFFFF] px-2 py-1 font-black text-xs uppercase tracking-widest">ADMIT ONE</span>
+              </div>
+              <p className="font-display font-bold uppercase text-[#705D00] text-sm tracking-widest">{isTeam ? 'Squadron Command Pass' : 'Solo Operative Pass'}</p>
+            </div>
             
-            {/* 1. Main Content Overlays (Building Section) */}
-            <div className="absolute left-[12%] top-[12%] max-w-[50%]">
-              <h2 className="text-[64px] font-black uppercase italic tracking-tighter leading-[0.8] drop-shadow-sm" style={{ fontFamily: 'var(--font-display, sans-serif)', color: '#1A1C1C' }}>
-                {reg.eventName}
-              </h2>
-              <p className="text-[#854D00] text-[20px] font-black uppercase tracking-[0.2em] mt-6 italic" style={{ color: '#854D00' }}>
-                {isTeam ? 'SQUADRON COMMAND PASS' : 'SOLO OPERATIVE PASS'}
-              </p>
+            <div className="mt-6 flex justify-between items-end">
+              <div className="space-y-2">
+                <div>
+                  <p className="text-[10px] font-bold uppercase opacity-50">OPERATOR NAME</p>
+                  <p className="text-lg font-black uppercase">{userName}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase opacity-50">AFFILIATION</p>
+                  <p className="text-sm font-bold uppercase">{college || 'UNKNOWN'}</p>
+                </div>
+                {isTeam && (
+                  <div>
+                    <p className="text-[10px] font-bold uppercase opacity-50">SQUADRON</p>
+                    <p className="text-sm font-bold uppercase text-[#FFD700] bg-[#000000] px-1 inline-block">{reg.teamName}</p>
+                  </div>
+                )}
+              </div>
+              <div className="text-right">
+                  <p className="text-[10px] font-bold uppercase opacity-50 mb-1">VERIFICATION CODE</p>
+                  <p className="font-mono text-sm font-bold bg-[#E5E7EB] text-[#1A1C1C] px-2 py-1">{reg.id.substring(0,18)}</p>
+              </div>
             </div>
-
-            {/* User Info Overlays */}
-            <div className="absolute left-[12%] top-[52%] space-y-7">
-               <div>
-                 <p className="text-[10px] font-bold uppercase tracking-widest leading-none mb-1 opacity-60" style={{ color: '#94a3b8' }}>OPERATOR NAME</p>
-                 <p className="text-[44px] font-black uppercase leading-none tracking-tighter" style={{ color: '#1A1C1C' }}>{userName}</p>
-               </div>
-               <div>
-                 <p className="text-[10px] font-bold uppercase tracking-widest leading-none mb-1 opacity-60" style={{ color: '#94a3b8' }}>AFFILIATION</p>
-                 <p className="text-[22px] font-black uppercase leading-none" style={{ color: '#1A1C1C' }}>{college || 'MPGI SOE'}</p>
-               </div>
+          </div>
+          
+          {/* Right QR Section */}
+          <div className="w-[250px] border-l-4 border-[#000000] p-6 flex flex-col items-center justify-center bg-[#FFFFFF] relative">
+            <div className="absolute top-2 left-2 right-2 flex justify-between">
+               <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
+               <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
             </div>
-
-            {/* Verification Code Box (Bottom Right of Building Area) */}
-            <div className="absolute right-[28%] bottom-[35px] text-right">
-               <p className="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-70" style={{ color: '#FFFFFF' }}>VERIFICATIONCODE</p>
-               <div className="bg-white border-2 border-black px-4 py-2 shadow-[2px_2px_0px_0px_#000000]">
-                  <p className="font-mono text-[16px] font-bold">{reg.id.substring(0,20)}</p>
-               </div>
+            <div className="absolute bottom-2 left-2 right-2 flex justify-between">
+               <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
+               <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
             </div>
-
-            {/* 2. QR/Auth Section Overlays (Right Side) */}
-            <div className="absolute right-0 top-0 w-[24.5%] h-full flex flex-col items-center justify-between py-12">
-               <div className="text-center">
-                 <p className="text-[12px] font-black uppercase tracking-[0.4em] mb-8" style={{ color: '#1A1C1C' }}>MANDATORYSCAN</p>
-                 <div className="p-3 border-[3px] border-black bg-white inline-block">
-                   <img 
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(verifyUrl)}&color=000000&bgcolor=FFFFFF&format=png&margin=1`}
-                      alt="qr"
-                      width={160}
-                      height={160}
-                      className="block"
-                   />
-                 </div>
-               </div>
-
-               <div className="w-full px-6">
-                 <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-1 text-center" style={{ color: '#1A1C1C' }}>AUTH TOKEN</p>
-                 <p className="text-[7px] font-mono opacity-40 break-all text-center leading-tight mb-4" style={{ color: '#1A1C1C' }}>{verifyUrl.replace('https://', '')}</p>
-                 <div className="w-full flex justify-end pr-2">
-                    <p className="text-[14px] font-black uppercase italic opacity-60 tracking-tighter" style={{ color: '#1A1C1C' }}>screws</p>
-                 </div>
-               </div>
-            </div>
-
+            <p className="text-[10px] font-black uppercase tracking-widest mb-4">MANDATORY SCAN</p>
+            <BrutalQRCode data={verifyUrl} size={150} />
           </div>
         </div>
       </div>
