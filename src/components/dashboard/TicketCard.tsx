@@ -105,63 +105,72 @@ export default function TicketCard({ reg, userName, college }: TicketCardProps) 
       
       {/* Hidden printable Ticket element for html2canvas */}
       <div className="absolute opacity-0 pointer-events-none z-[-1]" style={{ top: 0, left: 0 }}>
-        <div ref={ticketRef} className="w-[1000px] h-[400px] bg-[#FFFFFF] border-4 border-[#000000] p-0 flex relative overflow-hidden font-sans text-[#1A1C1C]">
+        <div ref={ticketRef} className="w-[1000px] h-[400px] bg-[#FFFFFF] border-[5px] border-[#000000] p-0 flex relative overflow-hidden font-sans text-[#1A1C1C]">
           
           {/* 1. Yellow Sidebar */}
-          <div className="w-20 bg-[#FACC15] border-r-[6px] border-[#000000] border-dashed flex items-center justify-center relative">
-             <div className="flex items-center justify-center transform -rotate-90 whitespace-nowrap">
-               <p className="font-black uppercase text-3xl font-display tracking-widest text-[#000000]">
+          <div className="w-24 bg-[#FFD100] border-r-[3px] border-[#000000] border-dashed flex items-center justify-center relative">
+             <div className="absolute inset-0 border-r-[8px] border-[#FFD100] z-10"></div>
+             <div className="flex items-center justify-center transform -rotate-90 whitespace-nowrap z-20">
+               <p className="font-black uppercase text-[38px] tracking-tight text-[#000000] font-sans italic" style={{ textShadow: '2px 2px 0px rgba(0,0,0,0.1)' }}>
                  OFFICIAL 2026 KRATOS
                </p>
              </div>
           </div>
           
           {/* 2. Main Module Info with Background */}
-          <div className="flex-1 relative flex flex-col justify-between overflow-hidden">
+          <div className="flex-1 relative flex flex-col justify-between overflow-hidden bg-white">
             {/* Background Building Graphic */}
-            <div className="absolute inset-0 z-0 opacity-40">
+            <div className="absolute inset-0 z-0">
               <img 
-                src="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1000&q=80" 
-                className="w-full h-full object-cover filter grayscale sepia brightness-110" 
+                src="/ticket-bg.png" 
+                className="w-full h-full object-cover" 
                 alt="bg"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent"></div>
             </div>
 
             <div className="relative z-10 p-10 flex flex-col h-full justify-between">
               <div>
-                <div className="flex justify-between items-start mb-6">
-                   <div className="max-w-[70%]">
-                      <h2 className="text-6xl font-black uppercase italic tracking-tighter leading-[0.9] text-[#1A1C1C] drop-shadow-sm">
+                <div className="flex justify-between items-start">
+                   <div className="max-w-[65%]">
+                      <h2 className="text-[68px] font-black uppercase italic tracking-tighter leading-[0.85] text-[#1A1C1C]" style={{ letterSpacing: '-0.02em' }}>
                         {reg.eventName}
                       </h2>
-                      <p className="font-display font-black uppercase text-[#854D0E] text-lg tracking-[0.2em] mt-4 opacity-80">
-                        {isTeam ? 'Squadron Command Pass' : 'Solo Operative Pass'}
+                      <p className="font-sans font-black uppercase text-[#854D00] text-2xl tracking-[0.1em] mt-8 opacity-90 italic">
+                        {isTeam ? 'SQUADRON COMMAND PASS' : 'SOLO OPERATIVE PASS'}
                       </p>
                    </div>
-                   <div className="text-right">
-                      <h3 className="text-5xl font-black uppercase italic tracking-tighter text-[#1A1C1C] leading-none">KRATOS</h3>
-                      <p className="text-[10px] font-bold uppercase tracking-widest mt-1 opacity-70">Technical B.Tech College Event</p>
+                   <div className="text-right flex flex-col items-end">
+                      <div className="relative">
+                        <h3 className="text-[64px] font-black uppercase italic tracking-tighter text-[#1A1C1C] leading-none" 
+                            style={{ 
+                              textShadow: '3px 3px 0px #00FFFF, -3px -3px 0px #FF00FF',
+                              filter: 'contrast(150%)' 
+                            }}>
+                          KRATOS
+                        </h3>
+                      </div>
+                      <p className="text-[11px] font-bold uppercase tracking-[0.15em] mt-2 text-[#000000]">Technical B.Tech College Event</p>
                    </div>
                 </div>
               </div>
               
-              <div className="flex justify-between items-end">
-                <div className="space-y-6">
-                  <div>
-                    <p className="text-[11px] font-bold uppercase opacity-50 tracking-widest mb-1">OPERATOR NAME</p>
-                    <p className="text-3xl font-black uppercase">{userName}</p>
+              <div className="flex justify-between items-end mb-2">
+                <div className="space-y-8">
+                  <div className="flex flex-col">
+                    <span className="text-[12px] font-bold uppercase text-[#94a3b8] tracking-[0.1em] mb-1">OPERATOR NAME</span>
+                    <span className="text-[42px] font-black uppercase leading-none tracking-tighter">{userName}</span>
                   </div>
-                  <div>
-                    <p className="text-[11px] font-bold uppercase opacity-50 tracking-widest mb-1">AFFILIATION</p>
-                    <p className="text-xl font-black uppercase">{college || 'MPGI SOE'}</p>
+                  <div className="flex flex-col">
+                    <span className="text-[12px] font-bold uppercase text-[#94a3b8] tracking-[0.1em] mb-1">AFFILIATION</span>
+                    <span className="text-2xl font-black uppercase leading-none">{college || 'MPGI SOE'}</span>
                   </div>
                 </div>
 
-                <div className="text-right mb-2">
-                    <p className="text-[11px] font-bold uppercase opacity-50 tracking-widest mb-2">VERIFICATION CODE</p>
-                    <div className="bg-[#FFFFFF] border-2 border-[#000000] px-4 py-2 shadow-[4px_4px_0px_0px_#000000]">
-                      <p className="font-mono text-lg font-black">{reg.id.substring(0,18)}</p>
+                <div className="flex flex-col items-end">
+                    <span className="text-[11px] font-bold uppercase text-white tracking-[0.1em] mb-1 drop-shadow-md">VERIFICATIONCODE</span>
+                    <div className="bg-[#FFFFFF] px-6 py-2 border-2 border-[#000000] shadow-[0px_0px_0px_2px_white]">
+                      <p className="font-mono text-xl font-bold tracking-tight">{reg.id.substring(0,20)}</p>
                     </div>
                 </div>
               </div>
@@ -169,31 +178,31 @@ export default function TicketCard({ reg, userName, college }: TicketCardProps) 
           </div>
           
           {/* 3. QR Authentication Block */}
-          <div className="w-[300px] border-l-[6px] border-[#000000] p-10 flex flex-col items-center justify-between bg-[#FFFFFF] relative">
+          <div className="w-[320px] border-l-[4px] border-[#000000] p-10 flex flex-col items-center justify-between bg-[#FFFFFF] relative">
             {/* Corner Rivets */}
-            <div className="absolute top-4 left-4 w-3 h-3 bg-[#000000] rounded-full"></div>
-            <div className="absolute top-4 right-4 w-3 h-3 bg-[#000000] rounded-full"></div>
-            <div className="absolute bottom-4 left-4 w-3 h-3 bg-[#000000] rounded-full"></div>
-            <div className="absolute bottom-4 right-4 w-3 h-3 bg-[#000000] rounded-full"></div>
+            <div className="absolute top-4 left-4 w-4 h-4 bg-[#1A1C1C] rounded-full border border-gray-400"></div>
+            <div className="absolute top-4 right-4 w-4 h-4 bg-[#1A1C1C] rounded-full border border-gray-400"></div>
+            <div className="absolute bottom-4 left-4 w-4 h-4 bg-[#1A1C1C] rounded-full border border-gray-400"></div>
+            <div className="absolute bottom-4 right-4 w-4 h-4 bg-[#1A1C1C] rounded-full border border-gray-400"></div>
 
-            <div className="text-center">
-              <p className="text-xs font-black uppercase tracking-[0.3em] mb-8">MANDATORY SCAN</p>
-              <div className="p-4 border-2 border-[#000000] bg-white">
+            <div className="text-center w-full mt-4">
+              <p className="text-[13px] font-black uppercase tracking-[0.4em] mb-8">MANDATORYSCAN</p>
+              <div className="p-4 border-[3px] border-[#1A1C1C] bg-white inline-block">
                 <img 
-                   src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(verifyUrl)}&color=1A1C1C&bgcolor=FFFFFF&format=png&margin=1`}
+                   src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(verifyUrl)}&color=000000&bgcolor=FFFFFF&format=png&margin=1`}
                    alt="verify-qr"
-                   width={150}
-                   height={150}
+                   width={180}
+                   height={180}
                    className="block"
                 />
               </div>
             </div>
 
-            <div className="text-center mt-6 w-full">
-              <p className="text-[10px] font-black uppercase tracking-widest mb-1">AUTH TOKEN</p>
-              <p className="text-[8px] font-mono opacity-40 break-all max-w-[200px] mx-auto leading-tight">{verifyUrl}</p>
-              <div className="mt-6 flex justify-end w-full pr-2">
-                 <p className="text-[12px] font-black uppercase italic opacity-40 tracking-tighter">screws</p>
+            <div className="text-center w-full">
+              <p className="text-[11px] font-black uppercase tracking-[0.2em] mb-1 leading-none">AUTH TOKEN</p>
+              <p className="text-[8px] font-mono opacity-30 break-all max-w-[200px] mx-auto mb-6">{verifyUrl.replace('https://', '')}</p>
+              <div className="w-full flex justify-end pr-2">
+                 <p className="text-[16px] font-black uppercase italic opacity-80 font-sans tracking-tight">screws</p>
               </div>
             </div>
           </div>
