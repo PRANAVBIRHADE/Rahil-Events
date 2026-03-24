@@ -126,7 +126,7 @@ export default function TicketCard({ reg, userName, college }: TicketCardProps) 
                 className="w-full h-full object-cover" 
                 alt="bg"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent"></div>
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%)' }}></div>
             </div>
 
             <div className="relative z-10 p-10 flex flex-col h-full justify-between">
@@ -142,11 +142,7 @@ export default function TicketCard({ reg, userName, college }: TicketCardProps) 
                    </div>
                    <div className="text-right flex flex-col items-end">
                       <div className="relative">
-                        <h3 className="text-[64px] font-black uppercase italic tracking-tighter text-[#1A1C1C] leading-none" 
-                            style={{ 
-                              textShadow: '3px 3px 0px #00FFFF, -3px -3px 0px #FF00FF',
-                              filter: 'contrast(150%)' 
-                            }}>
+                        <h3 className="text-[64px] font-black uppercase italic tracking-tighter text-[#1A1C1C] leading-none">
                           KRATOS
                         </h3>
                       </div>
@@ -158,12 +154,12 @@ export default function TicketCard({ reg, userName, college }: TicketCardProps) 
               <div className="flex justify-between items-end mb-2">
                 <div className="space-y-8">
                   <div className="flex flex-col">
-                    <span className="text-[12px] font-bold uppercase text-[#94a3b8] tracking-[0.1em] mb-1">OPERATOR NAME</span>
-                    <span className="text-[42px] font-black uppercase leading-none tracking-tighter">{userName}</span>
+                    <span className="text-[12px] font-bold uppercase tracking-[0.1em] mb-1" style={{ color: '#94a3b8' }}>OPERATOR NAME</span>
+                    <span className="text-[42px] font-black uppercase leading-none tracking-tighter" style={{ color: '#1A1C1C' }}>{userName}</span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[12px] font-bold uppercase text-[#94a3b8] tracking-[0.1em] mb-1">AFFILIATION</span>
-                    <span className="text-2xl font-black uppercase leading-none">{college || 'MPGI SOE'}</span>
+                    <span className="text-[12px] font-bold uppercase tracking-[0.1em] mb-1" style={{ color: '#94a3b8' }}>AFFILIATION</span>
+                    <span className="text-2xl font-black uppercase leading-none" style={{ color: '#1A1C1C' }}>{college || 'MPGI SOE'}</span>
                   </div>
                 </div>
 
@@ -180,10 +176,10 @@ export default function TicketCard({ reg, userName, college }: TicketCardProps) 
           {/* 3. QR Authentication Block */}
           <div className="w-[320px] border-l-[4px] border-[#000000] p-10 flex flex-col items-center justify-between bg-[#FFFFFF] relative">
             {/* Corner Rivets */}
-            <div className="absolute top-4 left-4 w-4 h-4 bg-[#1A1C1C] rounded-full border border-gray-400"></div>
-            <div className="absolute top-4 right-4 w-4 h-4 bg-[#1A1C1C] rounded-full border border-gray-400"></div>
-            <div className="absolute bottom-4 left-4 w-4 h-4 bg-[#1A1C1C] rounded-full border border-gray-400"></div>
-            <div className="absolute bottom-4 right-4 w-4 h-4 bg-[#1A1C1C] rounded-full border border-gray-400"></div>
+            <div className="absolute top-4 left-4 w-4 h-4 bg-[#1A1C1C] rounded-full border" style={{ borderColor: '#9ca3af' }}></div>
+            <div className="absolute top-4 right-4 w-4 h-4 bg-[#1A1C1C] rounded-full border" style={{ borderColor: '#9ca3af' }}></div>
+            <div className="absolute bottom-4 left-4 w-4 h-4 bg-[#1A1C1C] rounded-full border" style={{ borderColor: '#9ca3af' }}></div>
+            <div className="absolute bottom-4 right-4 w-4 h-4 bg-[#1A1C1C] rounded-full border" style={{ borderColor: '#9ca3af' }}></div>
 
             <div className="text-center w-full mt-4">
               <p className="text-[13px] font-black uppercase tracking-[0.4em] mb-8">MANDATORYSCAN</p>
