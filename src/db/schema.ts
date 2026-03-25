@@ -71,3 +71,19 @@ export const liveViewers = pgTable('live_viewers', {
   viewerId: text('viewer_id').primaryKey(),
   lastSeenAt: timestamp('last_seen_at').defaultNow().notNull(),
 });
+
+export const squadPosts = pgTable('squad_posts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').references(() => users.id).notNull(),
+  eventId: uuid('event_id').references(() => events.id).notNull(),
+  bio: text('bio').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const teamMessages = pgTable('team_messages', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  registrationId: uuid('registration_id').references(() => registrations.id).notNull(),
+  senderId: uuid('sender_id').references(() => users.id).notNull(),
+  content: text('content').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+});

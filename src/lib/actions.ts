@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@/db';
-import { users, events, announcements, registrations } from '@/db/schema';
+import { users, events, announcements, registrations, squadPosts, teamMessages } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
@@ -401,5 +401,62 @@ export async function updateEventWinners(eventId: string, winners: unknown) {
   } catch (e) {
     console.error(e);
     return { error: 'Failed to inject winner data.' };
+  }
+}
+
+export async function createSquadPost(formData: FormData) {
+  const eventId = formData.get('eventId') as string;
+  const bio = formData.get('bio') as string;
+
+  const session = await auth();
+  if (!session?.user?.id) return { error: 'Unauthorized sequence.' };
+
+  try {
+    await db.insert(squadPosts).values({
+      userId: session.user.id,
+      eventId,
+      bio,
+    });
+    revalidatePath('/squads');
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: 'Failed to broadcast recruitment signal.' };
+  }
+}
+
+export async function deleteSquadPost(postId: string) {
+  const session = await auth();
+  if (!session?.user?.id) return { error: 'Unauthorized sequence.' };
+
+  try {
+    await db.delete(squadPosts).where(and(eq(squadPosts.id, postId), eq(squadPosts.userId, session.user.id)));
+    revalidatePath('/squads');
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: 'Failed to purge recruitment signal.' };
+  }
+}
+
+export async function sendTeamMessage(registrationId: string, content: string) {
+  const session = await auth();
+  if (!session?.user?.id) return { error: 'Unauthorized sequence.' };
+
+  try {
+    // Verify membership
+    const [reg] = await db.select().from(registrations).where(eq(registrations.id, registrationId));
+    if (!reg) return { error: 'Team module not found.' };
+
+    await db.insert(teamMessages).values({
+      registrationId,
+      senderId: session.user.id,
+      content,
+    });
+    
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: 'Failed to transmit team comms.' };
   }
 }

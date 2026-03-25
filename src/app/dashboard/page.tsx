@@ -126,7 +126,7 @@ export default async function DashboardPage() {
 
             <div className="space-y-6">
               {dbRegistrations.map((reg) => (
-                <TicketCard key={reg.id} reg={reg} userName={dbUser.name} college={dbUser.college} />
+                <TicketCard key={reg.id} reg={reg} userName={dbUser.name} college={dbUser.college} currentUserId={dbUser.id} />
               ))}
               {dbRegistrations.length === 0 && (
                  <div className="text-center py-12 border-2 border-dashed border-on-surface/20">

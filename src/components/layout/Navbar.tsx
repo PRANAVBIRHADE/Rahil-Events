@@ -36,6 +36,7 @@ const Navbar = () => {
             </div>
           </div>
           <Link href="/#schedule" className="text-on-surface/60 hover:text-on-surface border-b-4 border-transparent hover:border-primary-container pb-1 transition-all duration-150 py-4">Schedule</Link>
+          <Link href="/squads" className="text-primary hover:text-on-surface border-b-4 border-transparent hover:border-primary pb-1 transition-all duration-150 py-4 font-black italic">Squads Board</Link>
           <Link href="/#workshops" className="text-on-surface/60 hover:text-on-surface border-b-4 border-transparent hover:border-primary-container pb-1 transition-all duration-150 py-4">Workshops</Link>
           <Link href="/leaderboard" className="text-on-surface/60 hover:text-on-surface border-b-4 border-transparent hover:border-primary-container pb-1 transition-all duration-150 py-4 font-black">Leaderboard</Link>
           <Link href="/about" className="text-on-surface/60 hover:text-on-surface border-b-4 border-transparent hover:border-primary-container pb-1 transition-all duration-150 py-4">About</Link>

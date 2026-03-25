@@ -5,6 +5,7 @@ import html2canvas from 'html2canvas';
 import BrutalButton from '@/components/ui/BrutalButton';
 import BrutalQRCode from '@/components/ui/BrutalQRCode';
 import Link from 'next/link';
+import TeamChat from '@/components/dashboard/TeamChat';
 
 type TicketCardProps = {
   reg: {
@@ -17,9 +18,10 @@ type TicketCardProps = {
   };
   userName: string;
   college: string | null;
+  currentUserId: string;
 };
 
-export default function TicketCard({ reg, userName, college }: TicketCardProps) {
+export default function TicketCard({ reg, userName, college, currentUserId }: TicketCardProps) {
   const ticketRef = useRef<HTMLDivElement>(null);
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -88,6 +90,11 @@ export default function TicketCard({ reg, userName, college }: TicketCardProps) 
           <p className="text-xs font-sans opacity-70 italic">
             FORMAT: {isTeam ? `TEAM/PAIR (${reg.teamName || 'NO NAME'})` : 'SOLO'} | REF: <span className="font-mono">{reg.id.substring(0,8)}</span>
           </p>
+          {isTeam && (
+            <div className="mt-4">
+              <TeamChat registrationId={reg.id} currentUserId={currentUserId} />
+            </div>
+          )}
         </div>
         <div className="w-full md:w-auto">
           <BrutalButton size="sm" variant="outline" className="w-full md:w-auto" disabled>
@@ -173,6 +180,11 @@ export default function TicketCard({ reg, userName, college }: TicketCardProps) 
           <p className="text-xs font-sans opacity-70 italic">
             FORMAT: {isTeam ? `TEAM/PAIR (${reg.teamName || 'NO NAME'})` : 'SOLO'} | REF: <span className="font-mono">{reg.id.substring(0,8)}</span>
           </p>
+          {isTeam && (
+            <div className="mt-4">
+              <TeamChat registrationId={reg.id} currentUserId={currentUserId} />
+            </div>
+          )}
         </div>
         <div className="flex gap-3 w-full md:w-auto">
           <div className="flex flex-col md:flex-row items-center gap-4 w-full">
