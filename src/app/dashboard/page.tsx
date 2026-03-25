@@ -66,7 +66,7 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Profile Summary */}
         <BrutalCard className="lg:col-span-1 h-fit" shadowColor="gold">
-          <h2 className="text-2xl font-black uppercase mb-6 border-b-2 border-on-surface pb-2">Profile Intel</h2>
+          <h2 className="text-2xl font-black uppercase mb-6 border-b-2 border-on-surface pb-2">Your Profile</h2>
           <div className="space-y-4 font-sans">
             <div>
               <p className="text-[10px] font-black uppercase opacity-60">Institute</p>
@@ -87,7 +87,7 @@ export default async function DashboardPage() {
         <div className="lg:col-span-2 space-y-8">
           <BrutalCard>
             <div className="flex justify-between items-center mb-8 border-b-2 border-on-surface pb-4">
-              <h2 className="text-2xl font-black uppercase italic">Registered Modules</h2>
+              <h2 className="text-2xl font-black uppercase italic">My Events</h2>
               <p className="text-xs font-bold uppercase opacity-60">{dbRegistrations.length} Active</p>
             </div>
 
@@ -113,7 +113,7 @@ export default async function DashboardPage() {
           {/* Verification Status Notice */}
           <div className="p-6 border-2 border-on-surface bg-primary-container/10 italic">
             <p className="text-sm font-bold uppercase">
-              Note: Technical verification takes 6-12 hours. Ensure your UPI payment proof is clear for instant approval.
+              Note: Payment verification usually takes 6-12 hours. Please wait while we process your registration.
             </p>
           </div>
         </div>

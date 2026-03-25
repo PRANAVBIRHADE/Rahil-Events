@@ -126,7 +126,7 @@ export default function TicketCard({ reg, userName, college }: TicketCardProps) 
             <div className="mt-6 flex justify-between items-end">
               <div className="space-y-2">
                 <div>
-                  <p className="text-[10px] font-bold uppercase opacity-50">OPERATOR NAME</p>
+                  <p className="text-[10px] font-bold uppercase opacity-50">PARTICIPANT NAME</p>
                   <p className="text-lg font-black uppercase">{userName}</p>
                 </div>
                 <div>
@@ -141,7 +141,7 @@ export default function TicketCard({ reg, userName, college }: TicketCardProps) 
                 )}
               </div>
               <div className="text-right">
-                  <p className="text-[10px] font-bold uppercase opacity-50 mb-1">VERIFICATION CODE</p>
+                  <p className="text-[10px] font-bold uppercase opacity-50 mb-1">REGISTRATION ID</p>
                   <p className="font-mono text-sm font-bold bg-[#E5E7EB] text-[#1A1C1C] px-2 py-1">{reg.id.substring(0,18)}</p>
               </div>
             </div>
@@ -157,7 +157,7 @@ export default function TicketCard({ reg, userName, college }: TicketCardProps) 
                <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
                <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
             </div>
-            <p className="text-[10px] font-black uppercase tracking-widest mb-4">MANDATORY SCAN</p>
+            <p className="text-[10px] font-black uppercase tracking-widest mb-4">SHOW AT ENTRANCE</p>
             <BrutalQRCode data={verifyUrl} size={150} />
           </div>
         </div>
