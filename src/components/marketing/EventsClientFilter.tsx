@@ -26,28 +26,31 @@ const getFormatLabel = (format: string | null) => {
   }
 };
 
+const branches = [
+  'All',
+  'Civil Engineering',
+  'Computer Science Engineering',
+  'Electrical Engineering',
+  'Mechanical & Automation',
+  'Electronics & Telecom',
+  'AI & Data Science',
+  'CSE (AIML)',
+  'Other'
+];
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function FilterContent({ allEvents }: { allEvents: any[] }) {
   const searchParams = useSearchParams();
   const branchQuery = searchParams.get('branch');
-
-  const branches = [
-    'All',
-    'Civil Engineering',
-    'Computer Science Engineering',
-    'Electrical Engineering',
-    'Mechanical & Automation',
-    'Electronics & Telecom',
-    'AI & Data Science',
-    'CSE (AIML)',
-    'Other'
-  ];
 
   const [activeFilter, setActiveFilter] = useState<string>('All');
 
   useEffect(() => {
     if (branchQuery && branches.includes(branchQuery)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveFilter(branchQuery);
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveFilter('All');
     }
   }, [branchQuery]);
@@ -60,9 +63,11 @@ function FilterContent({ allEvents }: { allEvents: any[] }) {
     if (!acc[branch]) acc[branch] = [];
     acc[branch].push(event);
     return acc;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }, {} as Record<string, any[]>);
 
   // If a specific filter is active, only show that. Otherwise show all.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const filteredGroups: Record<string, any[]> = activeFilter === 'All' 
     ? groupedEvents 
     : { [activeFilter]: groupedEvents[activeFilter] || [] };
@@ -94,7 +99,7 @@ function FilterContent({ allEvents }: { allEvents: any[] }) {
         <div className="mb-16">
           <h3 className="text-3xl font-black uppercase mb-8 pb-4 border-b-2 border-on-surface inline-block pr-12">Universal Modules</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 brutal-border overflow-hidden">
-            {commonEvents.map((event, i) => (
+            {commonEvents.map((event) => (
               <div key={event.id} className="p-8 border-b-2 border-r-2 last:border-b-0 md:last:border-b-2 lg:[&:nth-child(3n)]:border-r-0 border-on-surface flex flex-col justify-between hover:bg-primary-container transition-colors group">
                 <div>
                   <div className="flex justify-between items-start mb-6">
@@ -126,7 +131,7 @@ function FilterContent({ allEvents }: { allEvents: any[] }) {
           <div key={branch} className="mb-16 last:mb-0 animate-in fade-in duration-300">
             <h3 className="text-3xl font-black uppercase mb-8 pb-4 border-b-2 border-on-surface inline-block pr-12">{branch}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 brutal-border overflow-hidden">
-              {events.map((event, i) => (
+              {events.map((event) => (
                 <div key={event.id} className="p-8 border-b-2 border-r-2 last:border-b-0 md:last:border-b-2 lg:[&:nth-child(3n)]:border-r-0 border-on-surface flex flex-col justify-between hover:bg-primary-container transition-colors group">
                   <div>
                     <div className="flex justify-between items-start mb-6">
@@ -158,6 +163,7 @@ function FilterContent({ allEvents }: { allEvents: any[] }) {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function EventsClientFilter({ allEvents }: { allEvents: any[] }) {
   return (
     <Suspense fallback={<div className="font-display font-bold uppercase text-primary tracking-widest">LOADING FILTER CACHE...</div>}>

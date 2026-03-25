@@ -2,6 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 
+const TimerUnit = ({ value, label }: { value: number; label: string }) => (
+  <div className="flex flex-col items-center p-4 brutal-border bg-surface hard-shadow min-w-[100px]">
+    <span className="text-4xl md:text-6xl font-black font-display leading-none">
+      {value.toString().padStart(2, '0')}
+    </span>
+    <span className="text-xs font-bold uppercase tracking-widest mt-2">{label}</span>
+  </div>
+);
+
 const CountdownTimer = ({ targetDate = '2026-04-08T23:59:59', enableRefreshOnZero = false }: { targetDate?: string, enableRefreshOnZero?: boolean }) => {
   const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; seconds: number } | null>(null);
 
@@ -30,18 +39,9 @@ const CountdownTimer = ({ targetDate = '2026-04-08T23:59:59', enableRefreshOnZer
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [targetDate, enableRefreshOnZero]);
 
   if (!timeLeft) return null;
-
-  const TimerUnit = ({ value, label }: { value: number; label: string }) => (
-    <div className="flex flex-col items-center p-4 brutal-border bg-surface hard-shadow min-w-[100px]">
-      <span className="text-4xl md:text-6xl font-black font-display leading-none">
-        {value.toString().padStart(2, '0')}
-      </span>
-      <span className="text-xs font-bold uppercase tracking-widest mt-2">{label}</span>
-    </div>
-  );
 
   return (
     <div className="flex flex-wrap justify-center gap-4 py-8">

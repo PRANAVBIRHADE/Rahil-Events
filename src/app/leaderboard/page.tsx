@@ -13,6 +13,7 @@ export default async function LeaderboardPage() {
   const revealTime = currentSettings?.resultsRevealTime;
   const videoUrl = currentSettings?.resultsVideoUrl;
   
+  // eslint-disable-next-line react-hooks/purity
   const isLocked = !revealTime || revealTime.getTime() > Date.now();
 
   if (isLocked) {

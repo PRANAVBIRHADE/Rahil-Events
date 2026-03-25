@@ -3,6 +3,7 @@ import { auth } from "@/auth"
 export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const role = (req.auth?.user as any)?.role;
 
   const isAdminRoute = nextUrl.pathname.startsWith("/admin");

@@ -34,7 +34,7 @@ export default function TermsPage() {
 
           <h2 className="text-2xl font-black uppercase text-on-surface opacity-100">3. Operational Conduct</h2>
           <p>
-            All operatives (participants) are expected to maintain professional conduct during both physical and digital events. Any attempts to sabotage the technical infrastructure, manipulate leaderboards, or disrupt the festival's network will result in immediate extraction from the premises and severe academic penalties.
+            All operatives (participants) are expected to maintain professional conduct during both physical and digital events. Any attempts to sabotage the technical infrastructure, manipulate leaderboards, or disrupt the festival&apos;s network will result in immediate extraction from the premises and severe academic penalties.
           </p>
 
           <h2 className="text-2xl font-black uppercase text-on-surface opacity-100">4. Modifications</h2>

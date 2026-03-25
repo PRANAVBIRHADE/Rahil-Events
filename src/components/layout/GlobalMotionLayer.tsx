@@ -5,6 +5,16 @@ import Floating3D from '../ui/Floating3D';
 import { motion } from 'framer-motion';
 
 const GlobalMotionLayer = () => {
+  const [particles, setParticles] = React.useState<{ x: string, y: string, duration: number, delay: number }[]>([]);
+
+  React.useEffect(() => {
+    setParticles([...Array(6)].map((_, i) => ({
+      x: Math.random() * 100 + '%',
+      y: Math.random() * 100 + '%',
+      duration: 10 + Math.random() * 20,
+      delay: i * 2
+    })));
+  }, []);
   return (
     <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden opacity-30">
       {/* Scattered background elements */}
@@ -34,13 +44,13 @@ const GlobalMotionLayer = () => {
       />
       
       {/* Abstract floating particles */}
-      {[...Array(6)].map((_, i) => (
+      {particles.map((p, i) => (
         <motion.div
           key={i}
           className="absolute w-2 h-2 bg-primary rounded-full"
           initial={{ 
-            x: Math.random() * 100 + '%', 
-            y: Math.random() * 100 + '%',
+            x: p.x, 
+            y: p.y,
             opacity: 0.2
           }}
           animate={{
@@ -49,10 +59,10 @@ const GlobalMotionLayer = () => {
             opacity: [0.2, 0.5, 0.2]
           }}
           transition={{
-            duration: 10 + Math.random() * 20,
+            duration: p.duration,
             repeat: Infinity,
             ease: "linear",
-            delay: i * 2
+            delay: p.delay
           }}
         />
       ))}

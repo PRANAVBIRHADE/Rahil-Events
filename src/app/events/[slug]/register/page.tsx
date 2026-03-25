@@ -1,18 +1,6 @@
 import React from 'react';
 import BrutalCard from '@/components/ui/BrutalCard';
-import BrutalInput from '@/components/ui/BrutalInput';
-import BrutalButton from '@/components/ui/BrutalButton';
-import BrutalQRCode from '@/components/ui/BrutalQRCode';
 import RegistrationClientForm from '@/components/marketing/RegistrationClientForm';
-
-const StepHeader = ({ number, title }: { number: string; title: string }) => (
-  <div className="relative mb-8">
-    <div className="absolute -top-4 -left-4 bg-on-surface text-surface px-4 py-1 font-display font-black text-xl">
-      {number}
-    </div>
-    <h2 className="text-3xl font-black uppercase tracking-tighter ml-4">{title}</h2>
-  </div>
-);
 
 import { db } from '@/db';
 import { events, registrations, users } from '@/db/schema';

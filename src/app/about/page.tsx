@@ -6,7 +6,7 @@ import BrutalButton from '@/components/ui/BrutalButton';
 import Link from 'next/link';
 import Floating3D from '@/components/ui/Floating3D';
 import { motion } from 'framer-motion';
-import { LayoutGrid, Cpu, Users, GraduationCap } from 'lucide-react';
+import { Users, GraduationCap } from 'lucide-react';
 
 const TEAM_DATA = {
   faculty: [

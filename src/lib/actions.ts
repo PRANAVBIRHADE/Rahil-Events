@@ -386,7 +386,7 @@ export async function updateResultsSettings(formData: FormData) {
   }
 }
 
-export async function updateEventWinners(eventId: string, winners: any) {
+export async function updateEventWinners(eventId: string, winners: unknown) {
   try {
     await db.update(events).set({ winners }).where(eq(events.id, eventId));
     revalidatePath('/admin/results');

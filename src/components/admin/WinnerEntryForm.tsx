@@ -4,7 +4,7 @@ import React, { useState, useTransition } from 'react';
 import BrutalButton from '@/components/ui/BrutalButton';
 import { updateEventWinners } from '@/lib/actions';
 
-export default function WinnerEntryForm({ eventId, eventName, currentWinners }: { eventId: string, eventName: string, currentWinners: any }) {
+export default function WinnerEntryForm({ eventId, eventName, currentWinners }: { eventId: string, eventName: string, currentWinners: unknown }) {
   const [isPending, startTransition] = useTransition();
 
   const defaultWinners = Array.isArray(currentWinners) ? currentWinners : [
@@ -34,7 +34,7 @@ export default function WinnerEntryForm({ eventId, eventName, currentWinners }: 
       </h4>
       
       <div className="space-y-4 mb-6">
-        {winners.map((win: any, idx: number) => (
+        {winners.map((win: { place: number; name: string; college: string }, idx: number) => (
           <div key={idx} className="flex flex-col md:flex-row gap-4 items-center bg-surface-container-low border-2 border-on-surface p-3">
             <span className="font-display font-black text-2xl px-4 text-primary">0{win.place}</span>
             <input 

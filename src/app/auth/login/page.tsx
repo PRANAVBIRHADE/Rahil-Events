@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import BrutalCard from '@/components/ui/BrutalCard';
@@ -58,6 +58,7 @@ export default function LoginPage() {
           }}
           disabled={loading}
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4 grayscale contrast-200" />
           CONTINUE WITH GOOGLE
         </BrutalButton>

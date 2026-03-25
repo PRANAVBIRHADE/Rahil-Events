@@ -41,6 +41,7 @@ const BrutalButton = ({
         sizes[size],
         className
       )}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       {...(props as any)}
     >
       {children}

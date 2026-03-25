@@ -16,6 +16,7 @@ const BrutalQRCode = ({ data, size = 200, className }: BrutalQRCodeProps) => {
       "brutal-border p-3 bg-white hard-shadow-gold inline-block",
       className
     )}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img 
         src={qrUrl} 
         alt={`QR Code for ${data}`} 

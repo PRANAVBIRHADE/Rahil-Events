@@ -45,6 +45,7 @@ export default function RegisterPage() {
           }}
           disabled={loading}
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4 grayscale contrast-200" />
           JOIN WITH GOOGLE
         </BrutalButton>

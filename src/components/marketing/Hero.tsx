@@ -79,6 +79,7 @@ const Hero = () => {
           className="w-full md:w-1/3 relative"
         >
           <div className="brutal-border p-2 hard-shadow-gold bg-on-surface aspect-square flex items-center justify-center overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
               className="w-full h-full object-cover grayscale contrast-125 hover:scale-110 transition-transform duration-500" 
               alt="Technical machinery blueprint" 

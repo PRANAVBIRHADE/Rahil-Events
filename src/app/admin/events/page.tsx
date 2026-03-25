@@ -1,7 +1,7 @@
 import React from 'react';
 import { db } from '@/db';
 import { events } from '@/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { desc } from 'drizzle-orm';
 import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalButton from '@/components/ui/BrutalButton';
 import { updateEvent, deleteEvent } from '@/lib/actions';

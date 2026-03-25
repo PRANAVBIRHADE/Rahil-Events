@@ -13,6 +13,7 @@ export default function LiveViewerCounter() {
       currentId = 'op_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
       localStorage.setItem('kratos_viewer_id', currentId);
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setViewerId(currentId);
   }, []);
 
@@ -28,8 +29,8 @@ export default function LiveViewerCounter() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ viewerId }),
         });
-      } catch (e) {
-        console.error('Failed to emit heartbeat.');
+      } catch (error) {
+        console.error('Failed to emit heartbeat.', error);
       }
     };
 
@@ -40,8 +41,8 @@ export default function LiveViewerCounter() {
         if (mounted && data.count) {
           setCount(data.count);
         }
-      } catch (e) {
-        console.error('Failed to retrieve spectator count.');
+      } catch (error) {
+        console.error('Failed to retrieve spectator count.', error);
       }
     };
 
