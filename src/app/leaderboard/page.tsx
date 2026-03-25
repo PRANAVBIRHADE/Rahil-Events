@@ -5,7 +5,8 @@ import { eq, isNotNull, desc } from 'drizzle-orm';
 import BrutalCard from '@/components/ui/BrutalCard';
 import LiveViewerCounter from '@/components/marketing/LiveViewerCounter';
 import CountdownTimer from '@/components/marketing/CountdownTimer';
-import { Trophy, Medal, Target } from 'lucide-react';
+import { Trophy, Medal, Target, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default async function LeaderboardPage() {
   const settings = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
