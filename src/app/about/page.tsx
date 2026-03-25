@@ -4,6 +4,9 @@ import React from 'react';
 import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalButton from '@/components/ui/BrutalButton';
 import Link from 'next/link';
+import Floating3D from '@/components/ui/Floating3D';
+import { motion } from 'framer-motion';
+import { LayoutGrid, Cpu, Users, GraduationCap } from 'lucide-react';
 
 const TEAM_DATA = {
   faculty: [
@@ -24,34 +27,58 @@ const TEAM_DATA = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-surface-container-low pb-24">
+    <div className="min-h-screen bg-surface-container-low pb-24 overflow-hidden relative">
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
+        <Floating3D type="cube" size={200} className="absolute -top-10 -right-20" delay={1} />
+        <Floating3D type="cube" size={100} className="absolute top-[40%] -left-10" delay={3} />
+        <Floating3D type="grid" className="absolute bottom-0 w-full h-[30%]" />
+      </div>
+
       {/* Hero Section */}
-      <section className="bg-on-surface text-surface py-24 px-6 border-b-8 border-primary-container">
+      <section className="bg-on-surface text-surface py-24 px-6 border-b-8 border-primary-container relative z-10 transition-colors">
         <div className="max-w-[1440px] mx-auto">
-          <span className="font-mono text-primary-container text-lg mb-4 block animate-pulse">
-            [ SYSTEM_OVERVIEW_INITIATED ]
-          </span>
-          <h1 className="text-7xl md:text-9xl font-black uppercase italic tracking-tighter leading-none mb-8">
+          <motion.span 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="font-mono text-primary-container text-lg mb-4 block"
+          >
+            [ TEAM_DATABASE_V1.0 ]
+          </motion.span>
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-7xl md:text-9xl font-black uppercase italic tracking-tighter leading-none mb-8"
+          >
             MEET THE <br />
             <span className="text-primary-container">TEAM</span>
-          </h1>
-          <p className="max-w-3xl text-xl font-display opacity-80 leading-relaxed uppercase">
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="max-w-3xl text-xl font-display opacity-80 leading-relaxed uppercase"
+          >
             The people working behind the scenes to make KRATOS 2026 a success.
-          </p>
+          </motion.p>
         </div>
       </section>
 
       <div className="max-w-[1440px] mx-auto px-6 mt-20 space-y-32">
         
         {/* Faculty Section */}
-        <section>
+        <motion.section
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
           <div className="flex items-center gap-4 mb-12">
+            <GraduationCap className="w-12 h-12 text-primary" />
             <h2 className="text-5xl font-black uppercase italic tracking-tighter">FACULTY ADVISORS</h2>
             <div className="flex-1 h-2 bg-on-surface"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {TEAM_DATA.faculty.map((member, i) => (
-              <BrutalCard key={i} className="flex flex-col justify-between">
+              <BrutalCard key={i} className="flex flex-col justify-between" onClick={() => {}}>
                 <div>
                   <h3 className="text-3xl font-black uppercase mb-2">{member.name}</h3>
                   <p className="text-primary font-bold uppercase tracking-widest">{member.role}</p>
