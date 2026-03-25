@@ -1,0 +1,91 @@
+# KRATOS 2026: Official Documentation
+
+Welcome to the comprehensive technical and operational documentation for **KRATOS 2026**, the premier inter-collegiate technical festival platform.
+
+---
+
+## 🏗️ Project Overview & Architecture
+
+KRATOS 2026 is a high-performance, edge-ready web application designed to handle hundreds of concurrent participants registering, viewing live leaderboards, and interacting with the festival infrastructure. 
+
+The architecture is built heavily around Server-Side Rendering (SSR) and React Server Components (RSC) to ensure lightning-fast load times and maximum SEO efficiency, heavily relying on the Next.js App Router paradigm.
+
+### Tech Stack
+- **Framework**: [Next.js 16.2.0](https://nextjs.org/) (App Router, Turbopack enabled)
+- **UI Library**: [React 19.2](https://react.dev/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Database**: [Neon Postgres (Serverless)](https://neon.tech/)
+- **ORM**: [Drizzle ORM](https://orm.drizzle.team/)
+- **Authentication**: [NextAuth.js v5](https://authjs.dev/) (Auth.js)
+- **Media Storage**: [Cloudinary](https://cloudinary.com/)
+
+---
+
+## 🎨 UI/UX Design Grammar (Stark-Brutalist)
+
+The platform employs a distinctly **stark, tech-brutalist** design language. This aesthetic choices reflects the engineering nature of the festival—eschewing soft shadows and rounded corners for sharp, utilitarian geometry.
+
+### Core Visual Principles
+1. **Typography**: Heavy, aggressive use of uppercase fonts (`Space Grotesk` for display headers, `Inter` for readability, and monospace for technical data).
+2. **Colors**: High-contrast monochrome base (Pitch Black `bg-surface`, Bright White `text-on-surface`), punctuated by stark primary accents (Electric yellow/gold, alert reds) for interactive elements.
+3. **Borders & Elevation**: Elements utilizes bold, heavy borders (`brutal-border`) and solid, offset drop-shadows (`hard-shadow-gold`) instead of soft blurs.
+4. **Motion**: Crisp, snappy micro-interactions via Framer Motion. Elements scale up aggressively on hover, and global background particles provide a dynamic 3D depth layer (`GlobalMotionLayer.tsx`).
+5. **Components**:
+   - `BrutalCard`: The fundamental container layout.
+   - `BrutalButton`: High-impact interactive surfaces.
+   - `BrutalInput`: Utilitarian, terminal-style input fields. 
+
+---
+
+## 🗄️ Database Schema & Entities
+
+The platform uses a relational architecture managed by Drizzle ORM.
+
+### 1. Users (`users`)
+- **Role**: Tracks both `PARTICIPANT` and `ADMIN` roles.
+- **Fields**: ID, Name, Email (Unique), Password (Hashed), Phone, College, Branch, Role, CreatedAt.
+
+### 2. Events/Modules (`events`)
+- **Role**: The technical competitions or modules available for registration.
+- **Fields**: ID, Slug, Name, Description, Fee, Format (`SOLO`, `TEAM`, `SOLO_TEAM`), TeamSize, Branch, IsCommon.
+- **Winners**: A JSONB column tracking the podium placements for post-event leaderboards.
+
+### 3. Registrations (`registrations`)
+- **Role**: The nexus entity linking Users to Events.
+- **Fields**: ID, UserID, EventID, Status (`PENDING`, `APPROVED`, `REJECTED`), TransactionID, PaymentScreenshot (Cloudinary URL), TeamName, Members (JSON array of nested participants).
+
+---
+
+## 🔐 Security & Authentication
+
+Authentication is handled natively at the edge via NextAuth.js. 
+
+- **Providers**: Supports both Google OAuth (for rapid onboarding) and standardized Email/Password Credentials (hashed via `bcryptjs`).
+- **Role-Based Access Control (RBAC)**: All administrative routes (`/admin/*`) are heavily guarded by Next.js advanced interceptors (`src/proxy.ts`), which automatically eject any user lacking the `ADMIN` permission role back to their standard dashboard.
+
+---
+
+## 🚀 Deployment & Operations
+
+### Local Development Setup
+1. Clone the repository and install dependencies (`npm install`).
+2. Create your `.env.local` containing:
+   - `DATABASE_URL` (Neon Postgres)
+   - `AUTH_SECRET` (Run `npx auth secret`)
+   - Google Auth IDs (Optional)
+   - `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` (Unsigned Cloudinary upload profile)
+3. Push the schema to your fresh database: `npx drizzle-kit push`
+4. Start the Turbopack engine: `npm run dev`
+
+### Production Deployment
+The application is pre-configured and optimized for deployment on **Vercel**. All environments require zero-config setups, provided the corresponding Environment Variables are duplicated in the Vercel Dashboard project settings.
+
+---
+
+## ⚙️ Key Subsystems
+
+- **Registration Wizard**: A multi-step, dynamic React form accommodating both solo and large-team registrations, dynamically validating size limits based on the target event constraints.
+- **Command Center (Admin)**: A powerful dashboard allowing organizers to inspect incoming payment screenshots, verify transaction IDs, and either `APPROVE` or `REJECT` teams.
+- **Memory Gallery**: An integrated Cloudinary widget allowing participants to upload post-event pictures, with a centralized lockout mechanism.
+- **Live Leaderboard**: A real-time data table utilizing React Suspense to stream in the winners of various modules without blocking the initial page paint.
