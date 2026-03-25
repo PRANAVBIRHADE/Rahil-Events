@@ -10,6 +10,9 @@ import LogoutButton from '@/components/dashboard/LogoutButton';
 import TicketCard from '@/components/dashboard/TicketCard';
 import GalleryUploadClient from '@/components/dashboard/GalleryUploadClient';
 import { systemSettings, galleryPhotos } from '@/db/schema';
+import { getPlayerRank } from '@/lib/xp';
+import { ShieldCheck, Zap } from 'lucide-react';
+
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -50,12 +53,20 @@ export default async function DashboardPage() {
     imageUrl: galleryPhotos.imageUrl
   }).from(galleryPhotos).where(eq(galleryPhotos.userId, dbUser.id));
 
+  const rank = getPlayerRank(dbUser.xp || 0);
+
+
   return (
     <div className="max-w-[1440px] mx-auto px-6 py-12">
       <div className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
           <h1 className="text-5xl font-black uppercase tracking-tighter mb-2 italic">Dashboard</h1>
-          <p className="font-display font-bold uppercase text-primary tracking-widest text-sm">Participant: {dbUser.name.toUpperCase()}</p>
+          <div className="flex items-center gap-3">
+             <p className="font-display font-bold uppercase text-primary tracking-widest text-sm">Participant: {dbUser.name.toUpperCase()}</p>
+             <div className="bg-on-surface text-surface px-2 py-0.5 text-[10px] font-black uppercase italic rounded-sm">
+                LVL {rank.level}
+             </div>
+          </div>
         </div>
         <div className="flex gap-4">
           <BrutalButton variant="outline" size="sm">Edit Profile</BrutalButton>
@@ -67,6 +78,28 @@ export default async function DashboardPage() {
         {/* Profile Summary */}
         <BrutalCard className="lg:col-span-1 h-fit" shadowColor="gold">
           <h2 className="text-2xl font-black uppercase mb-6 border-b-2 border-on-surface pb-2">Your Profile</h2>
+          
+          {/* XP Progress Bar */}
+          <div className="mb-8 p-4 bg-on-surface text-surface rounded-sm">
+             <div className="flex justify-between items-end mb-2">
+                <div className="flex items-center gap-2">
+                   <Zap className="w-4 h-4 text-primary-container fill-primary-container" />
+                   <span className="text-[10px] font-black uppercase">Tech Progress</span>
+                </div>
+                <span className="text-[10px] font-mono tracking-tighter">LVL {rank.level}</span>
+             </div>
+             <div className="h-4 bg-surface/20 brutal-border p-0.5 overflow-hidden">
+                <div 
+                  className="h-full bg-primary-container transition-all duration-1000" 
+                  style={{ width: `${rank.progressPercent}%` }}
+                />
+             </div>
+             <div className="flex justify-between mt-1">
+                <span className="text-[9px] font-bold opacity-60 uppercase">{rank.xpInLevel} XP</span>
+                <span className="text-[9px] font-bold opacity-60 uppercase">Next: {rank.xpToNextLevel} XP</span>
+             </div>
+          </div>
+
           <div className="space-y-4 font-sans">
             <div>
               <p className="text-[10px] font-black uppercase opacity-60">Institute</p>

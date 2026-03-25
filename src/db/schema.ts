@@ -12,6 +12,8 @@ export const users = pgTable('users', {
   branch: text('branch'),
   phone: text('phone'),
   role: userRoleEnum('role').default('PARTICIPANT'),
+  xp: integer('xp').default(0),
+  level: integer('level').default(1),
   createdAt: timestamp('created_at').defaultNow(),
 });
 
