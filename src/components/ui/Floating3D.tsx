@@ -57,6 +57,55 @@ const Floating3D = ({ type = 'cube', size = 100, className = '', delay = 0 }: Fl
     );
   }
 
+  if (type === 'pyramid') {
+     const h = size;
+     const w = size;
+     return (
+        <div 
+          className={`relative ${className}`} 
+          style={{ 
+            width: w, 
+            height: h, 
+            perspective: '1000px',
+            transformStyle: 'preserve-3d'
+          }}
+        >
+          <motion.div
+            className="w-full h-full relative"
+            style={{ transformStyle: 'preserve-3d' }}
+            animate={{
+              rotateY: [0, 360],
+              y: [0, -15, 0]
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: delay
+            }}
+          >
+            {/* Pyramid Base */}
+            <div 
+              className="absolute inset-0 bg-primary/20 border-2 border-on-surface/20"
+              style={{ transform: `rotateX(90deg) translateZ(${-h/2}px)` }}
+            />
+            {/* Pyramid Sides */}
+            {[0, 90, 180, 270].map((angle, i) => (
+              <div 
+                key={i}
+                className="absolute inset-0 bg-primary-container/40 border-2 border-on-surface/20"
+                style={{ 
+                  transform: `rotateY(${angle}deg) rotateX(30deg) translateZ(${w/4}px)`,
+                  clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
+                  transformOrigin: 'bottom'
+                }}
+              />
+            ))}
+          </motion.div>
+        </div>
+     );
+  }
+
   if (type === 'grid') {
      return (
         <div className={`relative overflow-hidden pointer-events-none ${className}`} style={{ perspective: '1000px' }}>
