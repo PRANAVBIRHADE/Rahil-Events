@@ -89,17 +89,21 @@ export default function AboutPage() {
               </BrutalCard>
             ))}
           </div>
-        </section>
+        </motion.section>
 
-        {/* Student Section */}
-        <section>
+        <motion.section
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
           <div className="flex items-center gap-4 mb-12">
+            <Users className="w-12 h-12 text-primary" />
             <h2 className="text-5xl font-black uppercase italic tracking-tighter">STUDENT TEAM</h2>
             <div className="flex-1 h-2 bg-on-surface"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {TEAM_DATA.students.map((member, i) => (
-              <BrutalCard key={i} shadowColor="gold" className="hover:bg-primary-container/20 transition-colors">
+              <BrutalCard key={i} shadowColor="gold" className="hover:bg-primary-container/20 transition-colors" onClick={() => {}}>
                 <h3 className="text-xl font-black uppercase mb-1">{member.name}</h3>
                 <p className="text-xs font-bold uppercase opacity-60 mb-4">{member.role}</p>
                 <div className="bg-on-surface text-surface text-[10px] px-2 py-0.5 inline-block font-black uppercase italic">
@@ -108,7 +112,7 @@ export default function AboutPage() {
               </BrutalCard>
             ))}
           </div>
-        </section>
+        </motion.section>
 
         {/* Developer Wing */}
         <section id="developers" className="bg-on-surface p-12 brutal-border shadow-[12px_12px_0px_0px_var(--primary-container)]">

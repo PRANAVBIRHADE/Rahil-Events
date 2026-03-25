@@ -7,6 +7,8 @@ interface BrutalButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement
   className?: string;
 }
 
+import { motion } from 'framer-motion';
+
 const BrutalButton = ({
   variant = 'primary',
   size = 'md',
@@ -15,9 +17,9 @@ const BrutalButton = ({
   ...props
 }: BrutalButtonProps) => {
   const variants = {
-    primary: 'bg-primary-container text-on-primary-container hard-shadow-gold hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]',
-    secondary: 'bg-secondary-container text-foreground hard-shadow hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]',
-    outline: 'bg-surface text-foreground hover:bg-surface-container-low',
+    primary: 'bg-primary-container text-on-primary-container hard-shadow-gold',
+    secondary: 'bg-secondary-container text-foreground hard-shadow',
+    outline: 'bg-surface text-foreground',
   };
 
   const sizes = {
@@ -28,17 +30,19 @@ const BrutalButton = ({
   };
 
   return (
-    <button
+    <motion.button
+      whileHover={{ y: -4, x: -4, boxShadow: '8px 8px 0px 0px rgba(0,0,0,1)' }}
+      whileTap={{ scale: 0.98, x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
       className={cn(
-        'brutal-border font-display font-black uppercase tracking-tight transition-all tactile-click',
+        'brutal-border font-display font-black uppercase tracking-tight transition-all',
         variants[variant],
         sizes[size],
         className
       )}
-      {...props}
+      {...(props as any)}
     >
       {children}
-    </button>
+    </motion.button>
   );
 };
 
