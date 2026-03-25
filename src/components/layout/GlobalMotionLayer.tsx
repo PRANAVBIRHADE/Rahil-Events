@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Floating3D from './Floating3D';
+import Floating3D from '../ui/Floating3D';
 import { motion } from 'framer-motion';
 
 const GlobalMotionLayer = () => {
