@@ -6,6 +6,7 @@ import { eq, and } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
 import { auth } from '@/auth';
+import { awardXP, XP_PER_REGISTRATION } from './xp';
 
 export async function createEvent(formData: FormData) {
   const name = formData.get('name') as string;
@@ -70,6 +71,8 @@ export async function registerUser(formData: FormData) {
       branch,
       phone,
       role: 'PARTICIPANT',
+      xp: 50, // Welcome Bonus
+      level: 1,
     });
 
     return { success: true };
@@ -263,6 +266,9 @@ export async function createRegistration(formData: FormData) {
       paymentScreenshot,
       status: 'PENDING',
     });
+
+    // Award XP for deployment
+    await awardXP(dbUser.id, XP_PER_REGISTRATION);
 
     revalidatePath('/dashboard');
     return { success: true };

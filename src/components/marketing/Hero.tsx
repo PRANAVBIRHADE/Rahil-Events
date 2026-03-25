@@ -67,7 +67,7 @@ const Hero = () => {
             <Link href="/auth/register">
               <BrutalButton size="lg">Start Registering</BrutalButton>
             </Link>
-            <Link href="/events">
+            <Link href="/#events">
               <BrutalButton size="lg" variant="outline">View All Events</BrutalButton>
             </Link>
           </motion.div>
