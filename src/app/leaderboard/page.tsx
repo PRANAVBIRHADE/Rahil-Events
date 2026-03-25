@@ -1,10 +1,11 @@
 import React from 'react';
 import { db } from '@/db';
-import { systemSettings, events } from '@/db/schema';
+import { systemSettings, events, users } from '@/db/schema';
 import { eq, isNotNull, desc } from 'drizzle-orm';
 import BrutalCard from '@/components/ui/BrutalCard';
 import LiveViewerCounter from '@/components/marketing/LiveViewerCounter';
 import CountdownTimer from '@/components/marketing/CountdownTimer';
+import { Trophy, Medal, Target } from 'lucide-react';
 
 export default async function LeaderboardPage() {
   const settings = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
@@ -39,6 +40,17 @@ export default async function LeaderboardPage() {
 
   // UNLOCKED STATE
   const allEvents = await db.select().from(events).where(isNotNull(events.winners)).orderBy(desc(events.createdAt));
+  
+  // Fetch Top Operatives (Gamification)
+  const topOperatives = await db.select({
+    name: users.name,
+    xp: users.xp,
+    level: users.level,
+    college: users.college
+  })
+  .from(users)
+  .orderBy(desc(users.xp))
+  .limit(10);
 
   return (
     <div className="min-h-screen bg-surface-container-low pb-24 border-b-4 border-on-surface">
