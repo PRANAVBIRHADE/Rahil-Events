@@ -9,24 +9,26 @@ const Hero = () => {
       <div className="flex flex-col md:flex-row items-start gap-12">
         <div className="w-full md:w-2/3">
           <span className="inline-block px-3 py-1 bg-primary-container brutal-border text-on-primary-container font-display font-bold uppercase text-xs mb-6 tracking-widest">
-            Engineering Precision Since 2018
+            Largest Tech Festival at Matoshri
           </span>
           <h1 className="text-6xl md:text-9xl font-black tracking-tighter uppercase leading-[0.85] mb-8">
-            KRATOS<br /><span className="text-primary-container" style={{ WebkitTextStroke: '2px #1A1C1C' }}>2026</span>
+            KRATOS<br /><span className="text-primary-container">2026</span>
           </h1>
           <p className="text-xl md:text-2xl font-sans max-w-xl mb-6 border-l-4 border-on-surface pl-6">
-            Matoshri Engineering Festival. A convergence of logic, design, and raw technical power. Engineered for the future.
+            Welcome to the ultimate tech celebration. Experience innovation, compete in exciting events, and build the future with us.
           </p>
           
           <div className="mb-10 w-fit">
             <CountdownTimer />
           </div>
-
+ 
           <div className="flex flex-wrap gap-4">
             <Link href="/auth/register">
-              <BrutalButton size="lg">Register Now</BrutalButton>
+              <BrutalButton size="lg">Start Registering</BrutalButton>
             </Link>
-            <BrutalButton size="lg" variant="outline">Explore Labs</BrutalButton>
+            <Link href="/events">
+              <BrutalButton size="lg" variant="outline">View All Events</BrutalButton>
+            </Link>
           </div>
         </div>
         <div className="w-full md:w-1/3 relative">

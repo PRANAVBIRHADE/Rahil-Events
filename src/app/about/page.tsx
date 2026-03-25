@@ -32,11 +32,11 @@ export default function AboutPage() {
             [ SYSTEM_OVERVIEW_INITIATED ]
           </span>
           <h1 className="text-7xl md:text-9xl font-black uppercase italic tracking-tighter leading-none mb-8">
-            THE ARCHITECTS <br />
-            <span className="text-primary-container">OF KRATOS</span>
+            MEET THE <br />
+            <span className="text-primary-container">TEAM</span>
           </h1>
           <p className="max-w-3xl text-xl font-display opacity-80 leading-relaxed uppercase">
-            A convergence of visionaries, engineers, and designers. Meet the core team responsible for orchestrating the largest technical festival of 2026.
+            The people working behind the scenes to make KRATOS 2026 a success.
           </p>
         </div>
       </section>
@@ -46,7 +46,7 @@ export default function AboutPage() {
         {/* Faculty Section */}
         <section>
           <div className="flex items-center gap-4 mb-12">
-            <h2 className="text-5xl font-black uppercase italic tracking-tighter">FACULTY LEADERSHIP</h2>
+            <h2 className="text-5xl font-black uppercase italic tracking-tighter">FACULTY ADVISORS</h2>
             <div className="flex-1 h-2 bg-on-surface"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -67,7 +67,7 @@ export default function AboutPage() {
         {/* Student Section */}
         <section>
           <div className="flex items-center gap-4 mb-12">
-            <h2 className="text-5xl font-black uppercase italic tracking-tighter">EVENT COORDINATORS</h2>
+            <h2 className="text-5xl font-black uppercase italic tracking-tighter">STUDENT TEAM</h2>
             <div className="flex-1 h-2 bg-on-surface"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -88,11 +88,11 @@ export default function AboutPage() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16">
             <div>
               <h2 className="text-5xl md:text-7xl font-black uppercase italic tracking-tighter text-surface leading-none">
-                THE DEVELOPER <br />
-                <span className="text-primary-container">WING</span>
+                OUR <br />
+                <span className="text-primary-container">DEVELOPERS</span>
               </h2>
               <p className="text-surface/60 mt-4 max-w-xl font-mono uppercase text-sm">
-                This platform was engineered from scratch to handle high-concurrency registrations, real-time presence tracking, and dynamic leaderboard rendering.
+                Built with modern tech to make registration and event management easy for everyone.
               </p>
             </div>
             <div className="bg-surface/5 p-6 border-2 border-surface/20 font-mono text-xs text-primary-container space-y-2">

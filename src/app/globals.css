@@ -2,14 +2,14 @@
 
 @layer base {
   :root {
-    --background: #F9F9F9;
+    --background: #FFFCF0;
     --foreground: #1A1C1C;
-    --primary-container: #FFD700;
-    --on-primary-container: #705E00;
-    --secondary-container: #E5E2E1;
-    --surface-container-low: #F3F3F3;
-    --outline: #7E775F;
-    --primary: #705D00;
+    --primary-container: #FFD100;
+    --on-primary-container: #000000;
+    --secondary-container: #FFF6D1;
+    --outline: #D4AF37;
+    --primary: #BC9000;
+    --surface-container-low: #FFF9D6;
   }
 
   body {
