@@ -1,46 +1,83 @@
-# KRATOS 2026 Feature Guide
+# KRATOS 2026 — Feature Inventory
 
-## Participant features
+> Complete list of all implemented features for participants, administrators, and the underlying system.
 
-- Browse all festival events from the public site
-- View detailed event pages with venue, schedule, and fee information
-- Register with Google or email/password
-- Complete profile data before registering
-- Register for solo or team events
-- Register for free events without payment proof
-- Upload payment screenshots for paid events
-- Track registration status from the dashboard
-- Download approved entry passes
-- Access team chat for team and pair registrations
-- Upload gallery photos when the gallery is unlocked
+---
 
-## Admin features
+## 👤 Participant Features
 
-- Create and update events
-- Edit the structured 2-day schedule
-- Control registration status, fees, UPI ID, and deadline
-- Review payment proofs and approve or reject registrations
-- Search registrations for event-day check-in
-- Publish organizer contact cards
-- Configure result reveal time and results video
-- Export registration and payment CSV files
+### Discovery
+- Browse all festival events on the public listing page
+- View detailed event pages showing venue, schedule, team requirements, fees, and prizes
 
-## System features
+### Account & Profile
+- Sign in with **Google** (one-click) or **email + password** (credentials)
+- Profile completion gate — must provide name, phone, and college details before registering
 
-- Next.js 16 App Router architecture
-- Server actions for admin and participant mutations
-- Drizzle-backed relational data model
-- Auth.js session and JWT typing
-- Cloudinary upload support with production-safe image config
-- QR ticket generation and admin check-in links
-- Live viewer counter for the results page
-- Announcement bar driven from database content
+### Registration
+- Register for **solo** events (single-person)
+- Register for **team** events with group sizing validation
+- **Free events** — instant auto-approval, no payment required
+- **Paid events** — enter transaction ID and upload payment screenshot
 
-## Deployment hardening completed
+### Dashboard
+- Track the live status of all registrations (pending / approved / rejected)
+- Download approved **entry passes** (PDF-style ticket with QR code)
+- Access **team chat** for paired or group registrations
+- Upload gallery photos when the gallery is unlocked by admins
 
-- Added Cloudinary `next/image` remote pattern support
-- Replaced hardcoded admin seed credentials with env-driven setup
-- Added missing deployment env vars to `.env.example`
-- Fixed local-time formatting for admin deadline controls
-- Removed misleading dead buttons and placeholder contact behavior
-- Aligned admin and public schedule defaults with confirmed KRATOS timings
+---
+
+## 🔧 Admin Features
+
+### Event Management
+- Create, edit, and deactivate events
+- Set name, slug, description, category, format, team size limits, venue, fee, and registration cap
+
+### Schedule Management
+- Edit the structured 2-day × 5-slot schedule from the admin panel
+- Link events to specific day and time slot combinations
+
+### Registration Control
+- Toggle registration open/closed globally
+- Set and update the registration deadline (with local-time formatting)
+- Set the UPI ID displayed to participants during checkout
+
+### Payment Verification
+- View uploaded payment proof screenshots side-by-side with registration details
+- **Approve** or **Reject** registrations (with optional rejection notes)
+- Export full registration list and payment proofs as **CSV**
+
+### Event-Day Operations
+- Search registrations by ID prefix, participant name, or phone number
+- Mark participants as checked-in; only approved registrations can be checked in
+
+### Content & Results
+- Publish and manage **organizer contact cards** visible on the public site
+- Set the **results reveal time** and YouTube embed URL
+- Enter per-event top-3 winner results
+
+---
+
+## ⚙️ System Features
+
+### Architecture
+- **Next.js 16 App Router** with server components and server actions
+- **Drizzle ORM** relational data model with full type-safety
+- Edge middleware (`proxy.ts`) for session-aware route protection
+- Auth.js session and JWT types augmented with `role` and `id`
+
+### Media & Uploads
+- Cloudinary integration for payment proof uploads and gallery photos
+- `next/image` remote pattern support for Cloudinary-hosted images
+
+### Engagement
+- Live viewer counter on the results page (SSE-based)
+- Scrolling announcement bar driven from the database
+- QR ticket generation with correct origin-aware links
+
+### Security & Hardening
+- All admin creation uses environment variable credentials (no hardcoded passwords)
+- Profile gate prevents incomplete accounts from registering
+- Team size validation is enforced server-side
+- `.env.example` documents every required variable for new deployments
