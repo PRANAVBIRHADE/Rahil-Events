@@ -1,44 +1,40 @@
 import { db } from '@/db';
-import { registrations, users, events } from '@/db/schema';
+import { registrations, events, teamMembers } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
     const data = await db.select({
-      id: registrations.id,
-      participantName: users.name,
-      participantEmail: users.email,
-      moduleName: events.name,
-      branch: events.branch,
-      fee: events.fee,
-      status: registrations.status,
-      transactionId: registrations.transactionId,
-      createdAt: registrations.createdAt,
+      memberName: teamMembers.name,
+      memberCollege: teamMembers.college,
+      memberPhone: teamMembers.phone,
+      eventName: events.name,
+      teamName: registrations.teamName,
+      paymentStatus: registrations.status,
+      checkInStatus: registrations.checkedIn,
     })
     .from(registrations)
-    .innerJoin(users, eq(registrations.userId, users.id))
-    .innerJoin(events, eq(registrations.eventId, events.id));
+    .innerJoin(events, eq(registrations.eventId, events.id))
+    .innerJoin(teamMembers, eq(registrations.teamId, teamMembers.teamId));
 
     if (data.length === 0) {
       return new NextResponse('No registrations found.', { status: 404 });
     }
 
-    const headers = ['Registration ID', 'Participant Name', 'Participant Email', 'Module Name', 'Branch', 'Fee', 'Status', 'Transaction ID', 'Registration Date'];
+    const headers = ['Name', 'College', 'Event', 'Team', 'Phone', 'Payment status', 'Check-in status'];
     
     const csvContent = [
       headers.join(','),
       ...data.map(row => {
         return [
-          row.id,
-          `"${(row.participantName || '').replace(/"/g, '""')}"`,
-          `"${(row.participantEmail || '').replace(/"/g, '""')}"`,
-          `"${(row.moduleName || '').replace(/"/g, '""')}"`,
-          `"${(row.branch || '').replace(/"/g, '""')}"`,
-          row.fee,
-          row.status,
-          `"${(row.transactionId || '').replace(/"/g, '""')}"`,
-          row.createdAt?.toISOString() || ''
+          `"${(row.memberName || '').replace(/"/g, '""')}"`,
+          `"${(row.memberCollege || '').replace(/"/g, '""')}"`,
+          `"${(row.eventName || '').replace(/"/g, '""')}"`,
+          `"${(row.teamName || '').replace(/"/g, '""')}"`,
+          `"${(row.memberPhone || '').replace(/"/g, '""')}"`,
+          `"${(row.paymentStatus || '').replace(/"/g, '""')}"`,
+          `"${row.checkInStatus ? 'CHECKED_IN' : 'NOT_CHECKED_IN'}"`,
         ].join(',');
       })
     ].join('\n');

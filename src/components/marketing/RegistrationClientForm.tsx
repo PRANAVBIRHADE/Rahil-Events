@@ -23,15 +23,18 @@ type RegistrationClientFormProps = {
   eventFormat: string;
   isTeamFormat: boolean;
   isTeamRequired: boolean;
-  teamSize: number;
+  teamSizeMin: number;
+  teamSizeMax: number;
   eventData: {
-    fee: number;
     upiId: string;
-    upiURI: string;
+    feePerPerson: number;
   };
   dbUser: {
     name: string;
     phone: string | null;
+    college: string | null;
+    branch: string | null;
+    year: number | null;
   };
 };
 
@@ -40,15 +43,18 @@ export default function RegistrationClientForm({
   eventFormat,
   isTeamFormat,
   isTeamRequired,
-  teamSize,
+  teamSizeMin,
+  teamSizeMax,
   eventData,
   dbUser
 }: RegistrationClientFormProps) {
   const router = useRouter();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [memberCount, setMemberCount] = useState<number>(Math.max(0, (teamSize || 1) - 1));
+  const [memberCount, setMemberCount] = useState<number>(Math.max(0, (teamSizeMin || 1) - 1));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const totalFee = Math.max(1 + memberCount, 1) * (eventData.feePerPerson || 0);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -94,6 +100,9 @@ export default function RegistrationClientForm({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-60 pointer-events-none">
               <BrutalInput label="Verified Name" defaultValue={dbUser.name} required />
               <BrutalInput label="Verified Contact" defaultValue={dbUser.phone || ''} required />
+              <BrutalInput label="Verified College" defaultValue={dbUser.college || ''} required />
+              <BrutalInput label="Verified Branch" defaultValue={dbUser.branch || ''} required />
+              <BrutalInput label="Verified Year" defaultValue={dbUser.year ? String(dbUser.year) : ''} required />
             </div>
           </div>
 
@@ -114,15 +123,18 @@ export default function RegistrationClientForm({
                     {i > 0 && (
                       <button 
                         type="button" 
-                        onClick={() => setMemberCount(prev => prev - 1)}
+                        onClick={() => setMemberCount(prev => Math.max((teamSizeMin - 1), prev - 1))}
                         className="absolute top-2 right-2 text-red-500 hover:text-red-700"
                       >
                          <span className="material-symbols-outlined">close</span>
                       </button>
                     )}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
-                       <BrutalInput name={`member_${i}_name`} label="Full Name" placeholder={`Operator ${i + 2} Name`} required={isTeamRequired} />
-                       <BrutalInput name={`member_${i}_phone`} label="Contact Sequence" placeholder="+91 00000 00000" required={isTeamRequired} />
+                      <BrutalInput name={`member_${i}_name`} label="Full Name" placeholder={`Operator ${i + 2} Name`} required={isTeamRequired} />
+                      <BrutalInput name={`member_${i}_phone`} label="Phone" placeholder="+91 00000 00000" required={isTeamRequired} />
+                      <BrutalInput name={`member_${i}_college`} label="College" placeholder="Institution Name" required={false} />
+                      <BrutalInput name={`member_${i}_branch`} label="Branch" placeholder="CSE / ECE / ..." required={false} />
+                      <BrutalInput name={`member_${i}_year`} label="Year" type="number" min={1} max={6} placeholder="2" required={false} />
                     </div>
                   </div>
                 ))}
@@ -131,7 +143,7 @@ export default function RegistrationClientForm({
               <div className="mt-6 flex justify-center">
                 <button 
                   type="button" 
-                  onClick={() => setMemberCount(prev => prev + 1)}
+                  onClick={() => setMemberCount(prev => Math.min((teamSizeMax - 1), prev + 1))}
                   className="px-6 py-2 border-2 border-dashed border-on-surface/50 text-xs font-black uppercase tracking-widest hover:bg-primary-container hover:border-primary-container transition-colors flex items-center"
                 >
                   <span className="material-symbols-outlined mr-2 text-sm">add</span>
@@ -148,7 +160,11 @@ export default function RegistrationClientForm({
         <StepHeader number="02" title="Payment Terminal" />
         <div className="flex flex-col md:flex-row gap-8 items-center bg-surface-container-low p-6 brutal-border">
           <div className="w-48 h-48 bg-white p-2 border-2 border-on-surface flex items-center justify-center relative overflow-hidden">
-            <BrutalQRCode data={eventData.upiURI} size={160} className="w-full h-full" />
+            <BrutalQRCode
+              data={`upi://pay?pa=${encodeURIComponent(eventData.upiId)}&pn=Kratos%202026&cu=INR&am=${totalFee}`}
+              size={160}
+              className="w-full h-full"
+            />
           </div>
           <div className="flex-1 space-y-4">
             <div>
@@ -156,8 +172,10 @@ export default function RegistrationClientForm({
               <p className="text-2xl font-black tracking-tighter uppercase">{eventData.upiId}</p>
             </div>
             <div>
-              <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60">Amount Required</p>
-              <p className="text-4xl font-black text-primary" style={{ textShadow: '2px 2px 0px #F9F9F9' }}>₹ {eventData.fee}.00</p>
+              <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60">Fee (Per Person)</p>
+              <p className="text-3xl font-black text-primary" style={{ textShadow: '2px 2px 0px #F9F9F9' }}>₹ {eventData.feePerPerson}.00</p>
+              <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60 mt-2">Total Fee</p>
+              <p className="text-4xl font-black text-primary" style={{ textShadow: '2px 2px 0px #F9F9F9' }}>₹ {totalFee}.00</p>
             </div>
             <div className="w-full">
               <BrutalInput name="transactionId" label="Transaction / UTR ID" placeholder="Enter 12-digit UTR No." required />

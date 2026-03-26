@@ -41,6 +41,7 @@ export default function CreateEventForm() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <BrutalInput label="Module Name" name="name" placeholder="e.g. BRIDGE DESIGN" required />
+          <BrutalInput label="Category" name="category" placeholder="e.g. TECH / PAPER / ROBOTICS" />
           <div className="flex flex-col gap-2">
             <label className="text-sm font-display font-bold uppercase tracking-widest text-on-surface">Branch</label>
             <select name="branch" className="brutal-border bg-surface p-3 outline-none focus:border-primary font-display font-bold uppercase text-xs">
@@ -58,6 +59,16 @@ export default function CreateEventForm() {
 
         <BrutalInput label="Tagline" name="tagline" placeholder="Engineering the future..." />
         
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <BrutalInput label="Venue" name="venue" placeholder="e.g. COMPUTING LAB 01" />
+          <BrutalInput
+            label="Expected Participants"
+            name="expectedParticipants"
+            type="number"
+            placeholder="e.g. 120"
+          />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <BrutalInput label="Fee (INR)" name="fee" type="number" placeholder="499" required />
           <div className="flex flex-col gap-2">
@@ -70,6 +81,7 @@ export default function CreateEventForm() {
               <option value="SOLO_TEAM_ASSIGNED">SOLO (TEAM ASSIGNED)</option>
             </select>
           </div>
+          <BrutalInput label="Min Team Size" name="teamSizeMin" type="number" min="1" max="4" defaultValue="1" />
           <BrutalInput label="Max Team Size" name="teamSize" type="number" min="1" max="4" defaultValue="1" />
           <div className="flex items-center gap-3 h-full pt-6">
             <input type="checkbox" name="isCommon" id="isCommon" className="w-5 h-5 accent-primary-container brutal-border cursor-pointer" />
@@ -86,6 +98,16 @@ export default function CreateEventForm() {
             rows={3} 
             className="brutal-border bg-surface p-3 outline-none focus:border-primary font-sans font-bold text-sm w-full"
             placeholder="Detailed rules and module objectives..."
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-display font-bold uppercase tracking-widest text-on-surface">Prize Details</label>
+          <textarea
+            name="prizeDetails"
+            rows={2}
+            className="brutal-border bg-surface p-3 outline-none focus:border-primary font-sans font-bold text-sm w-full"
+            placeholder="e.g. Winner - ₹5000 + Trophy, Runner-up - ₹2000"
           />
         </div>
 

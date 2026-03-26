@@ -50,7 +50,8 @@ export default function TicketCard({ reg, userName, college, currentUserId }: Ti
   };
 
   // Safe generation of the absolute URL for Admin scanning Verification
-  const verifyUrl = `https://kratos2026.vercel.app/admin/verify/${reg.id}`;
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://kratos2026.vercel.app';
+  const verifyUrl = `${baseUrl}/admin/checkin/${reg.id}`;
 
   const isTeam = reg.format === 'TEAM' || reg.format === 'SOLO_TEAM' || reg.format === 'SOLO_PAIR';
 

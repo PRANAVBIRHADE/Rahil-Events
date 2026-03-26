@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@/db';
-import { users, events, announcements, registrations, squadPosts, teamMessages } from '@/db/schema';
+import { users, events, announcements, registrations, systemSettings, teams, teamMembers, scheduleSlots, organizers, squadPosts, teamMessages } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
@@ -13,11 +13,16 @@ export async function createEvent(formData: FormData) {
   const tagline = formData.get('tagline') as string;
   const description = formData.get('description') as string;
   const fee = parseInt(formData.get('fee') as string);
+  const category = (formData.get('category') as string) || null;
   const venue = formData.get('venue') as string;
   const branch = formData.get('branch') as string;
   const format = formData.get('format') as string || 'SOLO';
   const isCommon = formData.get('isCommon') === 'on';
   const teamSize = parseInt(formData.get('teamSize') as string) || 1;
+  const teamSizeMin = parseInt(formData.get('teamSizeMin') as string) || 1;
+  const expectedParticipantsRaw = (formData.get('expectedParticipants') as string) || null;
+  const expectedParticipants = expectedParticipantsRaw ? parseInt(expectedParticipantsRaw) : null;
+  const prizeDetails = (formData.get('prizeDetails') as string) || null;
 
   const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
@@ -27,12 +32,16 @@ export async function createEvent(formData: FormData) {
       slug,
       tagline,
       description,
+      category,
       fee,
       venue,
       branch,
       format,
       isCommon,
       teamSize,
+      teamSizeMin,
+      expectedParticipants,
+      prizeDetails,
     });
     revalidatePath('/');
     revalidatePath('/admin/dashboard');
@@ -157,6 +166,65 @@ export async function updateSchedules(formData: FormData) {
   }
 }
 
+export async function updateScheduleSlots(formData: FormData) {
+  const slotDefs = [
+    { sortIndex: 1, timeSlot: '9:00 AM – 10:00 AM' },
+    { sortIndex: 2, timeSlot: '10:00 AM – 1:00 PM' },
+    { sortIndex: 3, timeSlot: '1:00 PM – 2:00 PM' },
+    { sortIndex: 4, timeSlot: '2:00 PM – 5:30 PM' },
+    { sortIndex: 5, timeSlot: '5:30 PM – 6:00 PM' },
+  ];
+
+  try {
+    await db.transaction(async (tx) => {
+      for (const day of [1, 2] as const) {
+        for (const slot of slotDefs) {
+          const isBreak = slot.sortIndex === 3;
+          const linkedEventIdRaw = formData.get(`day${day}_event_${slot.sortIndex}`) as string | null;
+          const linkedEventId = !linkedEventIdRaw || linkedEventIdRaw === 'null' ? null : linkedEventIdRaw;
+          const venueRaw = formData.get(`day${day}_venue_${slot.sortIndex}`) as string | null;
+          const venue = venueRaw && venueRaw.trim().length > 0 ? venueRaw.trim() : null;
+
+          const existing = await tx
+            .select()
+            .from(scheduleSlots)
+            .where(
+              and(
+                eq(scheduleSlots.day, day),
+                eq(scheduleSlots.sortIndex, slot.sortIndex),
+              ),
+            )
+            .limit(1);
+
+          if (existing.length === 0) {
+            await tx.insert(scheduleSlots).values({
+              day,
+              sortIndex: slot.sortIndex,
+              timeSlot: slot.timeSlot,
+              venue,
+              linkedEventId: isBreak ? null : linkedEventId,
+              isBreak,
+            });
+          } else {
+            await tx.update(scheduleSlots).set({
+              timeSlot: slot.timeSlot,
+              venue,
+              linkedEventId: isBreak ? null : linkedEventId,
+              isBreak,
+            }).where(eq(scheduleSlots.id, existing[0].id));
+          }
+        }
+      }
+    });
+
+    revalidatePath('/admin/schedule');
+    revalidatePath('/');
+    revalidatePath('/admin/dashboard');
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 export async function deleteEvent(formData: FormData) {
   const id = formData.get('id') as string;
   try {
@@ -172,8 +240,13 @@ export async function updateEvent(formData: FormData) {
   const id = formData.get('id') as string;
   const fee = parseInt(formData.get('fee') as string);
   const teamSize = parseInt(formData.get('teamSize') as string);
+  const teamSizeMinRaw = (formData.get('teamSizeMin') as string) || null;
+  const teamSizeMin = teamSizeMinRaw ? parseInt(teamSizeMinRaw) : undefined;
   try {
-    await db.update(events).set({ fee, teamSize }).where(eq(events.id, id));
+    await db
+      .update(events)
+      .set({ fee, teamSize, ...(teamSizeMin !== undefined ? { teamSizeMin } : {}) })
+      .where(eq(events.id, id));
     revalidatePath('/');
     revalidatePath('/admin/events');
     revalidatePath('/admin/dashboard');
@@ -194,9 +267,11 @@ export async function updateUser(formData: FormData) {
   const name = formData.get('name') as string;
   const college = formData.get('college') as string;
   const branch = formData.get('branch') as string;
+  const yearRaw = (formData.get('year') as string) || null;
+  const year = yearRaw ? parseInt(yearRaw) : null;
   const phone = formData.get('phone') as string;
   try {
-    await db.update(users).set({ name, college, branch, phone }).where(eq(users.id, id));
+    await db.update(users).set({ name, college, branch, year, phone }).where(eq(users.id, id));
     revalidatePath('/admin/users');
   } catch (e) { console.error(e); }
 }
@@ -207,14 +282,16 @@ export async function completeProfile(formData: FormData) {
   const email = formData.get('email') as string;
   const college = formData.get('college') as string;
   const branch = formData.get('branch') as string;
+  const yearRaw = (formData.get('year') as string) || null;
+  const year = yearRaw ? parseInt(yearRaw) : null;
   const phone = formData.get('phone') as string;
   
-  if (!email || !college || !branch || !phone) {
+  if (!email || !college || !branch || !phone || !year) {
     return;
   }
 
   try {
-    await db.update(users).set({ college, branch, phone }).where(eq(users.email, email));
+    await db.update(users).set({ college, branch, year, phone }).where(eq(users.email, email));
     revalidatePath('/dashboard');
   } catch (e) {
     console.error(e);
@@ -228,14 +305,30 @@ export async function createRegistration(formData: FormData) {
   const paymentScreenshot = formData.get('paymentScreenshot') as string;
   const teamName = formData.get('teamName') as string || null;
   const transactionId = formData.get('transactionId') as string || null;
-  
-  const members = [];
+  const paymentNotes = (formData.get('paymentNotes') as string) || null;
+
+  const additionalMembers: Array<{
+    name: string;
+    phone: string;
+    college: string | null;
+    branch: string | null;
+    year: number | null;
+  }> = [];
+
+  // Additional operators (excluding the primary logged-in user).
   for (const [key, value] of formData.entries()) {
-    if (key.startsWith('member_') && key.endsWith('_name')) {
-      const index = key.split('_')[1];
-      const phone = formData.get(`member_${index}_phone`) as string;
-      members.push({ name: value as string, phone });
-    }
+    if (!key.startsWith('member_') || !key.endsWith('_name')) continue;
+    const index = key.split('_')[1];
+
+    const name = value as string;
+    const phone = (formData.get(`member_${index}_phone`) as string) || '';
+    const college = (formData.get(`member_${index}_college`) as string) || null;
+    const branch = (formData.get(`member_${index}_branch`) as string) || null;
+    const yearRaw = (formData.get(`member_${index}_year`) as string) || null;
+    const year = yearRaw ? parseInt(yearRaw) : null;
+
+    if (!name || !phone) continue;
+    additionalMembers.push({ name, phone, college, branch, year });
   }
 
   const session = await auth();
@@ -244,27 +337,90 @@ export async function createRegistration(formData: FormData) {
   const [dbUser] = await db.select().from(users).where(eq(users.email, session.user.email));
   if (!dbUser) return { error: 'Identity not found in global registry.' };
 
+  if (!dbUser.college || !dbUser.branch || !dbUser.phone || !dbUser.year) {
+    return { error: 'Identity incomplete. Please complete profile (college, branch, year, phone).' };
+  }
+
+  const feeSettings = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
+  const feePerPerson = feeSettings.length > 0 && feeSettings[0].feePerPerson ? feeSettings[0].feePerPerson : 0;
+
+  const [event] = await db.select().from(events).where(eq(events.id, eventId));
+  if (!event) return { error: 'Event not found.' };
+
+  const allMembers = [
+    {
+      name: dbUser.name,
+      phone: dbUser.phone as string,
+      college: dbUser.college,
+      branch: dbUser.branch,
+      year: dbUser.year ?? null,
+    },
+    ...additionalMembers,
+  ];
+
+  const memberCount = allMembers.length;
+  const teamSizeMin = event.teamSizeMin ?? 1;
+  const teamSizeMax = event.teamSize ?? 1;
+  if (memberCount < teamSizeMin || memberCount > teamSizeMax) {
+    return { error: `Invalid team size. Allowed: ${teamSizeMin}-${teamSizeMax}.` };
+  }
+
+  const resolvedTeamName = teamName || `${dbUser.name}'s Team`;
+  // Backward-compatible fallback: older deployments only stored per-module fee in `events.fee`.
+  const resolvedFeePerPerson = feePerPerson && feePerPerson > 0 ? feePerPerson : event.fee;
+  const totalFee = resolvedFeePerPerson * memberCount;
+
   // Check existing registration
   const existing = await db.select().from(registrations).where(and(eq(registrations.eventId, eventId), eq(registrations.userId, dbUser.id)));
   
   if (existing.length > 0) {
     if (existing[0].status === 'REJECTED') {
       // OVERWRITE PROTOCOL: Delete the rejected packet so they can retry smoothly.
+      const existingTeamId = existing[0].teamId;
       await db.delete(registrations).where(eq(registrations.id, existing[0].id));
+      if (existingTeamId) {
+        await db.delete(teamMembers).where(eq(teamMembers.teamId, existingTeamId as string));
+        await db.delete(teams).where(eq(teams.id, existingTeamId as string));
+      }
     } else {
       return { error: 'You have already deployed a packet for this module.' };
     }
   }
 
   try {
-    await db.insert(registrations).values({
-      userId: dbUser.id,
-      eventId,
-      teamName,
-      transactionId,
-      members: members.length > 0 ? members : null,
-      paymentScreenshot,
-      status: 'PENDING',
+    await db.transaction(async (tx) => {
+      const [insertedTeam] = await tx
+        .insert(teams)
+        .values({ eventId, name: resolvedTeamName })
+        .returning({ id: teams.id });
+
+      await tx.insert(teamMembers).values(
+        allMembers.map((m) => ({
+          teamId: insertedTeam.id,
+          name: m.name,
+          college: m.college,
+          branch: m.branch,
+          year: m.year ?? null,
+          phone: m.phone,
+        })),
+      );
+
+      // Persist legacy JSON `members` for backward compatibility with existing admin UI.
+      const legacyAdditionalMembers =
+        additionalMembers.length > 0 ? additionalMembers.map((m) => ({ name: m.name, phone: m.phone })) : null;
+
+      await tx.insert(registrations).values({
+        userId: dbUser.id,
+        eventId,
+        teamId: insertedTeam.id,
+        teamName: resolvedTeamName,
+        members: legacyAdditionalMembers,
+        transactionId,
+        paymentScreenshot,
+        paymentNotes,
+        totalFee,
+        status: 'PENDING',
+      });
     });
 
     // Award XP for deployment
@@ -281,8 +437,9 @@ export async function createRegistration(formData: FormData) {
 export async function updateRegistrationStatus(formData: FormData) {
   const id = formData.get('id') as string;
   const status = formData.get('status') as 'PENDING' | 'APPROVED' | 'REJECTED';
+  const paymentNotes = (formData.get('paymentNotes') as string) || null;
   try {
-    await db.update(registrations).set({ status }).where(eq(registrations.id, id));
+    await db.update(registrations).set({ status, paymentNotes }).where(eq(registrations.id, id));
     revalidatePath('/admin/dashboard');
     revalidatePath('/admin/registrations');
     revalidatePath(`/admin/verify/${id}`);
@@ -293,7 +450,22 @@ export async function updateRegistrationStatus(formData: FormData) {
   }
 }
 
-import { systemSettings, galleryPhotos } from '@/db/schema';
+export async function markRegistrationCheckedIn(formData: FormData) {
+  const id = formData.get('id') as string;
+  try {
+    await db
+      .update(registrations)
+      .set({ checkedIn: true, checkedInAt: new Date() })
+      .where(and(eq(registrations.id, id), eq(registrations.status, 'APPROVED')));
+
+    revalidatePath('/admin/checkin');
+    revalidatePath('/admin/checkin/' + id);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+import { galleryPhotos } from '@/db/schema';
 
 export async function updateGalleryLock(isGalleryLocked: boolean) {
   try {
@@ -389,6 +561,72 @@ export async function updateResultsSettings(formData: FormData) {
   } catch (error) {
     console.error(error);
     return { error: 'Failed to reprogram timeline.' };
+  }
+}
+
+export async function updateRegistrationSettings(formData: FormData) {
+  const registrationOpen = formData.get('registrationOpen') === 'on';
+  const upiId = (formData.get('upiId') as string) || null;
+  const feePerPersonRaw = formData.get('feePerPerson') as string;
+  const feePerPerson = feePerPersonRaw ? parseInt(feePerPersonRaw) : 0;
+  const deadlineRaw = (formData.get('deadline') as string) || '';
+  const deadline = deadlineRaw ? new Date(deadlineRaw) : null;
+
+  try {
+    const existing = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
+    if (existing.length === 0) {
+      await db.insert(systemSettings).values({
+        id: 1,
+        registrationOpen,
+        upiId,
+        feePerPerson,
+        deadline,
+      });
+    } else {
+      await db.update(systemSettings).set({
+        registrationOpen,
+        upiId,
+        feePerPerson,
+        deadline,
+      }).where(eq(systemSettings.id, 1));
+    }
+
+    revalidatePath('/admin/dashboard');
+    revalidatePath('/admin/settings');
+    revalidatePath('/');
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function createOrganizer(formData: FormData) {
+  const organizerName = (formData.get('organizerName') as string) || '';
+  const role = (formData.get('role') as string) || null;
+  const contact = (formData.get('contact') as string) || null;
+
+  if (!organizerName.trim()) {
+    return;
+  }
+
+  try {
+    await db.insert(organizers).values({
+      organizerName: organizerName.trim(),
+      role: role ? role.trim() : null,
+      contact: contact ? contact.trim() : null,
+    });
+    revalidatePath('/admin/organizers');
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function deleteOrganizer(formData: FormData) {
+  const id = formData.get('id') as string;
+  try {
+    await db.delete(organizers).where(eq(organizers.id, id));
+    revalidatePath('/admin/organizers');
+  } catch (error) {
+    console.error(error);
   }
 }
 

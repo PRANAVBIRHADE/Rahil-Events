@@ -27,11 +27,14 @@ Moving away from generic corporate templates, this platform utilizes a custom **
 
 ## ✨ Key Features
 
-- 🎫 **Dynamic Event Registration**: Multi-step, responsive forms supporting both solo participants and multi-member tactical squadrons.
-- 🔐 **Edge-Secured Authentication**: Integrated Google OAuth and secure credential logins powered by NextAuth.js v5.
-- 📊 **Real-Time Command Center**: A securely guarded `/admin` portal allowing organizers to verify UPI transactions, manage users, and update leaderboards instantly.
-- 📸 **Cloudinary Memory Gallery**: Integrated cloud upload widgets for participants to store their event highlights.
-- 🚀 **Extreme Performance**: Leverages Next.js 16 Server Components, React 19, and the Turbopack engine for near-instant page loads and perfect SEO capabilities.
+- 🎯 **Complete Event Management System**: Events now support name, description, category, venue, schedule linkage, min/max team size, expected participants, and prize details.
+- 📅 **Structured Day-Wise Schedule**: Admin-configurable Day 1 / Day 2 time slots with venue and linked event mapping, rendered publicly on the landing page.
+- 👥 **Normalized Team System**: Dedicated `teams` and `team_members` tables with per-member details (`name`, `college`, `branch`, `year`, `phone`).
+- 💳 **Payment + Verification Workflow**: Registration stores total fee, UTR/transaction ID, payment screenshot, verification status, and admin notes.
+- ✅ **Event-Day Check-In**: Admin can search by team code (registration ID), member name, or phone and mark checked-in with timestamp.
+- 📊 **Operational Admin Dashboard**: Includes total participants, total teams, pending payments, verified payments, and revenue estimate.
+- 📤 **CSV Export for Ground Ops**: Exports Name, College, Event, Team, Phone, Payment status, and Check-in status.
+- 🧩 **Organizer + Settings Management**: Organizer CRUD and public display; registration settings panel for open/close, UPI ID, fee per person, and deadline.
 
 ## 📖 Comprehensive Documentation
 
@@ -60,9 +63,10 @@ cp .env.example .env.local
 *(Fill in your Neon Database URL and NextAuth secrets inside `.env.local`)*
 
 ### 3. Energize the Database
-Push the Drizzle ORM schema to your Neon Postgres database to format the tables:
+Generate and apply Drizzle ORM migrations to sync schema with Neon Postgres:
 ```bash
-npx drizzle-kit push
+npx drizzle-kit generate
+npx drizzle-kit migrate
 ```
 
 ### 4. Ignite the Turbopack Server
@@ -79,6 +83,14 @@ To evaluate the admin components locally:
 1. Initialize the app and navigate to `/admin`.
 2. Ensure you have modified your underlying database to set your user account `role` to `'ADMIN'`.
 3. Non-admin users are automatically ejected via `src/proxy.ts` middleware.
+
+### Admin Routes (Core Operations)
+- `/admin/dashboard` - command center metrics and quick actions
+- `/admin/events` - event/module management
+- `/admin/schedule` - structured day-wise schedule editor
+- `/admin/checkin` - event-day check-in search + mark
+- `/admin/settings` - registration controls, UPI, fee/person, deadline
+- `/admin/organizers` - organizer management
 
 ---
 <div align="center">

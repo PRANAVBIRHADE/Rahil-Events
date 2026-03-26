@@ -38,6 +38,15 @@ export default async function ProfileCompletionPage() {
                placeholder="Imperial Institute of Technology" 
                required 
              />
+             <BrutalInput 
+               label="Current Year (e.g., 1/2/3/4)" 
+               name="year" 
+               type="number"
+               min={1}
+               max={6}
+               placeholder="2"
+               required 
+             />
              <div className="flex flex-col gap-2">
                <label className="text-sm font-display font-bold uppercase tracking-widest text-on-surface">Branch / Specialization</label>
                <select name="branch" required className="brutal-border bg-surface p-3 outline-none focus:border-primary font-display font-bold uppercase h-[46px]">

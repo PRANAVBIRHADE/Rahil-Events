@@ -10,6 +10,7 @@ export const users = pgTable('users', {
   password: text('password'),
   college: text('college'),
   branch: text('branch'),
+  year: integer('year'),
   phone: text('phone'),
   role: userRoleEnum('role').default('PARTICIPANT'),
   xp: integer('xp').default(0),
@@ -21,6 +22,7 @@ export const events = pgTable('events', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
   slug: text('slug').notNull().unique(),
+  category: text('category'),
   tagline: text('tagline'),
   description: text('description'),
   fee: integer('fee').notNull(),
@@ -30,7 +32,38 @@ export const events = pgTable('events', {
   format: text('format').default('SOLO'),
   isCommon: boolean('is_common').default(false),
   teamSize: integer('team_size').default(1),
+  teamSizeMin: integer('team_size_min').default(1),
+  expectedParticipants: integer('expected_participants'),
+  prizeDetails: text('prize_details'),
   winners: json('winners'),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const organizers = pgTable('organizers', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  organizerName: text('organizer_name').notNull(),
+  role: text('role'),
+  contact: text('contact'),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+// Teams are persisted separately from registrations, so we can store members individually
+// and support admin check-in search by name/phone.
+export const teams = pgTable('teams', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  eventId: uuid('event_id').references(() => events.id).notNull(),
+  name: text('name').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const teamMembers = pgTable('team_members', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  teamId: uuid('team_id').references(() => teams.id).notNull(),
+  name: text('name').notNull(),
+  college: text('college'),
+  branch: text('branch'),
+  year: integer('year'),
+  phone: text('phone'),
   createdAt: timestamp('created_at').defaultNow(),
 });
 
@@ -38,11 +71,16 @@ export const registrations = pgTable('registrations', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('user_id').references(() => users.id).notNull(),
   eventId: uuid('event_id').references(() => events.id).notNull(),
+  teamId: uuid('team_id').references(() => teams.id),
   teamName: text('team_name'),
   members: json('members'),
   paymentScreenshot: text('payment_screenshot'),
   transactionId: text('transaction_id'),
+  paymentNotes: text('payment_notes'),
   status: registrationStatusEnum('status').default('PENDING'),
+  totalFee: integer('total_fee'),
+  checkedIn: boolean('checked_in').default(false).notNull(),
+  checkedInAt: timestamp('checked_in_at'),
   createdAt: timestamp('created_at').defaultNow(),
 });
 
@@ -65,6 +103,10 @@ export const systemSettings = pgTable('system_settings', {
   isGalleryLocked: boolean('is_gallery_locked').default(true),
   resultsRevealTime: timestamp('results_reveal_time'),
   resultsVideoUrl: text('results_video_url'),
+  registrationOpen: boolean('registration_open').default(true).notNull(),
+  upiId: text('upi_id'),
+  feePerPerson: integer('fee_per_person').default(0).notNull(),
+  deadline: timestamp('deadline'),
 });
 
 export const liveViewers = pgTable('live_viewers', {
@@ -85,5 +127,16 @@ export const teamMessages = pgTable('team_messages', {
   registrationId: uuid('registration_id').references(() => registrations.id).notNull(),
   senderId: uuid('sender_id').references(() => users.id).notNull(),
   content: text('content').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const scheduleSlots = pgTable('schedule_slots', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  day: integer('day').notNull(), // 1 or 2
+  sortIndex: integer('sort_index').notNull(),
+  timeSlot: text('time_slot').notNull(),
+  venue: text('venue'),
+  linkedEventId: uuid('linked_event_id').references(() => events.id),
+  isBreak: boolean('is_break').default(false).notNull(),
   createdAt: timestamp('created_at').defaultNow(),
 });

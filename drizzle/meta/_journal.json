@@ -15,6 +15,13 @@
       "when": 1774433815694,
       "tag": "0001_thin_hitman",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774530299977,
+      "tag": "0002_complex_sprite",
+      "breakpoints": true
     }
   ]
 }

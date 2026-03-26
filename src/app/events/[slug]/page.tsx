@@ -3,33 +3,54 @@ import BrutalButton from '@/components/ui/BrutalButton';
 import BrutalCard from '@/components/ui/BrutalCard';
 
 import { db } from '@/db';
-import { events } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { events, systemSettings, scheduleSlots } from '@/db/schema';
+import { asc, eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 
 export default async function EventDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   
   const [dbEvent] = await db.select().from(events).where(eq(events.slug, slug));
+  const [settings] = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
 
   if (!dbEvent) {
     notFound();
   }
+
+  const feePerPersonResolved =
+    settings?.feePerPerson && settings.feePerPerson > 0 ? settings.feePerPerson : dbEvent.fee;
+
+  const scheduleForEvent = await db
+    .select()
+    .from(scheduleSlots)
+    .where(eq(scheduleSlots.linkedEventId, dbEvent.id))
+    .orderBy(asc(scheduleSlots.day), asc(scheduleSlots.sortIndex));
+
+  const scheduleText =
+    scheduleForEvent.length > 0
+      ? scheduleForEvent
+          .map((s) => `D${s.day} ${s.timeSlot}${s.venue ? ` @ ${s.venue}` : ''}`)
+          .join(' | ')
+      : dbEvent.schedule || 'TBA';
 
   const event = {
     name: dbEvent.name,
     tagline: dbEvent.tagline || 'Engineering the next infrastructure layer.',
     description: dbEvent.description || 'Module details pending initialization...',
     rules: [
-      'Maximum team size is 4 members.',
+      `Team size allowed: ${dbEvent.teamSizeMin ?? 1}-${dbEvent.teamSize ?? 1} members.`,
       'Participants must bring their own hardware.',
       'Software must be original and built during the event.',
       'Judgment will be based on innovation and structural logic.',
     ],
-    fee: `₹${dbEvent.fee} per member`,
-    schedule: dbEvent.schedule || 'APRIL 12, 11:00 AM',
+    fee: `₹${feePerPersonResolved} per person`,
+    schedule: scheduleText,
     venue: dbEvent.venue || 'COMPUTING LAB 01',
   };
+
+  const deadlineText = settings?.deadline
+    ? settings.deadline.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
+    : 'Deadline not configured';
 
   return (
     <div className="max-w-[1440px] mx-auto px-6 py-12">
@@ -59,6 +80,13 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                   </li>
                 ))}
               </ul>
+
+              {dbEvent.prizeDetails ? (
+                <div className="mt-10">
+                  <h3 className="text-2xl font-black uppercase italic mb-4 border-b-2 border-on-surface w-fit">Prize Details</h3>
+                  <p className="font-sans font-bold uppercase text-sm opacity-80">{dbEvent.prizeDetails}</p>
+                </div>
+              ) : null}
             </section>
           </div>
         </div>
@@ -79,6 +107,18 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                 <span className="text-[10px] font-black uppercase opacity-60">Module Venue</span>
                 <span className="font-display font-black uppercase">{event.venue}</span>
               </div>
+              {dbEvent.category ? (
+                <div className="flex justify-between border-b-2 border-on-surface pb-2">
+                  <span className="text-[10px] font-black uppercase opacity-60">Category</span>
+                  <span className="font-display font-black uppercase">{dbEvent.category}</span>
+                </div>
+              ) : null}
+              {dbEvent.expectedParticipants ? (
+                <div className="flex justify-between border-b-2 border-on-surface pb-2">
+                  <span className="text-[10px] font-black uppercase opacity-60">Expected Participants</span>
+                  <span className="font-display font-black uppercase">{dbEvent.expectedParticipants}</span>
+                </div>
+              ) : null}
             </div>
 
             <div className="space-y-4 pt-4">
@@ -87,7 +127,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
             </div>
             
             <p className="text-[10px] font-sans italic text-center opacity-60 uppercase">
-              Deadline for registration: APRIL 08, 23:59 IST
+              Deadline for registration: {deadlineText}
             </p>
           </BrutalCard>
         </div>

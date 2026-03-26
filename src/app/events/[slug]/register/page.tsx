@@ -3,7 +3,7 @@ import BrutalCard from '@/components/ui/BrutalCard';
 import RegistrationClientForm from '@/components/marketing/RegistrationClientForm';
 
 import { db } from '@/db';
-import { events, registrations, users } from '@/db/schema';
+import { events, registrations, users, systemSettings } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { notFound, redirect } from 'next/navigation';
 import { auth } from '@/auth';
@@ -17,7 +17,7 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
   const [dbUser] = await db.select().from(users).where(eq(users.email, session.user.email));
   if (!dbUser) redirect('/auth/login');
 
-  if (!dbUser.college || !dbUser.branch || !dbUser.phone) {
+  if (!dbUser.college || !dbUser.branch || !dbUser.phone || !dbUser.year) {
     redirect('/profile/complete');
   }
 
@@ -30,12 +30,17 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
   const dbRegistrations = await db.select({ id: registrations.id }).from(registrations).where(eq(registrations.eventId, event.id));
   const activeCount = dbRegistrations.length;
 
-  const eventData = {
-    name: event.name,
-    fee: event.fee,
-    upiId: '9834147160@kotak811',
-    upiURI: `upi://pay?pa=9834147160@kotak811&pn=Kratos%202026&cu=INR&am=${event.fee}`,
-  };
+  const [settings] = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
+  const registrationOpen = settings?.registrationOpen ?? true;
+  const deadline = settings?.deadline ?? null;
+  const now = new Date();
+  const isRegistrationClosed = !registrationOpen || (deadline ? now > deadline : false);
+
+  const upiId = settings?.upiId || '9834147160@kotak811';
+  const feePerPerson =
+    settings?.feePerPerson && settings.feePerPerson > 0 ? settings.feePerPerson : event.fee;
+
+  const eventData = { upiId, feePerPerson };
 
   const isTeamFormat = event.format === 'TEAM' || event.format === 'SOLO_TEAM' || event.format === 'SOLO_PAIR';
   const isTeamRequired = event.format === 'TEAM';
@@ -59,16 +64,36 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Left Column: Form Steps */}
         <div className="lg:col-span-7 space-y-16">
-          
-          <RegistrationClientForm 
-            eventId={event.id}
-            eventFormat={event.format || 'SOLO'}
-            isTeamFormat={isTeamFormat}
-            isTeamRequired={isTeamRequired}
-            teamSize={event.teamSize || 1}
-            eventData={eventData}
-            dbUser={{ name: dbUser.name, phone: dbUser.phone }}
-          />
+          {isRegistrationClosed ? (
+            <div className="bg-surface-container-low brutal-border p-8">
+              <h2 className="text-3xl font-black uppercase tracking-tighter italic mb-4">Registration Closed</h2>
+              <p className="font-sans opacity-70 uppercase text-xs tracking-widest">
+                Please contact the Admin Command Center for further instructions.
+              </p>
+              {deadline && (
+                <p className="mt-4 font-mono opacity-60 text-xs uppercase">
+                  Deadline was: {deadline.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
+                </p>
+              )}
+            </div>
+          ) : (
+            <RegistrationClientForm 
+              eventId={event.id}
+              eventFormat={event.format || 'SOLO'}
+              isTeamFormat={isTeamFormat}
+              isTeamRequired={isTeamRequired}
+              teamSizeMin={event.teamSizeMin || 1}
+              teamSizeMax={event.teamSize || 1}
+              eventData={eventData}
+              dbUser={{
+                name: dbUser.name,
+                phone: dbUser.phone || null,
+                college: dbUser.college || null,
+                branch: dbUser.branch || null,
+                year: dbUser.year ?? null,
+              }}
+            />
+          )}
         </div>
 
         {/* Right Column: Status & Sidebar */}
@@ -87,7 +112,7 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
               </div>
               <div className="flex items-center justify-between border-b border-surface/20 pb-4">
                 <span className="font-display text-sm uppercase opacity-60">Registration Fee</span>
-                <span className="font-black text-primary-container">₹ {eventData.fee}</span>
+                <span className="font-black text-primary-container">₹ {feePerPerson}</span>
               </div>
               <div className="pt-4 flex items-center justify-between">
                  <span className="font-display font-bold text-xs uppercase text-primary-container tracking-widest">Active Fleet Formations</span>

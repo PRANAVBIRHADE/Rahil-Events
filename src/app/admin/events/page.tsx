@@ -59,6 +59,18 @@ export default async function EventManagementPage() {
                          />
                        </div>
 
+                   <div className="flex items-center gap-4">
+                     <label className="text-xs font-bold uppercase tracking-widest w-24 opacity-60">MIN TEAM</label>
+                     <input
+                       name="teamSizeMin"
+                       type="number"
+                       min="1"
+                       max="4"
+                       defaultValue={event.teamSizeMin || 1}
+                       className="bg-transparent font-mono text-sm w-24 outline-none focus:border-b-2 border-primary"
+                     />
+                   </div>
+
                        <div className="flex items-center gap-4">
                          <label className="text-xs font-bold uppercase tracking-widest w-24 opacity-60">MAX TEAM</label>
                          <input 

@@ -47,10 +47,8 @@ function FilterContent({ allEvents }: { allEvents: any[] }) {
 
   useEffect(() => {
     if (branchQuery && branches.includes(branchQuery)) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveFilter(branchQuery);
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveFilter('All');
     }
   }, [branchQuery]);

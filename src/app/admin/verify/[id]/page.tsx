@@ -4,9 +4,9 @@ import { registrations, users, events } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import BrutalCard from '@/components/ui/BrutalCard';
-import BrutalButton from '@/components/ui/BrutalButton';
 import Link from 'next/link';
 import { updateRegistrationStatus } from '@/lib/actions';
+import { teamMembers } from '@/db/schema';
 
 export default async function VerifyRegistrationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -25,7 +25,11 @@ export default async function VerifyRegistrationPage({ params }: { params: Promi
 
   const { reg, user, event } = data;
 
-  const membersArray = reg.members ? (reg.members as Array<{name: string, phone: string}>) : [];
+  const teamMemberRows = reg.teamId
+    ? await db.select().from(teamMembers).where(eq(teamMembers.teamId, reg.teamId))
+    : [];
+
+  const resolvedTotalFee = reg.totalFee ?? null;
 
   return (
     <div className="max-w-[1440px] mx-auto px-6 py-12">
@@ -94,14 +98,20 @@ export default async function VerifyRegistrationPage({ params }: { params: Promi
                  <p className="opacity-60 uppercase font-sans font-bold text-xs uppercase mb-1">Squadron / Team Name</p>
                  <p className="font-display font-black text-2xl uppercase tracking-tighter text-primary-container">{reg.teamName}</p>
                </div>
-               
-               {membersArray.length > 0 && (
+
+               {teamMemberRows.length > 0 && (
                  <div className="space-y-4 mt-6">
-                   <p className="opacity-60 uppercase font-sans font-bold text-xs">Additional Operators:</p>
-                   {membersArray.map((member, i) => (
-                     <div key={i} className="bg-surface-container-low p-3 brutal-border flex justify-between items-center text-sm font-mono">
-                       <span className="font-bold uppercase">{member.name}</span>
-                       <span className="opacity-60">{member.phone}</span>
+                   <p className="opacity-60 uppercase font-sans font-bold text-xs">Team Members:</p>
+                   {teamMemberRows.map((member, i) => (
+                     <div key={i} className="bg-surface-container-low p-3 brutal-border flex justify-between items-center text-sm font-mono gap-4">
+                       <div className="min-w-0">
+                         <p className="font-bold uppercase truncate">{member.name}</p>
+                         <p className="text-[10px] opacity-60 uppercase truncate">{member.college || 'N/A'}{member.branch ? ` (${member.branch})` : ''}</p>
+                       </div>
+                       <div className="text-right">
+                         <p className="opacity-60 text-xs uppercase">{member.phone}</p>
+                         {member.year ? <p className="opacity-60 text-[10px] uppercase">Year {member.year}</p> : null}
+                       </div>
                      </div>
                    ))}
                  </div>
@@ -122,12 +132,27 @@ export default async function VerifyRegistrationPage({ params }: { params: Promi
                 {reg.status}
               </span>
             </div>
+
+            <div className="mb-6 border-b border-surface/20 pb-4 flex justify-between items-center">
+              <span className="font-sans text-sm uppercase font-bold opacity-60">Total Fee:</span>
+              <span className="font-black uppercase text-xl">₹ {resolvedTotalFee ?? event.fee}</span>
+            </div>
             
             <form action={async (formData) => {
               'use server';
               await updateRegistrationStatus(formData);
             }} className="space-y-4">
               <input type="hidden" name="id" value={reg.id} />
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest opacity-80">Admin Notes</label>
+                <textarea
+                  name="paymentNotes"
+                  defaultValue={reg.paymentNotes ?? ''}
+                  className="w-full p-3 border-2 border-surface bg-surface-container-low text-black outline-none"
+                  rows={3}
+                  placeholder="Add verification notes..."
+                />
+              </div>
               <button type="submit" name="status" value="APPROVED" className="w-full bg-green-500 hover:bg-green-400 text-black font-black uppercase tracking-widest py-4 border-2 border-surface transition-colors flex items-center justify-center">
                 <span className="material-symbols-outlined mr-2">verified</span> APPROVE TRANSMISSION
               </button>
@@ -160,6 +185,7 @@ export default async function VerifyRegistrationPage({ params }: { params: Promi
             <div className="w-full bg-surface-container-low min-h-[60vh] border-2 border-on-surface flex items-center justify-center p-2 relative">
                {reg.paymentScreenshot ? (
                   <a href={reg.paymentScreenshot} target="_blank" rel="noopener noreferrer" className="w-full block">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img 
                       src={reg.paymentScreenshot} 
                       alt="Payment Receipt" 

@@ -44,16 +44,36 @@ The platform uses a relational architecture managed by Drizzle ORM.
 
 ### 1. Users (`users`)
 - **Role**: Tracks both `PARTICIPANT` and `ADMIN` roles.
-- **Fields**: ID, Name, Email (Unique), Password (Hashed), Phone, College, Branch, Role, CreatedAt.
+- **Fields**: ID, Name, Email (Unique), Password (Hashed), Phone, College, Branch, Year, Role, CreatedAt.
 
 ### 2. Events/Modules (`events`)
 - **Role**: The technical competitions or modules available for registration.
-- **Fields**: ID, Slug, Name, Description, Fee, Format (`SOLO`, `TEAM`, `SOLO_TEAM`), TeamSize, Branch, IsCommon.
+- **Fields**: ID, Slug, Name, Description, Category, Venue, Fee, Format (`SOLO`, `TEAM`, `SOLO_TEAM`), TeamSizeMin, TeamSizeMax, ExpectedParticipants, PrizeDetails, Branch, IsCommon.
 - **Winners**: A JSONB column tracking the podium placements for post-event leaderboards.
 
 ### 3. Registrations (`registrations`)
 - **Role**: The nexus entity linking Users to Events.
-- **Fields**: ID, UserID, EventID, Status (`PENDING`, `APPROVED`, `REJECTED`), TransactionID, PaymentScreenshot (Cloudinary URL), TeamName, Members (JSON array of nested participants).
+- **Fields**: ID, UserID, EventID, TeamID, TeamName, Status (`PENDING`, `APPROVED`, `REJECTED`), TransactionID, PaymentScreenshot (Cloudinary URL), PaymentNotes, TotalFee, CheckedIn, CheckedInAt.
+
+### 4. Teams (`teams`)
+- **Role**: Persistent team entity associated with an event registration.
+- **Fields**: ID, EventID, Name, CreatedAt.
+
+### 5. Team Members (`team_members`)
+- **Role**: Member-level roster storage for teams.
+- **Fields**: ID, TeamID, Name, College, Branch, Year, Phone, CreatedAt.
+
+### 6. Schedule Slots (`schedule_slots`)
+- **Role**: Structured Day 1 / Day 2 schedule model with slot-level venue and linked events.
+- **Fields**: ID, Day, SortIndex, TimeSlot, Venue, LinkedEventID, IsBreak, CreatedAt.
+
+### 7. Organizers (`organizers`)
+- **Role**: Public-facing organizer directory and contact metadata.
+- **Fields**: ID, OrganizerName, Role, Contact, CreatedAt.
+
+### 8. System Settings (`system_settings`)
+- **Role**: Dynamic controls for real-world operations.
+- **Fields**: RegistrationOpen, UPI ID, FeePerPerson, Deadline, plus existing global toggles.
 
 ---
 
@@ -85,7 +105,11 @@ The application is pre-configured and optimized for deployment on **Vercel**. Al
 
 ## ⚙️ Key Subsystems
 
-- **Registration Wizard**: A multi-step, dynamic React form accommodating both solo and large-team registrations, dynamically validating size limits based on the target event constraints.
-- **Command Center (Admin)**: A powerful dashboard allowing organizers to inspect incoming payment screenshots, verify transaction IDs, and either `APPROVE` or `REJECT` teams.
+- **Registration Wizard**: Multi-step flow now computes total fee from global settings and stores team members individually in normalized tables.
+- **Command Center (Admin)**: Dashboard now reports total participants, total teams, pending payments, verified payments, and revenue estimate.
+- **Structured Schedule Engine**: Admin configures Day 1 / Day 2 slots with linked events and venues, rendered dynamically on the public site.
+- **Check-In Terminal**: Admin can search by team code (registration ID), member name, or phone and mark checked-in with timestamps.
+- **Settings Panel**: Registration open/close, UPI ID, fee per person, and deadline are editable at runtime from admin settings.
+- **Organizer Management**: Organizer CRUD in admin and public display on landing page.
 - **Memory Gallery**: An integrated Cloudinary widget allowing participants to upload post-event pictures, with a centralized lockout mechanism.
 - **Live Leaderboard**: A real-time data table utilizing React Suspense to stream in the winners of various modules without blocking the initial page paint.

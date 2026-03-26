@@ -5,8 +5,10 @@ import CreateEventForm from '@/components/admin/CreateEventForm';
 import BroadcastForm from '@/components/admin/BroadcastForm';
 import GalleryAdminToggle from '@/components/admin/GalleryAdminToggle';
 import { db } from '@/db';
-import { registrations, users, events, systemSettings } from '@/db/schema';
+import { registrations, users, events, systemSettings, teamMembers } from '@/db/schema';
 import { eq, desc, count, sum } from 'drizzle-orm';
+
+export const dynamic = 'force-dynamic';
 
 const StatCard = ({ label, value, trend }: { label: string; value: string; trend?: string }) => (
   <BrutalCard className="flex flex-col justify-between py-6 px-4" shadowColor="gold">
@@ -17,20 +19,36 @@ const StatCard = ({ label, value, trend }: { label: string; value: string; trend
 );
 
 export default async function AdminDashboard() {
-  const [regCount] = await db.select({ value: count() }).from(registrations);
-  const [pendingCount] = await db.select({ value: count() }).from(registrations).where(eq(registrations.status, 'PENDING'));
-  const [revTotal] = await db.select({ value: sum(events.fee) })
-    .from(registrations)
-    .innerJoin(events, eq(registrations.eventId, events.id))
+  const [participantsCount] = await db
+    .select({ value: count() })
+    .from(teamMembers)
+    .innerJoin(registrations, eq(teamMembers.teamId, registrations.teamId))
     .where(eq(registrations.status, 'APPROVED'));
 
-  const [moduleCount] = await db.select({ value: count() }).from(events);
+  // In this system each registration maps 1:1 to a team row (created during registration).
+  const [teamsCount] = await db.select({ value: count() }).from(registrations).where(eq(registrations.status, 'APPROVED'));
+
+  const [pendingPaymentsCount] = await db
+    .select({ value: count() })
+    .from(registrations)
+    .where(eq(registrations.status, 'PENDING'));
+
+  const [verifiedPaymentsCount] = await db
+    .select({ value: count() })
+    .from(registrations)
+    .where(eq(registrations.status, 'APPROVED'));
+
+  const [revTotal] = await db
+    .select({ value: sum(registrations.totalFee) })
+    .from(registrations)
+    .where(eq(registrations.status, 'APPROVED'));
 
   const stats = [
-    { label: 'Total Registrations', value: regCount.value.toString() },
-    { label: 'Approved Revenue', value: `₹ ${revTotal.value || 0}` },
-    { label: 'Pending Verification', value: pendingCount.value.toString() },
-    { label: 'Active Modules', value: moduleCount.value.toString() },
+    { label: 'Total Participants', value: participantsCount.value.toString() },
+    { label: 'Total Teams', value: teamsCount.value.toString() },
+    { label: 'Pending Payments', value: pendingPaymentsCount.value.toString() },
+    { label: 'Verified Payments', value: verifiedPaymentsCount.value.toString() },
+    { label: 'Revenue Estimate', value: `₹ ${revTotal.value || 0}` },
   ];
 
   const dbSettings = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
@@ -40,7 +58,8 @@ export default async function AdminDashboard() {
     id: registrations.id,
     name: users.name,
     event: events.name,
-    amount: events.fee,
+    fee: events.fee,
+    amount: registrations.totalFee,
     status: registrations.status,
   })
   .from(registrations)
@@ -62,7 +81,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Quick Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
         {stats.map((stat, i) => (
           <StatCard key={i} {...stat} />
         ))}
@@ -98,7 +117,7 @@ export default async function AdminDashboard() {
                     <tr key={i} className="hover:bg-primary-container/5 transition-colors">
                       <td className="p-4 font-bold uppercase text-sm w-1/3 truncate max-w-[150px]">{reg.name}</td>
                       <td className="p-4 text-xs font-bold opacity-60 uppercase w-1/4 truncate max-w-[120px]">{reg.event}</td>
-                      <td className="p-4 font-mono text-sm">₹ {reg.amount}</td>
+                      <td className="p-4 font-mono text-sm">₹ {reg.amount ?? reg.fee}</td>
                       <td className="p-4">
                         <span className={`px-2 py-0.5 border-2 text-[10px] font-black uppercase ${
                           reg.status === 'APPROVED' ? 'bg-green-100 text-green-800 border-green-800' :
@@ -132,6 +151,18 @@ export default async function AdminDashboard() {
                 <BrutalButton className="w-full justify-start" variant="outline">
                   <span className="material-symbols-outlined mr-3">event</span>
                   Edit Master Schedule
+                </BrutalButton>
+              </Link>
+              <Link href="/admin/settings" className="w-full">
+                <BrutalButton className="w-full justify-start" variant="outline">
+                  <span className="material-symbols-outlined mr-3">settings</span>
+                  Registration Settings
+                </BrutalButton>
+              </Link>
+              <Link href="/admin/organizers" className="w-full">
+                <BrutalButton className="w-full justify-start" variant="outline">
+                  <span className="material-symbols-outlined mr-3">people</span>
+                  Organizer Management
                 </BrutalButton>
               </Link>
               <Link href="/api/admin/proofs" target="_blank" className="w-full">
