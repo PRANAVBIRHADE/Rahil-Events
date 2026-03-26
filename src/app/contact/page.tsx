@@ -10,7 +10,7 @@ export default function ContactPage() {
       <div className="pt-12 pb-24 px-6 max-w-[1440px] mx-auto w-full">
         <div className="mb-16">
           <span className="text-sm font-display font-bold uppercase tracking-widest text-primary mb-2 block">Communication Channel</span>
-          <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-8">Contact Command</h1>
+          <h1 className="text-4xl md:text-7xl font-black uppercase tracking-tighter mb-8">Contact Command</h1>
           <p className="text-xl opacity-70 max-w-2xl font-sans">
             Have questions regarding the modules, registration, or logistics? Access our direct communication lines below.
           </p>
@@ -20,10 +20,10 @@ export default function ContactPage() {
           <div className="p-8 border-b-2 md:border-b-0 md:border-r-2 border-on-surface hover:bg-primary-container transition-colors group">
             <span className="material-symbols-outlined text-4xl mb-6 block">email</span>
             <h3 className="text-3xl font-black uppercase mb-4">Digital Comm</h3>
-            <a href="mailto:kratos2026@mpgi.ac.in" className="font-display font-bold text-xl hover:text-primary transition-colors block mb-2">
+            <a href="mailto:kratos2026@mpgi.ac.in" className="font-display font-bold text-lg md:text-xl hover:text-primary transition-colors block mb-2 break-words">
               kratos2026@mpgi.ac.in
             </a>
-            <a href="mailto:studentdept@mpgi.ac.in" className="font-display font-bold text-xl hover:text-primary transition-colors block">
+            <a href="mailto:studentdept@mpgi.ac.in" className="font-display font-bold text-lg md:text-xl hover:text-primary transition-colors block break-words">
               studentdept@mpgi.ac.in
             </a>
           </div>

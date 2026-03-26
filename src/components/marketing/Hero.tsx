@@ -36,7 +36,7 @@ const Hero = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4, type: "spring", stiffness: 100 }}
-            className="text-6xl md:text-9xl font-black tracking-tighter uppercase leading-[0.85] mb-8"
+            className="text-5xl md:text-9xl font-black tracking-tighter uppercase leading-[0.85] mb-4 md:mb-8"
           >
             KRATOS<br /><span className="text-primary-container">2026</span>
           </motion.h1>
@@ -44,7 +44,7 @@ const Hero = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="text-xl md:text-2xl font-sans max-w-xl mb-6 border-l-4 border-on-surface pl-6"
+            className="text-lg md:text-2xl font-sans max-w-xl mb-4 md:mb-6 border-l-4 border-on-surface pl-4 md:pl-6"
           >
             Experience two days of innovation and competition at KRATOS 2026. Engineers test skills, collaborate, and compete across coding, hardware, design, and gaming events.
           </motion.p>
@@ -53,7 +53,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            className="mb-10 w-fit"
+            className="mb-6 md:mb-10 w-fit"
           >
             <CountdownTimer />
           </motion.div>
@@ -78,7 +78,7 @@ const Hero = () => {
           transition={{ delay: 0.5, duration: 1 }}
           className="w-full md:w-1/3 relative flex justify-center md:justify-end"
         >
-          <div className="brutal-border p-1 hard-shadow-gold bg-on-surface w-full md:w-80 h-72 md:h-80 flex items-center justify-center overflow-hidden">
+          <div className="brutal-border p-1 hard-shadow-gold bg-on-surface w-full md:w-80 h-48 md:h-80 flex items-center justify-center overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
               className="w-full h-full object-contain grayscale contrast-125 hover:scale-105 transition-transform duration-500" 
@@ -86,8 +86,8 @@ const Hero = () => {
               src="/event-card.png" 
             />
           </div>
-          <div className="absolute -bottom-8 -left-8 brutal-border bg-primary-container p-6 hidden md:block">
-            <p className="font-display font-black text-4xl leading-none underline decoration-4">02<br />DAYS</p>
+          <div className="absolute -bottom-6 -left-6 brutal-border bg-primary-container p-4 md:p-6 hidden md:block">
+            <p className="font-display font-black text-3xl md:text-4xl leading-none underline decoration-4">02<br />DAYS</p>
           </div>
         </motion.div>
       </div>

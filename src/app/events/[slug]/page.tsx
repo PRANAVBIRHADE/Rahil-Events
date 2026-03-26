@@ -62,10 +62,10 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         <div className="lg:col-span-8">
           <span className="text-sm font-display font-bold uppercase text-primary tracking-[0.2em] mb-4 block">Event Details // 01</span>
-          <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter mb-6 leading-tight italic">
+          <h1 className="text-4xl md:text-8xl font-black uppercase tracking-tighter mb-4 md:mb-6 leading-tight italic">
             {event.name}
           </h1>
-          <p className="text-2xl font-sans italic border-l-8 border-primary-container pl-6 mb-12">
+          <p className="text-xl md:text-2xl font-sans italic border-l-8 border-primary-container pl-4 md:pl-6 mb-8 md:mb-12">
             {event.tagline}
           </p>
 
@@ -98,17 +98,17 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
         <div className="lg:col-span-4 h-fit sticky top-32">
           <BrutalCard shadowColor="gold" className="space-y-8">
             <div className="space-y-4">
-              <div className="flex justify-between border-b-2 border-on-surface pb-2">
+              <div className="flex flex-col sm:flex-row sm:justify-between border-b-2 border-on-surface pb-2 gap-1 sm:gap-4">
                 <span className="text-[10px] font-black uppercase opacity-60">Registration Fee</span>
-                <span className="font-display font-black uppercase text-xl">{event.fee}</span>
+                <span className="font-display font-black uppercase text-lg md:text-xl">{event.fee}</span>
               </div>
-              <div className="flex justify-between border-b-2 border-on-surface pb-2">
+              <div className="flex flex-col sm:flex-row sm:justify-between border-b-2 border-on-surface pb-2 gap-1 sm:gap-4">
                 <span className="text-[10px] font-black uppercase opacity-60">Time &amp; Schedule</span>
-                <span className="font-display font-black uppercase">{event.schedule}</span>
+                <span className="font-display font-black uppercase text-sm md:text-base">{event.schedule}</span>
               </div>
-              <div className="flex justify-between border-b-2 border-on-surface pb-2">
+              <div className="flex flex-col sm:flex-row sm:justify-between border-b-2 border-on-surface pb-2 gap-1 sm:gap-4">
                 <span className="text-[10px] font-black uppercase opacity-60">Venue</span>
-                <span className="font-display font-black uppercase">{event.venue}</span>
+                <span className="font-display font-black uppercase text-sm md:text-base">{event.venue}</span>
               </div>
               {dbEvent.category ? (
                 <div className="flex justify-between border-b-2 border-on-surface pb-2">

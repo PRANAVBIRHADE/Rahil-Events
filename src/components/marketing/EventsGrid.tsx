@@ -8,11 +8,11 @@ const EventsGrid = async () => {
   const dbEvents = await db.select().from(eventsTable).orderBy(desc(eventsTable.createdAt));
 
   return (
-    <section id="events" className="py-24 px-6 max-w-[1440px] mx-auto">
-      <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+    <section id="events" className="py-12 md:py-24 px-4 md:px-6 max-w-[1440px] mx-auto">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 md:mb-16 gap-4 md:gap-6">
         <div>
           <span className="text-sm font-display font-bold uppercase tracking-widest text-primary mb-2 block">Events 2026</span>
-          <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter">Our Events</h2>
+          <h2 className="text-4xl md:text-7xl font-black uppercase tracking-tighter">Our Events</h2>
         </div>
         <p className="max-w-md text-right font-sans italic">Explore our events, participate with your friends, and showcase your skills.</p>
       </div>

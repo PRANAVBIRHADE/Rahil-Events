@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 
 const TimerUnit = ({ value, label }: { value: number; label: string }) => (
-  <div className="flex flex-col items-center p-4 brutal-border bg-surface hard-shadow min-w-[100px]">
-    <span className="text-4xl md:text-6xl font-black font-display leading-none">
+  <div className="flex flex-col items-center p-3 md:p-4 brutal-border bg-surface hard-shadow min-w-[70px] md:min-w-[100px]">
+    <span className="text-3xl md:text-6xl font-black font-display leading-none">
       {value.toString().padStart(2, '0')}
     </span>
     <span className="text-xs font-bold uppercase tracking-widest mt-2">{label}</span>
@@ -44,7 +44,7 @@ const CountdownTimer = ({ targetDate = '2026-04-20T05:00:00Z', enableRefreshOnZe
   if (!timeLeft) return null;
 
   return (
-    <div className="flex flex-wrap justify-center gap-4 py-8">
+    <div className="flex flex-wrap justify-center gap-3 md:gap-4 py-4 md:py-8">
       <TimerUnit value={timeLeft.days} label="Days" />
       <TimerUnit value={timeLeft.hours} label="Hours" />
       <TimerUnit value={timeLeft.minutes} label="Mins" />

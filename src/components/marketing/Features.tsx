@@ -9,8 +9,8 @@ const coreValues = [
 
 const Features = () => {
   return (
-    <section id="workshops" className="bg-surface-container-low py-16 border-y-2 border-on-surface">
-      <div className="max-w-[1440px] mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
+    <section id="workshops" className="bg-surface-container-low py-10 md:py-16 border-y-2 border-on-surface">
+      <div className="max-w-[1440px] mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
         {coreValues.map((val) => (
           <div key={val.id} className="flex flex-col gap-2">
             <span className="font-display font-bold text-primary">{val.id} / {val.label}</span>

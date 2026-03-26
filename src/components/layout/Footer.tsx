@@ -4,7 +4,7 @@ import Link from 'next/link';
 const Footer = () => {
   return (
     <footer className="w-full border-t-2 border-on-surface bg-surface-container-low mt-auto">
-      <div className="flex flex-col md:flex-row justify-between items-center w-full px-8 py-12 gap-6 max-w-[1440px] mx-auto">
+      <div className="flex flex-col md:flex-row justify-between items-center w-full px-4 md:px-8 py-8 md:py-12 gap-4 md:gap-6 max-w-[1440px] mx-auto">
         <div className="font-display font-bold text-lg text-on-surface italic">
           KRATOS 2026
         </div>

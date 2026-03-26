@@ -12,8 +12,8 @@ const Navbar = () => {
 
   return (
     <nav className="w-full bg-surface border-b-2 border-on-surface shadow-[4px_4px_0px_0px_var(--primary-container)] relative z-50">
-      <div className="flex justify-between items-center w-full px-6 py-4 max-w-[1440px] mx-auto">
-        <Link href="/" onClick={closeMenu} className="text-3xl font-black tracking-tighter text-on-surface uppercase font-display italic z-50">
+      <div className="flex justify-between items-center w-full px-4 md:px-6 py-3 md:py-4 max-w-[1440px] mx-auto">
+        <Link href="/" onClick={closeMenu} className="text-2xl md:text-3xl font-black tracking-tighter text-on-surface uppercase font-display italic z-50">
           KRATOS 2026
         </Link>
         
