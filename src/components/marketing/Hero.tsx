@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 
 const Hero = () => {
   return (
-    <section className="relative px-6 py-20 md:py-32 max-w-[1440px] mx-auto overflow-hidden">
+    <section className="relative px-6 py-10 md:py-16 max-w-[1440px] mx-auto overflow-hidden">
       {/* 3D Background Elements */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <Floating3D type="grid" className="absolute bottom-0 left-0 w-full h-1/2 opacity-40" />
