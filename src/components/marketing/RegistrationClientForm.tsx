@@ -28,6 +28,7 @@ type RegistrationClientFormProps = {
   eventData: {
     upiId: string;
     feePerPerson: number;
+    requiresPayment: boolean;
   };
   dbUser: {
     name: string;
@@ -46,7 +47,7 @@ export default function RegistrationClientForm({
   teamSizeMin,
   teamSizeMax,
   eventData,
-  dbUser
+  dbUser,
 }: RegistrationClientFormProps) {
   const router = useRouter();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -54,31 +55,33 @@ export default function RegistrationClientForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
   const totalFee = Math.max(1 + memberCount, 1) * (eventData.feePerPerson || 0);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
 
-    if (!imageUrl) {
+    if (eventData.requiresPayment && !imageUrl) {
       setError('Please upload the payment screenshot to proceed.');
       return;
     }
 
     setLoading(true);
-    
-    // Convert form data
+
     const formData = new FormData(e.currentTarget);
     formData.append('eventId', eventId);
-    formData.append('paymentScreenshot', imageUrl);
+    if (imageUrl) {
+      formData.append('paymentScreenshot', imageUrl);
+    }
 
     const result = await createRegistration(formData);
 
     if (result && result.error) {
-       setError(result.error);
-       setLoading(false);
+      setError(result.error);
+      setLoading(false);
     } else {
-       router.push('/dashboard');
+      router.push('/dashboard');
     }
   }
 
@@ -90,9 +93,8 @@ export default function RegistrationClientForm({
         </div>
       )}
 
-      {/* STEP 1: Details */}
       <BrutalCard shadow={true}>
-        <StepHeader number="01" title={isTeamFormat ? "Team Details" : "Your Details"} />
+        <StepHeader number="01" title={isTeamFormat ? 'Team Details' : 'Your Details'} />
         <div className="space-y-6">
           <div className="bg-primary/10 border-2 border-primary p-6 mb-8">
             <h3 className="font-display font-black tracking-tighter uppercase mb-2">Team Leader</h3>
@@ -110,10 +112,12 @@ export default function RegistrationClientForm({
             <div className="space-y-6 mt-8 pt-8 border-t-2 border-on-surface">
               <h3 className="font-display text-2xl font-black tracking-tighter uppercase mb-4">Team Members</h3>
               {(eventFormat === 'SOLO_TEAM' || eventFormat === 'SOLO_PAIR') && (
-                <p className="text-xs font-bold opacity-60 italic mb-4">Note: Team Details are optional for Solo/Team format events. Fill only if participating as a team.</p>
+                <p className="text-xs font-bold opacity-60 italic mb-4">
+                  Note: team details are optional for solo/team format events. Fill them only if participating as a team.
+                </p>
               )}
               <BrutalInput label="Team Name" name="teamName" placeholder="e.g. Innovators" required={isTeamRequired} />
-              
+
               <div className="space-y-6 mt-4">
                 {Array.from({ length: memberCount }).map((_, i) => (
                   <div key={i} className="p-6 border-2 border-on-surface bg-surface-container-low relative">
@@ -121,12 +125,12 @@ export default function RegistrationClientForm({
                       Member 0{i + 2}
                     </div>
                     {i > 0 && (
-                      <button 
-                        type="button" 
-                        onClick={() => setMemberCount(prev => Math.max((teamSizeMin - 1), prev - 1))}
+                      <button
+                        type="button"
+                        onClick={() => setMemberCount((prev) => Math.max(teamSizeMin - 1, prev - 1))}
                         className="absolute top-2 right-2 text-red-500 hover:text-red-700"
                       >
-                         <span className="material-symbols-outlined">close</span>
+                        <span className="material-symbols-outlined">close</span>
                       </button>
                     )}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
@@ -139,11 +143,11 @@ export default function RegistrationClientForm({
                   </div>
                 ))}
               </div>
-              
+
               <div className="mt-6 flex justify-center">
-                <button 
-                  type="button" 
-                  onClick={() => setMemberCount(prev => Math.min((teamSizeMax - 1), prev + 1))}
+                <button
+                  type="button"
+                  onClick={() => setMemberCount((prev) => Math.min(teamSizeMax - 1, prev + 1))}
                   className="px-6 py-2 border-2 border-dashed border-on-surface/50 text-xs font-black uppercase tracking-widest hover:bg-primary-container hover:border-primary-container transition-colors flex items-center"
                 >
                   <span className="material-symbols-outlined mr-2 text-sm">add</span>
@@ -155,76 +159,128 @@ export default function RegistrationClientForm({
         </div>
       </BrutalCard>
 
-      {/* STEP 2: Payment */}
       <BrutalCard shadow={true}>
-        <StepHeader number="02" title="Payment" />
+        <StepHeader number="02" title={eventData.requiresPayment ? 'Payment' : 'Registration Summary'} />
         <div className="flex flex-col md:flex-row gap-8 items-center bg-surface-container-low p-6 brutal-border">
-          <div className="w-48 h-48 bg-white p-2 border-2 border-on-surface flex items-center justify-center relative overflow-hidden">
-            <BrutalQRCode
-              data={`upi://pay?pa=${encodeURIComponent(eventData.upiId)}&pn=Kratos%202026&cu=INR&am=${totalFee}`}
-              size={160}
-              className="w-full h-full"
-            />
-          </div>
-          <div className="flex-1 space-y-4">
-            <div>
-              <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60">Official UPI ID</p>
-              <p className="text-2xl font-black tracking-tighter uppercase">{eventData.upiId}</p>
+          {eventData.requiresPayment ? (
+            <div className="w-48 h-48 bg-white p-2 border-2 border-on-surface flex items-center justify-center relative overflow-hidden">
+              <BrutalQRCode
+                data={`upi://pay?pa=${encodeURIComponent(eventData.upiId)}&pn=Kratos%202026&cu=INR&am=${totalFee}`}
+                size={160}
+                className="w-full h-full"
+              />
             </div>
-            <div>
-              <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60">Fee (Per Person)</p>
-              <p className="text-3xl font-black text-primary" style={{ textShadow: '2px 2px 0px #F9F9F9' }}>₹ {eventData.feePerPerson}.00</p>
-              <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60 mt-2">Total Fee</p>
-              <p className="text-4xl font-black text-primary" style={{ textShadow: '2px 2px 0px #F9F9F9' }}>₹ {totalFee}.00</p>
-            </div>
-            <div className="w-full">
-              <BrutalInput name="transactionId" label="Transaction / UTR ID" placeholder="Enter 12-digit UTR No." required />
-            </div>
-          </div>
-        </div>
-      </BrutalCard>
-
-      {/* STEP 3: Upload */}
-      <BrutalCard shadow={true} shadowColor="gold">
-        <StepHeader number="03" title="Upload Screenshot" />
-        
-        <CldUploadWidget 
-          uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default"}
-          onSuccess={(result) => {
-            if (result.info && typeof result.info !== 'string') {
-              setImageUrl(result.info.secure_url);
-            }
-          }}
-        >
-          {({ open }) => (
-            <div 
-              onClick={() => open()}
-              className={`border-2 border-dashed ${imageUrl ? 'border-primary bg-primary/10' : 'border-on-surface/30 bg-surface-container-low'} p-12 text-center hover:border-primary transition-colors group cursor-pointer`}
-            >
-              <span className={`material-symbols-outlined text-6xl ${imageUrl ? 'text-primary' : 'text-on-surface/20'} group-hover:text-primary mb-4 transition-colors`}>
-                {imageUrl ? 'check_circle' : 'cloud_upload'}
-              </span>
-              <p className="font-display font-bold uppercase tracking-tighter text-lg">
-                {imageUrl ? 'Screenshot Uploaded Successfully!' : 'Upload Payment Screenshot'}
-              </p>
-              <p className="text-sm opacity-60 mt-2 font-mono">
-                {imageUrl ? 'Ready for submission.' : 'JPEG, PNG or PDF (Max 5MB)'}
-              </p>
+          ) : (
+            <div className="w-48 h-48 border-2 border-on-surface flex items-center justify-center bg-primary-container text-on-primary-container font-display font-black text-center text-2xl uppercase p-6">
+              Free Entry
             </div>
           )}
-        </CldUploadWidget>
-        
-        <div className="mt-8 flex items-start gap-4 p-4 brutal-border bg-surface-container-low">
-          <input className="mt-1 w-5 h-5 brutal-border rounded-none checked:bg-primary accent-primary focus:ring-0" id="terms" type="checkbox" required />
-          <label className="text-sm font-bold leading-tight opacity-70 uppercase tracking-tight" htmlFor="terms">
-            I confirm the details and payment proof are correct.
-          </label>
-        </div>
 
-        <BrutalButton className="w-full mt-10" size="xl" disabled={loading}>
-          {loading ? 'Submitting...' : 'Complete Registration'}
-        </BrutalButton>
+          <div className="flex-1 space-y-4">
+            {eventData.requiresPayment ? (
+              <>
+                <div>
+                  <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60">Official UPI ID</p>
+                  <p className="text-2xl font-black tracking-tighter uppercase">{eventData.upiId}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60">Fee (Per Person)</p>
+                  <p className="text-3xl font-black text-primary" style={{ textShadow: '2px 2px 0px #F9F9F9' }}>{`INR ${eventData.feePerPerson}.00`}</p>
+                  <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60 mt-2">Total Fee</p>
+                  <p className="text-4xl font-black text-primary" style={{ textShadow: '2px 2px 0px #F9F9F9' }}>{`INR ${totalFee}.00`}</p>
+                </div>
+                <div className="w-full">
+                  <BrutalInput name="transactionId" label="Transaction / UTR ID" placeholder="Enter 12-digit UTR No." required />
+                </div>
+              </>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60">Registration Fee</p>
+                <p className="text-4xl font-black text-primary" style={{ textShadow: '2px 2px 0px #F9F9F9' }}>FREE</p>
+                <p className="text-sm font-bold uppercase opacity-70">
+                  No payment screenshot or transaction ID is required for this event.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </BrutalCard>
+
+      {eventData.requiresPayment ? (
+        <BrutalCard shadow={true} shadowColor="gold">
+          <StepHeader number="03" title="Upload Screenshot" />
+
+          {!uploadPreset ? (
+            <div className="border-2 border-red-600 bg-red-50 p-8 text-center">
+              <p className="font-black uppercase text-red-900">Cloudinary upload preset is missing.</p>
+              <p className="text-xs font-bold uppercase text-red-700 mt-2">
+                Add `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` before accepting registrations.
+              </p>
+            </div>
+          ) : (
+            <CldUploadWidget
+              uploadPreset={uploadPreset}
+              options={{
+                maxFiles: 1,
+                multiple: false,
+                clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+              }}
+              onSuccess={(result) => {
+                if (result.info && typeof result.info !== 'string') {
+                  setImageUrl(result.info.secure_url);
+                }
+              }}
+            >
+              {({ open }) => (
+                <div
+                  onClick={() => open()}
+                  className={`border-2 border-dashed ${imageUrl ? 'border-primary bg-primary/10' : 'border-on-surface/30 bg-surface-container-low'} p-12 text-center hover:border-primary transition-colors group cursor-pointer`}
+                >
+                  <span className={`material-symbols-outlined text-6xl ${imageUrl ? 'text-primary' : 'text-on-surface/20'} group-hover:text-primary mb-4 transition-colors`}>
+                    {imageUrl ? 'check_circle' : 'cloud_upload'}
+                  </span>
+                  <p className="font-display font-bold uppercase tracking-tighter text-lg">
+                    {imageUrl ? 'Screenshot Uploaded Successfully!' : 'Upload Payment Screenshot'}
+                  </p>
+                  <p className="text-sm opacity-60 mt-2 font-mono">
+                    {imageUrl ? 'Ready for submission.' : 'JPEG, PNG or WEBP only (Max 5MB)'}
+                  </p>
+                </div>
+              )}
+            </CldUploadWidget>
+          )}
+
+          <div className="mt-8 flex items-start gap-4 p-4 brutal-border bg-surface-container-low">
+            <input className="mt-1 w-5 h-5 brutal-border rounded-none checked:bg-primary accent-primary focus:ring-0" id="terms" type="checkbox" required />
+            <label className="text-sm font-bold leading-tight opacity-70 uppercase tracking-tight" htmlFor="terms">
+              I confirm the details and payment proof are correct.
+            </label>
+          </div>
+
+          <BrutalButton className="w-full mt-10" size="xl" disabled={loading || !uploadPreset}>
+            {loading ? 'Submitting...' : 'Complete Registration'}
+          </BrutalButton>
+        </BrutalCard>
+      ) : (
+        <BrutalCard shadow={true} shadowColor="gold">
+          <StepHeader number="03" title="Finalize Registration" />
+          <div className="p-6 brutal-border bg-surface-container-low">
+            <p className="text-sm font-bold uppercase opacity-70">
+              Review your team details and complete the registration. Free events go straight into the dashboard once submitted.
+            </p>
+          </div>
+          <div className="mt-8 flex items-start gap-4 p-4 brutal-border bg-surface-container-low">
+            <input className="mt-1 w-5 h-5 brutal-border rounded-none checked:bg-primary accent-primary focus:ring-0" id="terms-free" type="checkbox" required />
+            <label className="text-sm font-bold leading-tight opacity-70 uppercase tracking-tight" htmlFor="terms-free">
+              I confirm the registration details are correct.
+            </label>
+          </div>
+
+          <BrutalButton className="w-full mt-10" size="xl" disabled={loading}>
+            {loading ? 'Submitting...' : 'Complete Registration'}
+          </BrutalButton>
+        </BrutalCard>
+      )}
     </form>
   );
 }

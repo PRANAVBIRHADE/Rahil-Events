@@ -1,15 +1,14 @@
 'use client';
 
 import React from 'react';
+import { motion, type HTMLMotionProps } from 'framer-motion';
 import { cn } from '@/lib/utils'; // I'll need to create this helper
 
-interface BrutalButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface BrutalButtonProps extends HTMLMotionProps<'button'> {
   variant?: 'primary' | 'secondary' | 'outline';
   size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
 }
-
-import { motion } from 'framer-motion';
 
 const BrutalButton = ({
   variant = 'primary',
@@ -41,8 +40,7 @@ const BrutalButton = ({
         sizes[size],
         className
       )}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      {...(props as any)}
+      {...props}
     >
       {children}
     </motion.button>

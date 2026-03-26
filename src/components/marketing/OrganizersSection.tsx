@@ -24,12 +24,12 @@ export default async function OrganizersSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {all.map((o) => (
-            <BrutalCard key={o.id} className="p-8" shadowColor="gold">
+          {all.map((organizer) => (
+            <BrutalCard key={organizer.id} className="p-8" shadowColor="gold">
               <div className="space-y-3">
-                <div className="font-black uppercase text-2xl">{o.organizerName}</div>
-                <div className="text-xs font-bold uppercase opacity-70">{o.role || '—'}</div>
-                <div className="font-mono text-sm opacity-80">{o.contact || '—'}</div>
+                <div className="font-black uppercase text-2xl">{organizer.organizerName}</div>
+                <div className="text-xs font-bold uppercase opacity-70">{organizer.role || 'TBA'}</div>
+                <div className="font-mono text-sm opacity-80">{organizer.contact || 'TBA'}</div>
               </div>
             </BrutalCard>
           ))}
@@ -38,4 +38,3 @@ export default async function OrganizersSection() {
     </section>
   );
 }
-

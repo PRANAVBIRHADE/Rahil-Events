@@ -15,10 +15,11 @@ type SearchParams = {
   phone?: string;
 };
 
-export default async function AdminCheckInPage({ searchParams }: { searchParams: SearchParams }) {
-  const teamCode = searchParams.teamCode?.trim() || '';
-  const name = searchParams.name?.trim() || '';
-  const phone = searchParams.phone?.trim() || '';
+export default async function AdminCheckInPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  const resolvedSearchParams = await searchParams;
+  const teamCode = resolvedSearchParams.teamCode?.trim() || '';
+  const name = resolvedSearchParams.name?.trim() || '';
+  const phone = resolvedSearchParams.phone?.trim() || '';
 
   const shouldSearch = teamCode.length > 0 || name.length > 0 || phone.length > 0;
 
@@ -54,35 +55,31 @@ export default async function AdminCheckInPage({ searchParams }: { searchParams:
         .innerJoin(users, eq(registrations.userId, users.id))
         .innerJoin(events, eq(registrations.eventId, events.id))
         .innerJoin(teamMembers, eq(registrations.teamId, teamMembers.teamId))
-        .where(eq(registrations.id, teamCode));
+        .where(sql`CAST(${registrations.id} AS text) ILIKE ${`${teamCode}%`}`);
 
-      // Dedupe per registration id (teamMembers join may create duplicates).
       const byId = new Map<string, (typeof rows)[number]>();
-      for (const r of rows) byId.set(r.regId, r);
-      results = Array.from(byId.values()).map((r) => ({
-        regId: r.regId,
-        eventName: r.eventName,
-        teamName: r.teamName,
-        regStatus: r.regStatus ?? 'PENDING',
-        checkedIn: r.checkedIn,
-        checkedInAt: r.checkedInAt ?? null,
-        memberName: r.memberName,
-        memberPhone: r.memberPhone ?? null,
-        memberCollege: r.memberCollege ?? null,
-        userPhone: r.userPhone ?? null,
+      for (const row of rows) byId.set(row.regId, row);
+      results = Array.from(byId.values()).map((row) => ({
+        regId: row.regId,
+        eventName: row.eventName,
+        teamName: row.teamName,
+        regStatus: row.regStatus ?? 'PENDING',
+        checkedIn: row.checkedIn,
+        checkedInAt: row.checkedInAt ?? null,
+        memberName: row.memberName,
+        memberPhone: row.memberPhone ?? null,
+        memberCollege: row.memberCollege ?? null,
+        userPhone: row.userPhone ?? null,
       }));
     } else {
       type SqlFragment = ReturnType<typeof sql>;
       const conditions: SqlFragment[] = [];
+
       if (name) {
-        conditions.push(
-          sql`LOWER(${teamMembers.name}) LIKE ${'%' + name.toLowerCase() + '%'}`,
-        );
+        conditions.push(sql`LOWER(${teamMembers.name}) LIKE ${`%${name.toLowerCase()}%`}`);
       }
       if (phone) {
-        conditions.push(
-          sql`LOWER(${teamMembers.phone}) LIKE ${'%' + phone.toLowerCase() + '%'}`,
-        );
+        conditions.push(sql`LOWER(${teamMembers.phone}) LIKE ${`%${phone.toLowerCase()}%`}`);
       }
 
       const whereClause = conditions.length > 1 ? sql`${conditions[0]} AND ${conditions[1]}` : conditions[0];
@@ -107,18 +104,18 @@ export default async function AdminCheckInPage({ searchParams }: { searchParams:
         .where(whereClause);
 
       const byId = new Map<string, (typeof rows)[number]>();
-      for (const r of rows) byId.set(r.regId, r);
-      results = Array.from(byId.values()).map((r) => ({
-        regId: r.regId,
-        eventName: r.eventName,
-        teamName: r.teamName,
-        regStatus: r.regStatus ?? 'PENDING',
-        checkedIn: r.checkedIn,
-        checkedInAt: r.checkedInAt ?? null,
-        memberName: r.memberName,
-        memberPhone: r.memberPhone ?? null,
-        memberCollege: r.memberCollege ?? null,
-        userPhone: r.userPhone ?? null,
+      for (const row of rows) byId.set(row.regId, row);
+      results = Array.from(byId.values()).map((row) => ({
+        regId: row.regId,
+        eventName: row.eventName,
+        teamName: row.teamName,
+        regStatus: row.regStatus ?? 'PENDING',
+        checkedIn: row.checkedIn,
+        checkedInAt: row.checkedInAt ?? null,
+        memberName: row.memberName,
+        memberPhone: row.memberPhone ?? null,
+        memberCollege: row.memberCollege ?? null,
+        userPhone: row.userPhone ?? null,
       }));
     }
   }
@@ -167,7 +164,7 @@ export default async function AdminCheckInPage({ searchParams }: { searchParams:
 
           <div className="md:col-span-3 flex gap-4 pt-2">
             <BrutalButton type="submit" variant="secondary" size="sm">
-              SEARCH & SHOW
+              SEARCH &amp; SHOW
             </BrutalButton>
             <Link
               href="/admin/checkin"
@@ -204,27 +201,27 @@ export default async function AdminCheckInPage({ searchParams }: { searchParams:
                       </td>
                     </tr>
                   ) : (
-                    results.map((r) => (
-                      <tr key={r.regId} className="hover:bg-primary-container/10 transition-colors">
+                    results.map((result) => (
+                      <tr key={result.regId} className="hover:bg-primary-container/10 transition-colors">
                         <td className="p-4">
-                          <div className="font-mono text-xs opacity-70">{r.regId.substring(0, 18)}</div>
-                          <div className="font-bold uppercase text-sm truncate max-w-[220px]">{r.teamName || r.memberName}</div>
-                          <div className="text-[10px] opacity-60 uppercase truncate max-w-[220px]">{r.memberName} {r.memberPhone ? `(${r.memberPhone})` : ''}</div>
+                          <div className="font-mono text-xs opacity-70">{result.regId.substring(0, 18)}</div>
+                          <div className="font-bold uppercase text-sm truncate max-w-[220px]">{result.teamName || result.memberName}</div>
+                          <div className="text-[10px] opacity-60 uppercase truncate max-w-[220px]">{result.memberName} {result.memberPhone ? `(${result.memberPhone})` : ''}</div>
                         </td>
                         <td className="p-4">
-                          <div className="font-black uppercase text-xs text-primary truncate max-w-[220px]">{r.eventName}</div>
+                          <div className="font-black uppercase text-xs text-primary truncate max-w-[220px]">{result.eventName}</div>
                         </td>
                         <td className="p-4">
                           <span className="px-2 py-0.5 border-2 text-[10px] font-black uppercase bg-surface">
-                            {r.regStatus}
+                            {result.regStatus}
                           </span>
                         </td>
                         <td className="p-4">
-                          {r.checkedIn ? (
+                          {result.checkedIn ? (
                             <div className="text-xs font-bold uppercase">
                               CHECKED-IN
-                              {r.checkedInAt ? (
-                                <div className="text-[10px] opacity-60 font-mono">{r.checkedInAt.toLocaleString()}</div>
+                              {result.checkedInAt ? (
+                                <div className="text-[10px] opacity-60 font-mono">{result.checkedInAt.toLocaleString()}</div>
                               ) : null}
                             </div>
                           ) : (
@@ -232,14 +229,14 @@ export default async function AdminCheckInPage({ searchParams }: { searchParams:
                           )}
                         </td>
                         <td className="p-4 text-center">
-                          {r.checkedIn ? null : (
+                          {result.checkedIn ? null : (
                             <form action={markRegistrationCheckedIn}>
-                              <input type="hidden" name="id" value={r.regId} />
+                              <input type="hidden" name="id" value={result.regId} />
                               <BrutalButton
                                 type="submit"
                                 variant="outline"
                                 size="sm"
-                                disabled={r.regStatus !== 'APPROVED'}
+                                disabled={result.regStatus !== 'APPROVED'}
                                 className="w-full"
                               >
                                 Mark as Checked-In
@@ -259,4 +256,3 @@ export default async function AdminCheckInPage({ searchParams }: { searchParams:
     </div>
   );
 }
-

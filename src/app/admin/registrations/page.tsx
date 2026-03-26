@@ -14,7 +14,7 @@ export default async function AdminRegistrationsPage() {
     participantName: users.name,
     participantEmail: users.email,
     moduleName: events.name,
-    amount: events.fee,
+    amount: registrations.totalFee,
     status: registrations.status,
     createdAt: registrations.createdAt,
     transactionId: registrations.transactionId,

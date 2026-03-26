@@ -10,10 +10,10 @@ const CTA = () => {
       </div>
       <div className="max-w-[1440px] mx-auto text-center relative z-10">
         <h2 className="text-5xl md:text-8xl font-black uppercase tracking-tighter mb-8 leading-none">
-          ENGINEERING IS <br /><span className="text-primary-container">ART IN MOTION</span>
+          READY TO <br /><span className="text-primary-container">COMPETE?</span>
         </h2>
         <p className="text-xl md:text-2xl font-sans max-w-2xl mx-auto mb-12 opacity-80">
-          Be part of the most precise technical festival of 2026. Registration closes in 72 hours.
+          Registrations are now open. Choose your events, form your team, and be part of KRATOS 2026. Limited time to register.
         </p>
         <div className="flex justify-center">
           <Link href="/auth/register">

@@ -8,11 +8,11 @@ export const dynamic = 'force-dynamic';
 
 export default async function ThreeDSchedule() {
   const slotDefs = [
-    { sortIndex: 1, time: '9:00 AM – 10:00 AM', day1: 'Registration + Inauguration', day2: 'Briefing + Late Registration' },
-    { sortIndex: 2, time: '10:00 AM – 1:00 PM', day1: 'Round 1 of all events (Prelims)', day2: 'Finals of selected events' },
-    { sortIndex: 3, time: '1:00 PM – 2:00 PM', day1: 'Lunch Break', day2: 'Lunch Break' },
-    { sortIndex: 4, time: '2:00 PM – 5:30 PM', day1: 'Round 2 / Main Events', day2: 'Finals, Project Expo, Demos' },
-    { sortIndex: 5, time: '5:30 PM – 6:00 PM', day1: 'Day 1 wrap-up', day2: 'Prize Distribution + Closing Ceremony' },
+    { sortIndex: 1, time: '10:30 AM - 11:00 AM', day1: 'Opening Ceremony', day2: 'Events Begin' },
+    { sortIndex: 2, time: '11:00 AM - 01:00 PM', day1: 'Multiple events', day2: 'Multiple events' },
+    { sortIndex: 3, time: '01:00 PM - 01:30 PM', day1: 'Lunch Break', day2: 'Lunch Break' },
+    { sortIndex: 4, time: '01:30 PM - 04:00 PM', day1: 'Multiple events', day2: 'Final rounds and judging' },
+    { sortIndex: 5, time: '04:00 PM - 05:30 PM', day1: 'Wrap-up and qualifiers', day2: 'Prize Distribution' },
   ];
 
   const scheduleRows = await db
@@ -28,43 +28,34 @@ export default async function ThreeDSchedule() {
     .leftJoin(events, eq(scheduleSlots.linkedEventId, events.id));
 
   if (!scheduleRows || scheduleRows.length === 0) {
-    // Backward-compatible fallback to old hardcoded schedule.
     return (
       <ThreeDScheduleClient
-        scheduleData={slotDefs.map((s) => ({
-          time: s.time,
-          day1: s.day1,
-          day2: s.day2,
-          day1Venue: 'Main Arena',
-          day2Venue: 'Main Arena',
-          isBreak: s.sortIndex === 3,
+        scheduleData={slotDefs.map((slot) => ({
+          time: slot.time,
+          day1: slot.day1,
+          day2: slot.day2,
+          day1Venue: 'Auditorium',
+          day2Venue: 'Main Campus',
+          isBreak: slot.sortIndex === 3,
         }))}
       />
     );
   }
 
   const byKey = new Map<string, (typeof scheduleRows)[number]>();
-  for (const r of scheduleRows) {
-    byKey.set(`${r.day}-${r.sortIndex}`, r);
+  for (const row of scheduleRows) {
+    byKey.set(`${row.day}-${row.sortIndex}`, row);
   }
 
-  const scheduleData = slotDefs.map((s) => {
-    const day1Row = byKey.get(`1-${s.sortIndex}`);
-    const day2Row = byKey.get(`2-${s.sortIndex}`);
-    const isBreak = s.sortIndex === 3;
-
-    const day1EventLabel = isBreak
-      ? 'Lunch Break'
-      : day1Row?.linkedEventName || s.day1;
-
-    const day2EventLabel = isBreak
-      ? 'Lunch Break'
-      : day2Row?.linkedEventName || s.day2;
+  const scheduleData = slotDefs.map((slot) => {
+    const day1Row = byKey.get(`1-${slot.sortIndex}`);
+    const day2Row = byKey.get(`2-${slot.sortIndex}`);
+    const isBreak = slot.sortIndex === 3;
 
     return {
-      time: s.time,
-      day1: day1EventLabel,
-      day2: day2EventLabel,
+      time: day1Row?.timeSlot || day2Row?.timeSlot || slot.time,
+      day1: isBreak ? 'Lunch Break' : day1Row?.linkedEventName || slot.day1,
+      day2: isBreak ? 'Lunch Break' : day2Row?.linkedEventName || slot.day2,
       day1Venue: day1Row?.venue ?? null,
       day2Venue: day2Row?.venue ?? null,
       isBreak,

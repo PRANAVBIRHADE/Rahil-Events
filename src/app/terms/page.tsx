@@ -1,6 +1,4 @@
 import React from 'react';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 
 export const metadata = {
   title: 'Terms of Service | Kratos 2026',
@@ -8,10 +6,8 @@ export const metadata = {
 
 export default function TermsPage() {
   return (
-    <main className="min-h-screen bg-surface selection:bg-primary selection:text-on-primary font-sans flex flex-col">
-      <Navbar />
-      
-      <div className="flex-grow pt-32 pb-24 px-6 max-w-[800px] mx-auto w-full">
+    <main className="min-h-screen bg-surface selection:bg-primary selection:text-on-primary font-sans">
+      <div className="pt-12 pb-24 px-6 max-w-[800px] mx-auto w-full">
         <div className="mb-16">
           <span className="text-sm font-display font-bold uppercase tracking-widest text-primary mb-2 block">Legal Directives</span>
           <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-8">Terms of Service</h1>
@@ -19,32 +15,30 @@ export default function TermsPage() {
 
         <div className="space-y-8 font-sans opacity-80 leading-relaxed">
           <p>
-            Welcome to KRATOS 2026. These terms and conditions outline the rules and regulations for engaging with the KRATOS TECHNICAL FESTIVAL infrastructure and operational modules.
-          </p>
-          
-          <h2 className="text-2xl font-black uppercase text-on-surface opacity-100">1. Acceptance of Protocol</h2>
-          <p>
-            By accessing this digital platform, we assume you accept these terms and conditions. Do not continue to use KRATOS 2026 if you do not agree to take all of the terms and conditions stated on this page.
+            Welcome to KRATOS 2026. These terms outline the rules and responsibilities for using the registration system, participant dashboard, check-in tools, and public festival content.
           </p>
 
-          <h2 className="text-2xl font-black uppercase text-on-surface opacity-100">2. Module Registration & Verification</h2>
+          <h2 className="text-2xl font-black uppercase text-on-surface opacity-100">1. Acceptance of Protocol</h2>
           <p>
-            Participation in KRATOS 2026 events requires official registration via our dashboard. All provided identities and institutional affiliations must be accurate. The Command Center reserves the right to terminate access or disqualify participants found bypassing verification protocols or submitting falsified intel.
+            By accessing this platform, you agree to the terms and conditions stated here. If you do not agree, do not continue to use KRATOS 2026 services.
+          </p>
+
+          <h2 className="text-2xl font-black uppercase text-on-surface opacity-100">2. Registration &amp; Verification</h2>
+          <p>
+            Participation in KRATOS 2026 requires accurate registration details. Organizers may reject, suspend, or remove registrations that contain false information or invalid payment proof.
           </p>
 
           <h2 className="text-2xl font-black uppercase text-on-surface opacity-100">3. Operational Conduct</h2>
           <p>
-            All operatives (participants) are expected to maintain professional conduct during both physical and digital events. Any attempts to sabotage the technical infrastructure, manipulate leaderboards, or disrupt the festival&apos;s network will result in immediate extraction from the premises and severe academic penalties.
+            Participants are expected to maintain professional conduct during physical and digital events. Any attempt to damage the platform, disrupt the event, or misrepresent results may lead to disqualification.
           </p>
 
           <h2 className="text-2xl font-black uppercase text-on-surface opacity-100">4. Modifications</h2>
           <p>
-            The Command Center holds absolute authority to modify, inject, or extract rules pertaining to individual event modules at any given timeframe prior to execution. Participants will be notified via their registered communication channels.
+            The organizing team may update event rules, schedules, or operational details before execution. Important changes will be communicated through official KRATOS 2026 channels.
           </p>
         </div>
       </div>
-
-      <Footer />
     </main>
   );
 }

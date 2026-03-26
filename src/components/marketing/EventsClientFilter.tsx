@@ -1,21 +1,30 @@
 'use client';
 
 import React, { Suspense } from 'react';
+import type { InferSelectModel } from 'drizzle-orm';
 import Link from 'next/link';
+import { events } from '@/db/schema';
+
+type EventRecord = InferSelectModel<typeof events>;
+type EventCardRecord = Pick<EventRecord, 'id' | 'name' | 'description' | 'tagline' | 'slug' | 'fee' | 'format'>;
 
 const getFormatLabel = (format: string | null) => {
-  switch(format) {
-    case 'TEAM': return 'TEAM FORMAT';
-    case 'SOLO_TEAM': return 'SOLO/TEAM FORMAT';
-    case 'SOLO_PAIR': return 'SOLO/PAIR FORMAT';
-    case 'SOLO_TEAM_ASSIGNED': return 'SOLO (TEAM ASSIGNED)';
+  switch (format) {
+    case 'TEAM':
+      return 'TEAM FORMAT';
+    case 'SOLO_TEAM':
+      return 'SOLO/TEAM FORMAT';
+    case 'SOLO_PAIR':
+      return 'SOLO/PAIR FORMAT';
+    case 'SOLO_TEAM_ASSIGNED':
+      return 'SOLO (TEAM ASSIGNED)';
     case 'SOLO':
-    default: return 'SOLO FORMAT';
+    default:
+      return 'SOLO FORMAT';
   }
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function FilterContent({ allEvents }: { allEvents: any[] }) {
+function FilterContent({ allEvents }: { allEvents: EventCardRecord[] }) {
   if (!allEvents || allEvents.length === 0) {
     return (
       <div className="font-display font-bold uppercase text-on-surface opacity-50 tracking-widest text-center py-20">
@@ -43,11 +52,11 @@ function FilterContent({ allEvents }: { allEvents: any[] }) {
                 {event.description || event.tagline || 'Event details coming soon...'}
               </p>
             </div>
-            <Link 
-              href={`/events/${event.slug}/register`} 
+            <Link
+              href={`/events/${event.slug}/register`}
               className="font-display font-bold uppercase border-b-2 border-on-surface w-fit hover:border-primary transition-colors block mt-8"
             >
-              Register for Event [₹{event.fee}]
+              {`Register for Event [INR ${event.fee}]`}
             </Link>
           </div>
         ))}
@@ -56,8 +65,7 @@ function FilterContent({ allEvents }: { allEvents: any[] }) {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function EventsClientFilter({ allEvents }: { allEvents: any[] }) {
+export default function EventsClientFilter({ allEvents }: { allEvents: EventCardRecord[] }) {
   return (
     <Suspense fallback={<div className="font-display font-bold uppercase text-primary tracking-widest">LOADING EVENTS...</div>}>
       <FilterContent allEvents={allEvents} />

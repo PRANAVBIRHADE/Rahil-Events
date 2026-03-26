@@ -30,7 +30,7 @@ const Hero = () => {
             transition={{ delay: 0.2 }}
             className="inline-block px-3 py-1 bg-primary-container brutal-border text-on-primary-container font-display font-bold uppercase text-xs mb-6 tracking-widest"
           >
-            Largest Tech Festival at Matoshri
+            Annual Technical Festival of MPGI Engineering
           </motion.span>
           <motion.h1 
             initial={{ opacity: 0, scale: 0.9 }}
@@ -46,7 +46,7 @@ const Hero = () => {
             transition={{ delay: 0.6 }}
             className="text-xl md:text-2xl font-sans max-w-xl mb-6 border-l-4 border-on-surface pl-6"
           >
-            Welcome to the ultimate tech celebration. Experience innovation, compete in exciting events, and build the future with us.
+            Experience two days of innovation, competition, and creativity at KRATOS 2026. From coding challenges and hardware builds to design, gaming, and problem-solving events, this is where engineers come to test their skills, collaborate, and compete. Open to all engineering branches, KRATOS is designed to maximize participation, learning, and real-world exposure.
           </motion.p>
           
           <motion.div 
@@ -76,14 +76,14 @@ const Hero = () => {
           initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
           animate={{ opacity: 1, scale: 1, rotate: 3 }}
           transition={{ delay: 0.5, duration: 1 }}
-          className="w-full md:w-1/3 relative"
+          className="w-full md:w-1/3 relative flex justify-center md:justify-end"
         >
-          <div className="brutal-border p-2 hard-shadow-gold bg-on-surface aspect-square flex items-center justify-center overflow-hidden">
+          <div className="brutal-border p-1 hard-shadow-gold bg-on-surface w-full md:w-80 h-72 md:h-80 flex items-center justify-center overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
-              className="w-full h-full object-cover grayscale contrast-125 hover:scale-110 transition-transform duration-500" 
+              className="w-full h-full object-contain grayscale contrast-125 hover:scale-105 transition-transform duration-500" 
               alt="Technical machinery blueprint" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqzdYyF2iEmrG87Zwmc_cylxrpguxn6c7VOcGdZlZiBxK4b2YqBgJpXmQq455XvUk9A856skAmSt3AP9jUWZn8cZRZg9DsZKrESjJoaSePY2A1y_3JztG18AhWUUci7w0IeYKsMTWPIZx_OrsVGMtRtfvoUtvRTwxxd6cSdb-3_RazjewrbN5lwPrYJu5NkkEwN2k6whoLpL_LvIOuceCo1MnpE4aeIlKJJIeNPa_yj2Vr_aFVbTdXFZ55Qz2DDJu46Vxl_VNlBgg" 
+              src="/event-card.png" 
             />
           </div>
           <div className="absolute -bottom-8 -left-8 brutal-border bg-primary-container p-6 hidden md:block">

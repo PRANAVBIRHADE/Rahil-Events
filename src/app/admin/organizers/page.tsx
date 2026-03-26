@@ -17,7 +17,7 @@ export default async function AdminOrganizersPage() {
       <div className="mb-12 flex justify-between items-end">
         <div>
           <h1 className="text-5xl font-black uppercase tracking-tighter mb-2 italic">Organizer Management</h1>
-          <p className="font-display font-bold uppercase text-primary tracking-widest text-sm">Create & publish organizer details</p>
+          <p className="font-display font-bold uppercase text-primary tracking-widest text-sm">Create &amp; publish organizer details</p>
         </div>
         <Link href="/admin/dashboard" className="border-b-2 border-on-surface font-black uppercase text-xs hover:text-primary hover:border-primary transition-colors">
           &larr; Return to Command Center
@@ -85,14 +85,14 @@ export default async function AdminOrganizersPage() {
                       </td>
                     </tr>
                   ) : (
-                    allOrganizers.map((o) => (
-                      <tr key={o.id} className="hover:bg-primary-container/10 transition-colors">
-                        <td className="p-4 font-bold uppercase">{o.organizerName}</td>
-                        <td className="p-4 text-xs opacity-70 uppercase">{o.role || '—'}</td>
-                        <td className="p-4 font-mono text-xs opacity-70">{o.contact || '—'}</td>
+                    allOrganizers.map((organizer) => (
+                      <tr key={organizer.id} className="hover:bg-primary-container/10 transition-colors">
+                        <td className="p-4 font-bold uppercase">{organizer.organizerName}</td>
+                        <td className="p-4 text-xs opacity-70 uppercase">{organizer.role || 'TBA'}</td>
+                        <td className="p-4 font-mono text-xs opacity-70">{organizer.contact || 'TBA'}</td>
                         <td className="p-4 text-center">
                           <form action={deleteOrganizer}>
-                            <input type="hidden" name="id" value={o.id} />
+                            <input type="hidden" name="id" value={organizer.id} />
                             <BrutalButton type="submit" size="sm" variant="secondary" className="bg-red-100 border-red-800 text-red-800">
                               DELETE
                             </BrutalButton>
@@ -110,4 +110,3 @@ export default async function AdminOrganizersPage() {
     </div>
   );
 }
-

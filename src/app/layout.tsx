@@ -6,10 +6,9 @@ import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import Footer from "@/components/layout/Footer";
 import GlobalMotionLayer from "@/components/layout/GlobalMotionLayer";
 
-
 export const metadata: Metadata = {
   title: "KRATOS 2026 | Technical Festival",
-  description: "Matoshri Engineering Festival. A convergence of logic, design, and raw technical power.",
+  description: "Annual Technical Festival of MPGI Engineering - Build. Compete. Innovate. Two days of innovation, competition, and creativity at Matoshri Pratishthan Group of Institutions, Nanded.",
 };
 
 export default function RootLayout({

@@ -23,6 +23,18 @@ export async function createEvent(formData: FormData) {
   const expectedParticipants = expectedParticipantsRaw ? parseInt(expectedParticipantsRaw) : null;
   const prizeDetails = (formData.get('prizeDetails') as string) || null;
 
+  if (!name.trim()) {
+    return { error: 'Event name is required.' };
+  }
+
+  if (Number.isNaN(fee) || fee < 0) {
+    return { error: 'Fee must be zero or greater.' };
+  }
+
+  if (teamSizeMin > teamSize) {
+    return { error: 'Min team size cannot be greater than max team size.' };
+  }
+
   const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
   try {
@@ -166,11 +178,11 @@ export async function updateSchedules(formData: FormData) {
 
 export async function updateScheduleSlots(formData: FormData) {
   const slotDefs = [
-    { sortIndex: 1, timeSlot: '9:00 AM – 10:00 AM' },
-    { sortIndex: 2, timeSlot: '10:00 AM – 1:00 PM' },
-    { sortIndex: 3, timeSlot: '1:00 PM – 2:00 PM' },
-    { sortIndex: 4, timeSlot: '2:00 PM – 5:30 PM' },
-    { sortIndex: 5, timeSlot: '5:30 PM – 6:00 PM' },
+    { sortIndex: 1, timeSlot: '10:30 AM - 11:00 AM' },
+    { sortIndex: 2, timeSlot: '11:00 AM - 01:00 PM' },
+    { sortIndex: 3, timeSlot: '01:00 PM - 01:30 PM' },
+    { sortIndex: 4, timeSlot: '01:30 PM - 04:00 PM' },
+    { sortIndex: 5, timeSlot: '04:00 PM - 05:30 PM' },
   ];
 
   try {
@@ -240,6 +252,15 @@ export async function updateEvent(formData: FormData) {
   const teamSize = parseInt(formData.get('teamSize') as string);
   const teamSizeMinRaw = (formData.get('teamSizeMin') as string) || null;
   const teamSizeMin = teamSizeMinRaw ? parseInt(teamSizeMinRaw) : undefined;
+
+  if (Number.isNaN(fee) || Number.isNaN(teamSize) || (teamSizeMin !== undefined && Number.isNaN(teamSizeMin))) {
+    return { error: 'Fee and team sizes must be valid numbers.' };
+  }
+
+  if (teamSizeMin !== undefined && teamSizeMin > teamSize) {
+    return { error: 'Min team size cannot be greater than max team size.' };
+  }
+
   try {
     await db
       .update(events)
@@ -300,7 +321,7 @@ export async function completeProfile(formData: FormData) {
 
 export async function createRegistration(formData: FormData) {
   const eventId = formData.get('eventId') as string;
-  const paymentScreenshot = formData.get('paymentScreenshot') as string;
+  const paymentScreenshot = (formData.get('paymentScreenshot') as string) || null;
   const teamName = formData.get('teamName') as string || null;
   const transactionId = formData.get('transactionId') as string || null;
   const paymentNotes = (formData.get('paymentNotes') as string) || null;
@@ -364,9 +385,18 @@ export async function createRegistration(formData: FormData) {
   }
 
   const resolvedTeamName = teamName || `${dbUser.name}'s Team`;
-  // Backward-compatible fallback: older deployments only stored per-module fee in `events.fee`.
-  const resolvedFeePerPerson = feePerPerson && feePerPerson > 0 ? feePerPerson : event.fee;
+  const resolvedFeePerPerson =
+    event.fee === 0
+      ? 0
+      : feePerPerson && feePerPerson > 0
+        ? feePerPerson
+        : event.fee;
   const totalFee = resolvedFeePerPerson * memberCount;
+  const requiresPayment = totalFee > 0;
+
+  if (requiresPayment && (!paymentScreenshot || !transactionId)) {
+    return { error: 'Payment screenshot and transaction ID are required for paid events.' };
+  }
 
   // Check existing registration
   const existing = await db.select().from(registrations).where(and(eq(registrations.eventId, eventId), eq(registrations.userId, dbUser.id)));
@@ -413,11 +443,11 @@ export async function createRegistration(formData: FormData) {
         teamId: insertedTeam.id,
         teamName: resolvedTeamName,
         members: legacyAdditionalMembers,
-        transactionId,
-        paymentScreenshot,
+        transactionId: requiresPayment ? transactionId : null,
+        paymentScreenshot: requiresPayment ? paymentScreenshot : null,
         paymentNotes,
         totalFee,
-        status: 'PENDING',
+        status: requiresPayment ? 'PENDING' : 'APPROVED',
       });
     });
 
@@ -570,6 +600,10 @@ export async function updateRegistrationSettings(formData: FormData) {
   const deadlineRaw = (formData.get('deadline') as string) || '';
   const deadline = deadlineRaw ? new Date(deadlineRaw) : null;
 
+  if (Number.isNaN(feePerPerson) || feePerPerson < 0) {
+    return { error: 'Fee per person must be zero or greater.' };
+  }
+
   try {
     const existing = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
     if (existing.length === 0) {
@@ -696,3 +730,4 @@ export async function sendTeamMessage(registrationId: string, content: string) {
     return { error: 'Failed to transmit team comms.' };
   }
 }
+

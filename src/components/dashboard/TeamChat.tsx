@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useEffectEvent, useRef, useState } from 'react';
 import BrutalCard from '@/components/ui/BrutalCard';
-import BrutalInput from '@/components/ui/BrutalInput';
 import BrutalButton from '@/components/ui/BrutalButton';
 import { sendTeamMessage } from '@/lib/actions';
 
@@ -11,31 +10,51 @@ type TeamChatProps = {
   currentUserId: string;
 };
 
+type TeamMessage = {
+  id: string;
+  content: string;
+  createdAt: string | Date | null;
+  senderId: string;
+  senderName: string;
+};
+
 export default function TeamChat({ registrationId, currentUserId }: TeamChatProps) {
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<TeamMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  async function loadMessages() {
+    try {
+      const res = await fetch(`/api/team/${registrationId}/messages`, { cache: 'no-store' });
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setMessages(data);
+      }
+    } catch (err) {
+      console.error('Comms error:', err);
+    }
+  }
+
+  const fetchMessages = useEffectEvent(() => {
+    void loadMessages();
+  });
+
   useEffect(() => {
     if (!isOpen) return;
 
-    const fetchMessages = async () => {
-      try {
-        const res = await fetch(`/api/team/${registrationId}/messages`);
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          setMessages(data);
-        }
-      } catch (err) {
-        console.error('Comms error:', err);
-      }
-    };
+    const initialFetch = setTimeout(() => {
+      void fetchMessages();
+    }, 0);
+    const interval = setInterval(() => {
+      void fetchMessages();
+    }, 4000);
 
-    fetchMessages();
-    const interval = setInterval(fetchMessages, 4000);
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(initialFetch);
+      clearInterval(interval);
+    };
   }, [isOpen, registrationId]);
 
   useEffect(() => {
@@ -49,12 +68,15 @@ export default function TeamChat({ registrationId, currentUserId }: TeamChatProp
     if (!newMessage.trim()) return;
 
     setLoading(true);
-    const content = newMessage;
+    const content = newMessage.trim();
     setNewMessage('');
     
     const result = await sendTeamMessage(registrationId, content);
     if (result.error) {
        console.error(result.error);
+       setNewMessage(content);
+    } else {
+       await loadMessages();
     }
     setLoading(false);
   }

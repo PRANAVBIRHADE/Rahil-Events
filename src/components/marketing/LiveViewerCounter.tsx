@@ -38,7 +38,7 @@ export default function LiveViewerCounter() {
       try {
         const res = await fetch('/api/presence');
         const data = await res.json();
-        if (mounted && data.count) {
+        if (mounted && typeof data.count === 'number') {
           setCount(data.count);
         }
       } catch (error) {

@@ -1,12 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import BrutalInput from '@/components/ui/BrutalInput';
+import type { InferSelectModel } from 'drizzle-orm';
+import { events } from '@/db/schema';
 import BrutalButton from '@/components/ui/BrutalButton';
 import { createSquadPost } from '@/lib/actions';
 
+type EventRecord = InferSelectModel<typeof events>;
+
 type SquadPostFormProps = {
-  events: any[];
+  events: Pick<EventRecord, 'id' | 'name'>[];
 };
 
 export default function SquadPostForm({ events }: SquadPostFormProps) {

@@ -6,6 +6,13 @@ import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 
+type AppUser = {
+  id: string;
+  name: string;
+  email: string;
+  role: 'PARTICIPANT' | 'ADMIN';
+};
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     Google({
@@ -34,8 +41,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           id: user.id,
           name: user.name,
           email: user.email,
-          role: user.role,
-        };
+          role: user.role ?? 'PARTICIPANT',
+        } satisfies AppUser;
       },
     }),
   ],
@@ -62,24 +69,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (account?.provider === 'google') {
         const existingUser = await db.select().from(users).where(eq(users.email, token.email as string)).limit(1);
         if (existingUser.length > 0) {
-          token.role = existingUser[0].role;
+          token.role = existingUser[0].role ?? 'PARTICIPANT';
           token.id = existingUser[0].id;
         } else {
           token.role = 'PARTICIPANT';
         }
       } else if (user) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        token.role = (user as any).role;
+        token.role = user.role;
         token.id = user.id;
       }
       return token;
     },
     async session({ session, token }) {
-      if (session.user) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (session.user as any).role = token.role;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (session.user as any).id = token.id;
+      if (session.user && token.id && token.role) {
+        session.user.role = token.role;
+        session.user.id = token.id;
       }
       return session;
     },

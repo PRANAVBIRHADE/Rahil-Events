@@ -7,8 +7,14 @@ import * as dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
 async function seedAdmin() {
-  const adminEmail = 'admin@kratos.fest';
-  const hashedPassword = await bcrypt.hash('KratosAdmin2026!', 10);
+  const adminEmail = process.env.SEED_ADMIN_EMAIL || 'admin@kratos.fest';
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD;
+
+  if (!adminPassword) {
+    throw new Error('SEED_ADMIN_PASSWORD is required before running seed-admin.');
+  }
+
+  const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
   const existing = await db.select().from(users).where(eq(users.email, adminEmail));
 
@@ -24,7 +30,7 @@ async function seedAdmin() {
     role: 'ADMIN',
   });
 
-  console.log('✅ Admin account created: admin@kratos.fest / KratosAdmin2026!');
+  console.log(`Admin account created for ${adminEmail}.`);
 }
 
 seedAdmin().catch(console.error);

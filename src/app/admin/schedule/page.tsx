@@ -14,16 +14,16 @@ export default async function AdminSchedulePage() {
   const existingSlots = await db.select().from(scheduleSlots);
 
   const slotDefs = [
-    { sortIndex: 1, timeSlot: '9:00 AM – 10:00 AM' },
-    { sortIndex: 2, timeSlot: '10:00 AM – 1:00 PM' },
-    { sortIndex: 3, timeSlot: '1:00 PM – 2:00 PM' },
-    { sortIndex: 4, timeSlot: '2:00 PM – 5:30 PM' },
-    { sortIndex: 5, timeSlot: '5:30 PM – 6:00 PM' },
+    { sortIndex: 1, timeSlot: '10:30 AM - 11:00 AM' },
+    { sortIndex: 2, timeSlot: '11:00 AM - 01:00 PM' },
+    { sortIndex: 3, timeSlot: '01:00 PM - 01:30 PM' },
+    { sortIndex: 4, timeSlot: '01:30 PM - 04:00 PM' },
+    { sortIndex: 5, timeSlot: '04:00 PM - 05:30 PM' },
   ];
 
   const slotByDayAndIndex = new Map<string, (typeof existingSlots)[number]>();
-  for (const s of existingSlots) {
-    slotByDayAndIndex.set(`${s.day}-${s.sortIndex}`, s);
+  for (const slot of existingSlots) {
+    slotByDayAndIndex.set(`${slot.day}-${slot.sortIndex}`, slot);
   }
 
   return (
@@ -71,10 +71,10 @@ export default async function AdminSchedulePage() {
                               disabled={isBreak}
                               className="w-full p-2 brutal-border bg-surface text-xs font-bold uppercase outline-none focus:border-primary"
                             >
-                              <option value="">— Unassigned —</option>
-                              {allEvents.map((e) => (
-                                <option key={e.id} value={e.id}>
-                                  {e.name}
+                              <option value="">- Unassigned -</option>
+                              {allEvents.map((event) => (
+                                <option key={event.id} value={event.id}>
+                                  {event.name}
                                 </option>
                               ))}
                             </select>
@@ -85,7 +85,7 @@ export default async function AdminSchedulePage() {
                               type="text"
                               name={`day1_venue_${slot.sortIndex}`}
                               defaultValue={day1Existing?.venue ?? ''}
-                              placeholder="e.g. Main Arena"
+                              placeholder="e.g. Auditorium"
                               className="w-full p-2 brutal-border bg-surface text-xs font-mono font-bold uppercase outline-none focus:border-primary"
                             />
                           </div>
@@ -101,10 +101,10 @@ export default async function AdminSchedulePage() {
                               disabled={isBreak}
                               className="w-full p-2 brutal-border bg-surface text-xs font-bold uppercase outline-none focus:border-primary"
                             >
-                              <option value="">— Unassigned —</option>
-                              {allEvents.map((e) => (
-                                <option key={e.id} value={e.id}>
-                                  {e.name}
+                              <option value="">- Unassigned -</option>
+                              {allEvents.map((event) => (
+                                <option key={event.id} value={event.id}>
+                                  {event.name}
                                 </option>
                               ))}
                             </select>
@@ -115,7 +115,7 @@ export default async function AdminSchedulePage() {
                               type="text"
                               name={`day2_venue_${slot.sortIndex}`}
                               defaultValue={day2Existing?.venue ?? ''}
-                              placeholder="e.g. Main Arena"
+                              placeholder="e.g. Auditorium"
                               className="w-full p-2 brutal-border bg-surface text-xs font-mono font-bold uppercase outline-none focus:border-primary"
                             />
                           </div>

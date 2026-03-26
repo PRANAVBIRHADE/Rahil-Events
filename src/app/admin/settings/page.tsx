@@ -12,8 +12,12 @@ export const dynamic = 'force-dynamic';
 function toDateTimeLocalValue(d: Date | null | undefined) {
   if (!d) return '';
   const date = new Date(d);
-  // `datetime-local` expects `YYYY-MM-DDTHH:mm`
-  return date.toISOString().slice(0, 16);
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  const hours = `${date.getHours()}`.padStart(2, '0');
+  const minutes = `${date.getMinutes()}`.padStart(2, '0');
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
 export default async function AdminSettingsPage() {
@@ -37,7 +41,10 @@ export default async function AdminSettingsPage() {
       </div>
 
       <BrutalCard className="p-8" shadowColor="gold">
-        <form action={updateRegistrationSettings} className="space-y-8">
+        <form action={async (formData) => {
+          'use server';
+          await updateRegistrationSettings(formData);
+        }} className="space-y-8">
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-widest opacity-60">Registration open</label>
             <input

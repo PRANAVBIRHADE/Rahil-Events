@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import BrutalButton from '@/components/ui/BrutalButton';
 import BrutalCard from '@/components/ui/BrutalCard';
 
@@ -9,7 +10,7 @@ import { notFound } from 'next/navigation';
 
 export default async function EventDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  
+
   const [dbEvent] = await db.select().from(events).where(eq(events.slug, slug));
   const [settings] = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
 
@@ -18,7 +19,11 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
   }
 
   const feePerPersonResolved =
-    settings?.feePerPerson && settings.feePerPerson > 0 ? settings.feePerPerson : dbEvent.fee;
+    dbEvent.fee === 0
+      ? 0
+      : settings?.feePerPerson && settings.feePerPerson > 0
+        ? settings.feePerPerson
+        : dbEvent.fee;
 
   const scheduleForEvent = await db
     .select()
@@ -29,7 +34,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
   const scheduleText =
     scheduleForEvent.length > 0
       ? scheduleForEvent
-          .map((s) => `D${s.day} ${s.timeSlot}${s.venue ? ` @ ${s.venue}` : ''}`)
+          .map((slot) => `D${slot.day} ${slot.timeSlot}${slot.venue ? ` @ ${slot.venue}` : ''}`)
           .join(' | ')
       : dbEvent.schedule || 'TBA';
 
@@ -39,13 +44,13 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
     description: dbEvent.description || 'Event details coming soon...',
     rules: [
       `Team size allowed: ${dbEvent.teamSizeMin ?? 1}-${dbEvent.teamSize ?? 1} members.`,
-      'Participants must bring their own hardware.',
-      'Software must be original and built during the event.',
-      'Judgment will be based on innovation and structural logic.',
+      'Participants must bring their own hardware when the event rules require it.',
+      'Submissions must be original unless the official rule sheet states otherwise.',
+      'Judgment will be based on innovation, execution, and structural clarity.',
     ],
-    fee: `₹${feePerPersonResolved} per person`,
+    fee: feePerPersonResolved > 0 ? `INR ${feePerPersonResolved} per person` : 'FREE',
     schedule: scheduleText,
-    venue: dbEvent.venue || 'COMPUTING LAB 01',
+    venue: dbEvent.venue || 'Venue TBA',
   };
 
   const deadlineText = settings?.deadline
@@ -55,7 +60,6 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
   return (
     <div className="max-w-[1440px] mx-auto px-6 py-12">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-        {/* Header Section */}
         <div className="lg:col-span-8">
           <span className="text-sm font-display font-bold uppercase text-primary tracking-[0.2em] mb-4 block">Event Details // 01</span>
           <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter mb-6 leading-tight italic">
@@ -64,18 +68,18 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
           <p className="text-2xl font-sans italic border-l-8 border-primary-container pl-6 mb-12">
             {event.tagline}
           </p>
-          
+
           <div className="prose prose-xl font-sans opacity-80 mb-16">
             <p>{event.description}</p>
           </div>
 
           <div className="space-y-12">
             <section>
-              <h2 className="text-3xl font-black uppercase italic mb-6 border-b-4 border-on-surface w-fit">Rules & Guidelines</h2>
+              <h2 className="text-3xl font-black uppercase italic mb-6 border-b-4 border-on-surface w-fit">Rules &amp; Guidelines</h2>
               <ul className="space-y-4">
-                {event.rules.map((rule, i) => (
-                  <li key={i} className="flex gap-4 items-start">
-                    <span className="font-display font-black text-primary-container text-2xl" style={{ WebkitTextStroke: '1px #1A1C1C' }}>{i + 1}</span>
+                {event.rules.map((rule, index) => (
+                  <li key={rule} className="flex gap-4 items-start">
+                    <span className="font-display font-black text-primary-container text-2xl" style={{ WebkitTextStroke: '1px #1A1C1C' }}>{index + 1}</span>
                     <p className="font-sans font-bold uppercase text-sm tracking-wide pt-1">{rule}</p>
                   </li>
                 ))}
@@ -91,7 +95,6 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
           </div>
         </div>
 
-        {/* Sidebar Actions */}
         <div className="lg:col-span-4 h-fit sticky top-32">
           <BrutalCard shadowColor="gold" className="space-y-8">
             <div className="space-y-4">
@@ -100,7 +103,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                 <span className="font-display font-black uppercase text-xl">{event.fee}</span>
               </div>
               <div className="flex justify-between border-b-2 border-on-surface pb-2">
-                <span className="text-[10px] font-black uppercase opacity-60">Time & Schedule</span>
+                <span className="text-[10px] font-black uppercase opacity-60">Time &amp; Schedule</span>
                 <span className="font-display font-black uppercase">{event.schedule}</span>
               </div>
               <div className="flex justify-between border-b-2 border-on-surface pb-2">
@@ -122,10 +125,14 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
             </div>
 
             <div className="space-y-4 pt-4">
-              <BrutalButton className="w-full" size="lg">Register Now</BrutalButton>
-              <BrutalButton className="w-full" variant="outline">View PDF Rules</BrutalButton>
+              <Link href={`/events/${dbEvent.slug}/register`} className="block">
+                <BrutalButton className="w-full" size="lg">Register Now</BrutalButton>
+              </Link>
+              <Link href="/events" className="block">
+                <BrutalButton className="w-full" variant="outline">Back to Events</BrutalButton>
+              </Link>
             </div>
-            
+
             <p className="text-[10px] font-sans italic text-center opacity-60 uppercase">
               Deadline for registration: {deadlineText}
             </p>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { db } from '@/db';
 import { users, registrations, events } from '@/db/schema';
 import { eq } from 'drizzle-orm';
@@ -11,7 +12,7 @@ import TicketCard from '@/components/dashboard/TicketCard';
 import GalleryUploadClient from '@/components/dashboard/GalleryUploadClient';
 import { systemSettings, galleryPhotos } from '@/db/schema';
 import { getPlayerRank } from '@/lib/xp';
-import { ShieldCheck, Zap } from 'lucide-react';
+import { Zap } from 'lucide-react';
 
 
 export default async function DashboardPage() {
@@ -69,7 +70,9 @@ export default async function DashboardPage() {
           </div>
         </div>
         <div className="flex gap-4">
-          <BrutalButton variant="outline" size="sm">Edit Profile</BrutalButton>
+          <Link href="/profile/complete">
+            <BrutalButton variant="outline" size="sm">Edit Profile</BrutalButton>
+          </Link>
           <LogoutButton />
         </div>
       </div>
@@ -136,7 +139,9 @@ export default async function DashboardPage() {
             </div>
 
             <div className="mt-8">
-              <BrutalButton variant="outline" className="w-full">Browse More Events</BrutalButton>
+              <Link href="/events" className="block">
+                <BrutalButton variant="outline" className="w-full">Browse More Events</BrutalButton>
+              </Link>
             </div>
           </BrutalCard>
 

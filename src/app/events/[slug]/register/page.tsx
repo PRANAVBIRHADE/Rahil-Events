@@ -10,7 +10,7 @@ import { auth } from '@/auth';
 
 export default async function RegistrationPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  
+
   const session = await auth();
   if (!session?.user?.email) redirect('/auth/login');
 
@@ -38,9 +38,17 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
 
   const upiId = settings?.upiId || '9834147160@kotak811';
   const feePerPerson =
-    settings?.feePerPerson && settings.feePerPerson > 0 ? settings.feePerPerson : event.fee;
+    event.fee === 0
+      ? 0
+      : settings?.feePerPerson && settings.feePerPerson > 0
+        ? settings.feePerPerson
+        : event.fee;
 
-  const eventData = { upiId, feePerPerson };
+  const eventData = {
+    upiId,
+    feePerPerson,
+    requiresPayment: feePerPerson > 0,
+  };
 
   const isTeamFormat = event.format === 'TEAM' || event.format === 'SOLO_TEAM' || event.format === 'SOLO_PAIR';
   const isTeamRequired = event.format === 'TEAM';
@@ -59,7 +67,6 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-        {/* Left Column: Form Steps */}
         <div className="lg:col-span-7 space-y-16">
           {isRegistrationClosed ? (
             <div className="bg-surface-container-low brutal-border p-8">
@@ -74,7 +81,7 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
               )}
             </div>
           ) : (
-            <RegistrationClientForm 
+            <RegistrationClientForm
               eventId={event.id}
               eventFormat={event.format || 'SOLO'}
               isTeamFormat={isTeamFormat}
@@ -93,42 +100,53 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
           )}
         </div>
 
-        {/* Right Column: Status & Sidebar */}
         <div className="lg:col-span-5 space-y-8 h-fit sticky top-32">
-          {/* Status Dashboard */}
           <div className="bg-on-surface text-surface p-8 hard-shadow-gold italic">
             <h3 className="font-display text-xs font-bold uppercase tracking-[0.3em] mb-6 text-primary-container">Registration Status</h3>
             <div className="space-y-6">
               <div className="flex items-center justify-between border-b border-surface/20 pb-4">
                 <span className="font-display text-sm uppercase opacity-60">Validation State</span>
-                <span className="bg-primary-container text-on-primary-container px-3 py-1 font-bold text-xs uppercase not-italic">Open</span>
+                <span className={`px-3 py-1 font-bold text-xs uppercase not-italic ${
+                  isRegistrationClosed
+                    ? 'bg-red-200 text-red-900'
+                    : 'bg-primary-container text-on-primary-container'
+                }`}>
+                  {isRegistrationClosed ? 'Closed' : 'Open'}
+                </span>
               </div>
               <div className="flex items-center justify-between border-b border-surface/20 pb-4">
                 <span className="font-display text-sm uppercase opacity-60">Max Capacity</span>
                 <span className="font-bold">{event.teamSize || 1} Members</span>
               </div>
               <div className="flex items-center justify-between border-b border-surface/20 pb-4">
-                <span className="font-display text-sm uppercase opacity-60">Registration Fee</span>
-                <span className="font-black text-primary-container">₹ {feePerPerson}</span>
+                <span className="font-display text-sm uppercase opacity-60">Registrations Received</span>
+                <span className="font-bold">{activeCount}</span>
               </div>
-              <div className="pt-4 flex items-center justify-between">
-                 <span className="font-display font-bold text-xs uppercase text-primary-container tracking-widest">Registered Teams</span>
-                 <span className="font-black text-lg">{activeCount} TEAMS</span>
+              <div className="flex items-center justify-between border-b border-surface/20 pb-4">
+                <span className="font-display text-sm uppercase opacity-60">Registration Fee</span>
+                <span className="font-black text-primary-container">
+                  {feePerPerson > 0 ? `INR ${feePerPerson}` : 'FREE'}
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Critical Instructions */}
           <BrutalCard className="bg-secondary-container/20">
             <h3 className="text-xl font-black uppercase tracking-tighter mb-6 underline">Critical Instructions</h3>
             <ul className="space-y-4">
               <li className="flex gap-4 items-start">
                 <span className="material-symbols-outlined text-primary font-bold">verified</span>
-                <p className="text-xs font-bold uppercase leading-relaxed tracking-tight">Ensure Transaction ID is visible in the uploaded screenshot for rapid verification.</p>
+                <p className="text-xs font-bold uppercase leading-relaxed tracking-tight">
+                  {eventData.requiresPayment
+                    ? 'Ensure the transaction ID is visible in the uploaded screenshot for rapid verification.'
+                    : 'No payment is required for this event, but team details must still be accurate.'}
+                </p>
               </li>
               <li className="flex gap-4 items-start">
                 <span className="material-symbols-outlined text-primary font-bold">verified</span>
-                <p className="text-xs font-bold uppercase leading-relaxed tracking-tight">Double-check your college name and branch before submission. Incorrect data may lead to rejection.</p>
+                <p className="text-xs font-bold uppercase leading-relaxed tracking-tight">
+                  Double-check your college name and branch before submission. Incorrect data may lead to rejection.
+                </p>
               </li>
             </ul>
           </BrutalCard>

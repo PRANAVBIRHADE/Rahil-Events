@@ -1,115 +1,96 @@
-# KRATOS 2026: Official Documentation
+# KRATOS 2026 Documentation
 
-Welcome to the comprehensive guide for **KRATOS 2026**, the premier inter-collegiate technical festival platform.
+## Overview
 
----
+This project is a festival operations platform built with the Next.js App Router. It supports public event discovery, participant authentication, profile completion, registration, payment proof uploads, admin verification, results publishing, and event-day check-in.
 
-## 🏗️ Project Overview & Architecture
+## Architecture
 
-KRATOS 2026 is a high-performance, edge-ready web application designed to handle hundreds of concurrent participants registering, viewing live leaderboards, and interacting with the festival infrastructure. 
+### App layer
 
-The architecture is built heavily around Server-Side Rendering (SSR) and React Server Components (RSC) to ensure lightning-fast load times and maximum SEO efficiency, heavily relying on the Next.js App Router paradigm.
+- `src/app` contains public pages, admin pages, auth pages, and API routes.
+- Route params already follow the async Next.js 16 pattern for dynamic routes.
+- Global layout renders the navbar, announcement bar, motion layer, intro sequence, and footer.
 
-### Tech Stack
-- **Framework**: [Next.js 16.2.0](https://nextjs.org/) (App Router, Turbopack enabled)
-- **UI Library**: [React 19.2](https://react.dev/)
-- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **Database**: [Neon Postgres (Serverless)](https://neon.tech/)
-- **ORM**: [Drizzle ORM](https://orm.drizzle.team/)
-- **Authentication**: [NextAuth.js v5](https://authjs.dev/) (Auth.js)
-- **Media Storage**: [Cloudinary](https://cloudinary.com/)
+### Data layer
 
----
+- Neon Postgres is accessed through Drizzle in `src/db`.
+- Core tables include `users`, `events`, `registrations`, `teams`, `team_members`, `schedule_slots`, `organizers`, `gallery_photos`, `announcements`, and `system_settings`.
 
-## 🎨 UI/UX Design Grammar (Stark-Brutalist)
+### Auth layer
 
-The platform employs a distinctly **stark, tech-brutalist** design language. This aesthetic choices reflects the engineering nature of the festival—eschewing soft shadows and rounded corners for sharp, utilitarian geometry.
+- Auth.js uses credentials and Google sign-in.
+- Session and JWT types are augmented in `src/types/next-auth.d.ts`.
+- `src/proxy.ts` protects `/admin/*` and `/dashboard/*`.
 
-### Core Visual Principles
-1. **Typography**: Heavy, aggressive use of uppercase fonts (`Space Grotesk` for display headers, `Inter` for readability, and monospace for technical data).
-2. **Colors**: High-contrast monochrome base (Pitch Black `bg-surface`, Bright White `text-on-surface`), punctuated by stark primary accents (Electric yellow/gold, alert reds) for interactive elements.
-3. **Borders & Elevation**: Elements utilizes bold, heavy borders (`brutal-border`) and solid, offset drop-shadows (`hard-shadow-gold`) instead of soft blurs.
-4. **Motion**: Crisp, snappy micro-interactions via Framer Motion. Elements scale up aggressively on hover, and global background particles provide a dynamic 3D depth layer (`GlobalMotionLayer.tsx`).
-5. **Components**:
-   - `BrutalCard`: The fundamental container layout.
-   - `BrutalButton`: High-impact interactive surfaces.
-   - `BrutalInput`: Utilitarian, terminal-style input fields. 
+### Media layer
 
----
+- Cloudinary is used for registration proof uploads and gallery uploads.
+- `next.config.ts` now whitelists `res.cloudinary.com` for `next/image`.
 
-## 🗄️ Database Schema & Entities
+## Important runtime rules
 
-The platform uses a relational architecture managed by Drizzle ORM.
+### Registration
 
-### 1. Users (`users`)
-- **Role**: Tracks both `PARTICIPANT` and `ADMIN` roles.
-- **Fields**: ID, Name, Email (Unique), Password (Hashed), Phone, College, Branch, Year, Role, CreatedAt.
+- Paid events require transaction ID plus image proof.
+- Free events skip payment proof and are created as approved registrations automatically.
+- Team size validation happens server-side before the registration is stored.
 
-### 2. Events (`events`)
-- **Role**: The technical competitions or events available for registration.
-- **Fields**: ID, Slug, Name, Description, Category, Venue, Fee, Format (`SOLO`, `TEAM`, `SOLO_TEAM`), TeamSizeMin, TeamSizeMax, ExpectedParticipants, PrizeDetails, Branch, IsCommon.
-- **Winners**: A JSONB column tracking the podium placements for post-event leaderboards.
+### Schedule
 
-### 3. Registrations (`registrations`)
-- **Role**: The nexus entity linking Users to Events.
-- **Fields**: ID, UserID, EventID, TeamID, TeamName, Status (`PENDING`, `APPROVED`, `REJECTED`), TransactionID, PaymentScreenshot (Cloudinary URL), PaymentNotes, TotalFee, CheckedIn, CheckedInAt.
+- The current build assumes 2 days and 5 slots per day.
+- Admin and public schedule views now use the confirmed KRATOS slot timings:
+  - `10:30 AM - 11:00 AM`
+  - `11:00 AM - 01:00 PM`
+  - `01:00 PM - 01:30 PM`
+  - `01:30 PM - 04:00 PM`
+  - `04:00 PM - 05:30 PM`
 
-### 4. Teams (`teams`)
-- **Role**: Persistent team entity associated with an event registration.
-- **Fields**: ID, EventID, Name, CreatedAt.
+### Tickets and QR links
 
-### 5. Team Members (`team_members`)
-- **Role**: Member-level roster storage for teams.
-- **Fields**: ID, TeamID, Name, College, Branch, Year, Phone, CreatedAt.
+- Ticket QR links use `window.location.origin` in the browser and fall back to `NEXT_PUBLIC_SITE_URL` only when needed.
 
-### 6. Schedule Slots (`schedule_slots`)
-- **Role**: Structured Day 1 / Day 2 schedule model with slot-level venue and linked events.
-- **Fields**: ID, Day, SortIndex, TimeSlot, Venue, LinkedEventID, IsBreak, CreatedAt.
+## Admin operations
 
-### 7. Organizers (`organizers`)
-- **Role**: Public-facing organizer directory and contact metadata.
-- **Fields**: ID, OrganizerName, Role, Contact, CreatedAt.
+### Dashboard
 
-### 8. System Settings (`system_settings`)
-- **Role**: Dynamic controls for real-world operations.
-- **Fields**: RegistrationOpen, UPI ID, FeePerPerson, Deadline, plus existing global toggles.
+- Shows participant count, approved team count, pending payments, verified payments, and revenue estimate.
+- Links to exports, schedules, settings, organizers, proofs, users, results, and event management.
 
----
+### Check-in
 
-## 🔐 Security & Authentication
+- Search supports registration ID prefixes, member names, and member phones.
+- Check-in is only allowed for approved registrations.
 
-Authentication is handled natively at the edge via NextAuth.js. 
+### Settings
 
-- **Providers**: Supports both Google OAuth (for rapid onboarding) and standardized Email/Password Credentials (hashed via `bcryptjs`).
-- **Role-Based Access Control (RBAC)**: All administrative routes (`/admin/*`) are heavily guarded by Next.js advanced interceptors (`src/proxy.ts`), which automatically eject any user lacking the `ADMIN` permission role back to their standard dashboard.
+- Registration deadline values are now formatted in local time for the `datetime-local` input.
 
----
+## Seeding and bootstrap
 
-## 🚀 Deployment & Operations
+### Seed scripts
 
-### Local Development Setup
-1. Clone the repository and install dependencies (`npm install`).
-2. Create your `.env.local` containing:
-   - `DATABASE_URL` (Neon Postgres)
-   - `AUTH_SECRET` (Run `npx auth secret`)
-   - Google Auth IDs (Optional)
-   - `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` (Unsigned Cloudinary upload profile)
-3. Push the schema to your fresh database: `npx drizzle-kit push`
-4. Start the Turbopack engine: `npm run dev`
+- `src/db/seed.ts` resets the main festival tables and seeds baseline event data.
+- `src/db/seed-admin.ts` creates an admin safely without hardcoded credentials.
+- Both scripts require `SEED_ADMIN_PASSWORD`.
 
-### Production Deployment
-The application is pre-configured and optimized for deployment on **Vercel**. All environments require zero-config setups, provided the corresponding Environment Variables are duplicated in the Vercel Dashboard project settings.
+### Why this changed
 
----
+- The repo previously contained hardcoded admin passwords and an incomplete data reset path.
+- Those defaults were not safe for deployment and could also leave stale child records behind.
 
-## ⚙️ Key Subsystems
+## Validation commands
 
-- **Registration Wizard**: Multi-step flow now computes total fee from global settings and stores team members individually in normalized tables.
-- **Admin Panel**: Dashboard reports total participants, total teams, pending payments, verified payments, and revenue estimate.
-- **Schedule Engine**: Admin configures Day 1 / Day 2 slots with linked events and venues, rendered dynamically on the public site.
-- **Check-In Terminal**: Admin can search by registration ID, member name, or phone and mark checked-in.
-- **Settings Panel**: Registration open/close, UPI ID, fee per person, and deadline are editable from admin settings.
-- **Organizer Management**: Organizer management in admin and public display on landing page.
-- **Memory Gallery**: An integrated tool allowing participants to upload post-event pictures.
-- **Live Leaderboard**: A real-time table showing the winners of various events.
+```bash
+npm run lint
+npx tsc --noEmit
+npm run build
+```
+
+## Deployment notes
+
+1. Set all required environment variables.
+2. Push schema changes to the target database.
+3. Seed or create the admin account with a strong `SEED_ADMIN_PASSWORD`.
+4. Confirm Cloudinary upload preset, cloud name, and site URL.
+5. Verify organizer contacts, results timing, and public content before launch.

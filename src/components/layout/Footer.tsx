@@ -15,7 +15,7 @@ const Footer = () => {
           <Link href="/sponsorships" className="text-on-surface/70 hover:text-primary transition-colors duration-200">Sponsorships</Link>
         </div>
         <div className="text-on-surface/70 text-xs font-sans uppercase tracking-widest text-center md:text-right">
-          © 2026 KRATOS TECHNICAL FESTIVAL. ENGINEERED FOR PRECISION.
+          Copyright 2026 KRATOS | Student Department | Matoshri Pratishthan Group of Institutions, Nanded
         </div>
       </div>
     </footer>

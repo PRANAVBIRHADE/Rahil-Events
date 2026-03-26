@@ -45,7 +45,10 @@ export default async function EventManagementPage() {
                     </div>
                   </td>
                   <td className="p-4 w-1/3">
-                    <form action={updateEvent} id={`update-event-${event.id}`} className="space-y-4">
+                    <form action={async (formData) => {
+                      'use server';
+                      await updateEvent(formData);
+                    }} id={`update-event-${event.id}`} className="space-y-4">
                        <input type="hidden" name="id" value={event.id} />
                        
                        <div className="flex items-center gap-4">

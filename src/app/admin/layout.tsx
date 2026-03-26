@@ -13,10 +13,7 @@ export default async function AdminLayout({
     redirect("/auth/login");
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const role = (session.user as any).role;
-
-  if (role !== "ADMIN" && role !== "SUPERADMIN") {
+  if (session.user.role !== "ADMIN") {
     redirect("/dashboard");
   }
 

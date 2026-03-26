@@ -15,6 +15,7 @@ type GalleryUploadClientProps = {
 export default function GalleryUploadClient({ isLocked, photos }: GalleryUploadClientProps) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
 
   if (isLocked) {
     return (
@@ -87,8 +88,18 @@ export default function GalleryUploadClient({ isLocked, photos }: GalleryUploadC
 
       {/* Upload Handler */}
       {canUpload ? (
+        !uploadPreset ? (
+          <div className="w-full text-center p-6 border-2 border-dashed border-red-600 bg-red-50">
+            <p className="font-black uppercase tracking-widest text-red-700">Cloudinary upload preset is missing</p>
+          </div>
+        ) : (
         <CldUploadWidget 
-          uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default"}
+          uploadPreset={uploadPreset}
+          options={{
+            maxFiles: 1,
+            multiple: false,
+            clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+          }}
           onSuccess={(result) => {
             if (result.info && typeof result.info !== 'string') {
                handleUploadSuccess(result.info.secure_url);
@@ -109,6 +120,7 @@ export default function GalleryUploadClient({ isLocked, photos }: GalleryUploadC
             </button>
           )}
         </CldUploadWidget>
+        )
       ) : (
         <div className="w-full text-center p-6 border-2 border-dashed border-primary bg-primary/10">
           <p className="font-black uppercase tracking-widest text-primary">MAXIMUM CAPACITY REACHED</p>

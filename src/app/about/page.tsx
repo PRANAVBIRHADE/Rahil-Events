@@ -10,18 +10,14 @@ import { Users, GraduationCap } from 'lucide-react';
 
 const TEAM_DATA = {
   faculty: [
-    { name: 'Prof. Name Placeholder', role: 'Faculty Coordinator', dept: 'CSE' },
-    { name: 'Dr. Name Placeholder', role: 'Chief Mentor', dept: 'Electronics' },
+    { name: 'Faculty Advisors To Be Announced', role: 'Faculty Coordination Team', dept: 'MPGI School of Engineering' },
   ],
   students: [
-    { name: 'Student Name 1', role: 'General Secretary', year: '4th Year' },
-    { name: 'Student Name 2', role: 'Technical Head', year: '3rd Year' },
-    { name: 'Student Name 3', role: 'Event Manager', year: '3rd Year' },
-    { name: 'Student Name 4', role: 'Creative Director', year: '2nd Year' },
+    { name: 'Final Student Core Team Pending Approval', role: 'Student Department', year: 'Roster Updates Soon' },
   ],
   developers: [
-    { name: 'Developer Name', role: 'Full Stack Architect', github: '#' },
-    { name: 'Designer Name', role: 'UI/UX Lead', github: '#' },
+    { name: 'Rahil Hussain', role: 'Frontend Developer', github: 'https://github.com/Rahil-dope' },
+    { name: 'Pranav Birade', role: 'Backend Developer', github: 'https://github.com/PRANAVBIRHADE' },
   ]
 };
 
