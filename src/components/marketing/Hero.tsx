@@ -46,7 +46,7 @@ const Hero = () => {
             transition={{ delay: 0.6 }}
             className="text-xl md:text-2xl font-sans max-w-xl mb-6 border-l-4 border-on-surface pl-6"
           >
-            Experience two days of innovation, competition, and creativity at KRATOS 2026. From coding challenges and hardware builds to design, gaming, and problem-solving events, this is where engineers come to test their skills, collaborate, and compete. Open to all engineering branches, KRATOS is designed to maximize participation, learning, and real-world exposure.
+            Experience two days of innovation and competition at KRATOS 2026. Engineers test skills, collaborate, and compete across coding, hardware, design, and gaming events.
           </motion.p>
           
           <motion.div 
