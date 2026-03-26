@@ -31,7 +31,7 @@ export default function RegisterPage() {
     <BrutalCard shadowColor="gold" className="max-w-xl mx-auto">
       <div className="mb-8">
         <h1 className="text-4xl font-black uppercase italic tracking-tighter mb-2">Register</h1>
-        <p className="text-sm opacity-60 font-sans uppercase font-bold tracking-wider italic">Create Personal Participant ID</p>
+        <p className="text-sm opacity-60 font-sans uppercase font-bold tracking-wider italic">Create your account</p>
       </div>
 
       <div className="mb-6">
@@ -116,7 +116,7 @@ export default function RegisterPage() {
 
         <div className="md:col-span-2">
           <BrutalButton type="submit" className="w-full" size="lg" disabled={loading}>
-            {loading ? 'INITIALIZING...' : 'Create Profile'}
+            {loading ? 'CREATING PROFILE...' : 'Create Profile'}
           </BrutalButton>
         </div>
       </form>

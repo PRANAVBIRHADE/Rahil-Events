@@ -15,7 +15,6 @@ export async function createEvent(formData: FormData) {
   const fee = parseInt(formData.get('fee') as string);
   const category = (formData.get('category') as string) || null;
   const venue = formData.get('venue') as string;
-  const branch = formData.get('branch') as string;
   const format = formData.get('format') as string || 'SOLO';
   const isCommon = formData.get('isCommon') === 'on';
   const teamSize = parseInt(formData.get('teamSize') as string) || 1;
@@ -35,7 +34,6 @@ export async function createEvent(formData: FormData) {
       category,
       fee,
       venue,
-      branch,
       format,
       isCommon,
       teamSize,

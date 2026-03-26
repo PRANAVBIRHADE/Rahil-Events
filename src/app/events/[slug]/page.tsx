@@ -36,7 +36,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
   const event = {
     name: dbEvent.name,
     tagline: dbEvent.tagline || 'Engineering the next infrastructure layer.',
-    description: dbEvent.description || 'Module details pending initialization...',
+    description: dbEvent.description || 'Event details coming soon...',
     rules: [
       `Team size allowed: ${dbEvent.teamSizeMin ?? 1}-${dbEvent.teamSize ?? 1} members.`,
       'Participants must bring their own hardware.',
@@ -57,7 +57,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Header Section */}
         <div className="lg:col-span-8">
-          <span className="text-sm font-display font-bold uppercase text-primary tracking-[0.2em] mb-4 block">Event Module // 01</span>
+          <span className="text-sm font-display font-bold uppercase text-primary tracking-[0.2em] mb-4 block">Event Details // 01</span>
           <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter mb-6 leading-tight italic">
             {event.name}
           </h1>
@@ -71,7 +71,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
 
           <div className="space-y-12">
             <section>
-              <h2 className="text-3xl font-black uppercase italic mb-6 border-b-4 border-on-surface w-fit">Standard Protocol</h2>
+              <h2 className="text-3xl font-black uppercase italic mb-6 border-b-4 border-on-surface w-fit">Rules & Guidelines</h2>
               <ul className="space-y-4">
                 {event.rules.map((rule, i) => (
                   <li key={i} className="flex gap-4 items-start">
@@ -96,15 +96,15 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
           <BrutalCard shadowColor="gold" className="space-y-8">
             <div className="space-y-4">
               <div className="flex justify-between border-b-2 border-on-surface pb-2">
-                <span className="text-[10px] font-black uppercase opacity-60">Access Fee</span>
+                <span className="text-[10px] font-black uppercase opacity-60">Registration Fee</span>
                 <span className="font-display font-black uppercase text-xl">{event.fee}</span>
               </div>
               <div className="flex justify-between border-b-2 border-on-surface pb-2">
-                <span className="text-[10px] font-black uppercase opacity-60">Schedule Slot</span>
+                <span className="text-[10px] font-black uppercase opacity-60">Time & Schedule</span>
                 <span className="font-display font-black uppercase">{event.schedule}</span>
               </div>
               <div className="flex justify-between border-b-2 border-on-surface pb-2">
-                <span className="text-[10px] font-black uppercase opacity-60">Module Venue</span>
+                <span className="text-[10px] font-black uppercase opacity-60">Venue</span>
                 <span className="font-display font-black uppercase">{event.venue}</span>
               </div>
               {dbEvent.category ? (
@@ -122,8 +122,8 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
             </div>
 
             <div className="space-y-4 pt-4">
-              <BrutalButton className="w-full" size="lg">Initialize Registration</BrutalButton>
-              <BrutalButton className="w-full" variant="outline">Consult Rules PDF</BrutalButton>
+              <BrutalButton className="w-full" size="lg">Register Now</BrutalButton>
+              <BrutalButton className="w-full" variant="outline">View PDF Rules</BrutalButton>
             </div>
             
             <p className="text-[10px] font-sans italic text-center opacity-60 uppercase">

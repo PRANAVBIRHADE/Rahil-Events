@@ -24,7 +24,7 @@ export default function ThreeDScheduleClient({ scheduleData }: { scheduleData: S
             Timeline <span className="text-primary-container">3D</span>
           </h2>
           <p className="font-display font-bold uppercase tracking-widest text-primary text-sm border-l-4 border-primary pl-4">
-            Interactive Isometric Itinerary
+            Interactive Event Schedule
           </p>
         </div>
 

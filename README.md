@@ -19,20 +19,18 @@
 
 ---
 
-## ⚡ Overview
-
-Welcome to the digital command center for **KRATOS 2026**. This repository contains the full source code for the festival's web infrastructure—a high-performance ecosystem orchestrating event registrations, live leaderboards, and administrative oversight. 
+Welcome to the **KRATOS 2026** platform hub. This repository contains the full source code for the festival's web infrastructure—a high-performance system for event registrations, live leaderboards, and management. 
 
 Moving away from generic corporate templates, this platform utilizes a custom **Tech-Brutalist UI**, featuring aggressive typography, high-contrast monochrome palettes, and snappy Framer Motion animations to deliver a memorable user experience.
 
 ## ✨ Key Features
 
 - 🎯 **Complete Event Management System**: Events now support name, description, category, venue, schedule linkage, min/max team size, expected participants, and prize details.
-- 📅 **Structured Day-Wise Schedule**: Admin-configurable Day 1 / Day 2 time slots with venue and linked event mapping, rendered publicly on the landing page.
+- 📅 **Structured Day-Wise Schedule**: Admin-configurable Day 1 / Day 2 time slots with venue and event mapping, rendered publicly on the landing page.
 - 👥 **Normalized Team System**: Dedicated `teams` and `team_members` tables with per-member details (`name`, `college`, `branch`, `year`, `phone`).
 - 💳 **Payment + Verification Workflow**: Registration stores total fee, UTR/transaction ID, payment screenshot, verification status, and admin notes.
 - ✅ **Event-Day Check-In**: Admin can search by team code (registration ID), member name, or phone and mark checked-in with timestamp.
-- 📊 **Operational Admin Dashboard**: Includes total participants, total teams, pending payments, verified payments, and revenue estimate.
+- 📊 **Admin Panel Dashboard**: Includes total participants, total teams, pending payments, verified payments, and revenue estimate.
 - 📤 **CSV Export for Ground Ops**: Exports Name, College, Event, Team, Phone, Payment status, and Check-in status.
 - 🧩 **Organizer + Settings Management**: Organizer CRUD and public display; registration settings panel for open/close, UPI ID, fee per person, and deadline.
 
@@ -77,7 +75,7 @@ Navigate to [http://localhost:3000](http://localhost:3000) to view the platform.
 
 ---
 
-## 🛡️ Administrative Override
+## 🛡️ Admin Access
 
 To evaluate the admin components locally:
 1. Initialize the app and navigate to `/admin`.
@@ -85,8 +83,8 @@ To evaluate the admin components locally:
 3. Non-admin users are automatically ejected via `src/proxy.ts` middleware.
 
 ### Admin Routes (Core Operations)
-- `/admin/dashboard` - command center metrics and quick actions
-- `/admin/events` - event/module management
+- `/admin/dashboard` - Admin Panel metrics and quick actions
+- `/admin/events` - Event management
 - `/admin/schedule` - structured day-wise schedule editor
 - `/admin/checkin` - event-day check-in search + mark
 - `/admin/settings` - registration controls, UPI, fee/person, deadline

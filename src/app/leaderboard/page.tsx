@@ -223,7 +223,7 @@ export default async function LeaderboardPage() {
                       <div className="bg-primary text-on-primary p-6 border-b-4 border-on-surface flex justify-between items-center text-left h-fit min-h-24">
                          <div>
                             <h3 className="font-display font-black text-2xl uppercase tracking-widest truncate max-w-[200px] md:max-w-xs">{evt.name}</h3>
-                            <p className="font-bold text-[10px] opacity-80 uppercase font-sans tracking-widest mt-1">Module // {evt.branch || 'Universal'}</p>
+                            <p className="font-bold text-[10px] opacity-80 uppercase font-sans tracking-widest mt-1">Event // {evt.category || 'Universal'}</p>
                          </div>
                          <span className="material-symbols-outlined text-4xl opacity-50">workspace_premium</span>
                       </div>

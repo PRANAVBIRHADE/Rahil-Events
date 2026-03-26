@@ -28,7 +28,6 @@ export const events = pgTable('events', {
   fee: integer('fee').notNull(),
   schedule: text('schedule'),
   venue: text('venue'),
-  branch: text('branch'),
   format: text('format').default('SOLO'),
   isCommon: boolean('is_common').default(false),
   teamSize: integer('team_size').default(1),

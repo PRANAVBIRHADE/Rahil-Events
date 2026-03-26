@@ -67,7 +67,7 @@ export default function TicketCard({ reg, userName, college, currentUserId }: Ti
             <span className="px-2 py-0.5 border-2 bg-red-200 text-red-900 border-red-900 text-[10px] font-black uppercase tracking-tighter">ACCESS DENIED</span>
           </div>
           <p className="text-sm font-sans font-bold text-red-800 mb-2">Transaction Verification Failed / Payment Rejected</p>
-          <p className="text-xs font-mono opacity-80 text-red-900">REF: {reg.id.substring(0,8)} | Your payment screenshot was marked invalid by Command.</p>
+          <p className="text-xs font-mono opacity-80 text-red-900">REF: {reg.id.substring(0,8)} | Your payment screenshot was marked invalid by the organizers.</p>
         </div>
         <div className="w-full md:w-auto mt-4 md:mt-0 relative z-10">
           <Link href={`/events/${reg.eventSlug}/register`}>
@@ -128,7 +128,7 @@ export default function TicketCard({ reg, userName, college, currentUserId }: Ti
                  <h2 className="text-4xl font-black uppercase italic tracking-tighter leading-none">{reg.eventName}</h2>
                  <span className="bg-[#000000] text-[#FFFFFF] px-2 py-1 font-black text-xs uppercase tracking-widest">ADMIT ONE</span>
               </div>
-              <p className="font-display font-bold uppercase text-[#705D00] text-sm tracking-widest">{isTeam ? 'Squadron Command Pass' : 'Solo Operative Pass'}</p>
+              <p className="font-display font-bold uppercase text-[#705D00] text-sm tracking-widest">{isTeam ? 'Team Pass' : 'Solo Pass'}</p>
             </div>
             
             <div className="mt-6 flex justify-between items-end">

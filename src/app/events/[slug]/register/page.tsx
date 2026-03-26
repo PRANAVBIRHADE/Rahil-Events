@@ -48,9 +48,6 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
   return (
     <div className="max-w-[1440px] mx-auto px-6 py-12">
       <header className="mb-16">
-        <div className="inline-block bg-primary-container px-4 py-1 brutal-border mb-4">
-          <span className="font-display font-bold text-sm tracking-widest uppercase">{event.branch || 'Universal Module'}</span>
-        </div>
         <h1 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.9] text-on-surface italic mb-6">
           {event.name}
         </h1>
@@ -100,11 +97,11 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
         <div className="lg:col-span-5 space-y-8 h-fit sticky top-32">
           {/* Status Dashboard */}
           <div className="bg-on-surface text-surface p-8 hard-shadow-gold italic">
-            <h3 className="font-display text-xs font-bold uppercase tracking-[0.3em] mb-6 text-primary-container">Transmission Status</h3>
+            <h3 className="font-display text-xs font-bold uppercase tracking-[0.3em] mb-6 text-primary-container">Registration Status</h3>
             <div className="space-y-6">
               <div className="flex items-center justify-between border-b border-surface/20 pb-4">
                 <span className="font-display text-sm uppercase opacity-60">Validation State</span>
-                <span className="bg-primary-container text-on-primary-container px-3 py-1 font-bold text-xs uppercase not-italic">Initial Phase</span>
+                <span className="bg-primary-container text-on-primary-container px-3 py-1 font-bold text-xs uppercase not-italic">Open</span>
               </div>
               <div className="flex items-center justify-between border-b border-surface/20 pb-4">
                 <span className="font-display text-sm uppercase opacity-60">Max Capacity</span>
@@ -115,7 +112,7 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
                 <span className="font-black text-primary-container">₹ {feePerPerson}</span>
               </div>
               <div className="pt-4 flex items-center justify-between">
-                 <span className="font-display font-bold text-xs uppercase text-primary-container tracking-widest">Active Fleet Formations</span>
+                 <span className="font-display font-bold text-xs uppercase text-primary-container tracking-widest">Registered Teams</span>
                  <span className="font-black text-lg">{activeCount} TEAMS</span>
               </div>
             </div>
@@ -131,7 +128,7 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
               </li>
               <li className="flex gap-4 items-start">
                 <span className="material-symbols-outlined text-primary font-bold">verified</span>
-                <p className="text-xs font-bold uppercase leading-relaxed tracking-tight">Cross-check College ID number before submission. Incorrect data leads to rejection.</p>
+                <p className="text-xs font-bold uppercase leading-relaxed tracking-tight">Double-check your college name and branch before submission. Incorrect data may lead to rejection.</p>
               </li>
             </ul>
           </BrutalCard>

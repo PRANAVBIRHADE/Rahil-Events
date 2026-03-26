@@ -65,7 +65,7 @@ const Hero = () => {
             className="flex flex-wrap gap-4"
           >
             <Link href="/auth/register">
-              <BrutalButton size="lg">Start Registering</BrutalButton>
+              <BrutalButton size="lg">Register Now</BrutalButton>
             </Link>
             <Link href="/#events">
               <BrutalButton size="lg" variant="outline">View All Events</BrutalButton>

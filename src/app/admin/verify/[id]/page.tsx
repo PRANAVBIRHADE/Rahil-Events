@@ -35,11 +35,11 @@ export default async function VerifyRegistrationPage({ params }: { params: Promi
     <div className="max-w-[1440px] mx-auto px-6 py-12">
       <div className="mb-12 flex justify-between items-end">
         <div>
-          <h1 className="text-5xl font-black uppercase tracking-tighter mb-2 italic">Inspect Transmission</h1>
-          <p className="font-display font-bold uppercase text-primary tracking-widest text-sm">Protocol ID: {reg.id}</p>
+          <h1 className="text-5xl font-black uppercase tracking-tighter mb-2 italic">Review Registration</h1>
+          <p className="font-display font-bold uppercase text-primary tracking-widest text-sm">Ref ID: {reg.id}</p>
         </div>
         <Link href="/admin/registrations" className="border-b-2 border-on-surface font-black uppercase text-xs hover:text-primary hover:border-primary transition-colors">
-          &larr; Return to Master Logs
+          &larr; Return to Registrations
         </Link>
       </div>
 
@@ -48,7 +48,7 @@ export default async function VerifyRegistrationPage({ params }: { params: Promi
         {/* Left Column: Metadata */}
         <div className="lg:col-span-5 space-y-8">
           <BrutalCard shadow={true}>
-            <h2 className="text-2xl font-black uppercase italic mb-6 border-b-2 border-on-surface pb-2">Target Module</h2>
+            <h2 className="text-2xl font-black uppercase italic mb-6 border-b-2 border-on-surface pb-2">Event Details</h2>
             <div className="space-y-4 font-mono text-sm">
               <div className="flex justify-between border-b border-on-surface/10 pb-2">
                 <span className="opacity-60 uppercase font-sans font-bold">Event Name</span>
@@ -60,7 +60,7 @@ export default async function VerifyRegistrationPage({ params }: { params: Promi
               </div>
               <div className="flex justify-between border-b border-on-surface/10 pb-2">
                 <span className="opacity-60 uppercase font-sans font-bold">Category</span>
-                <span className="font-bold">{event.branch}</span>
+                <span className="font-bold">{event.category || 'EVENT'}</span>
               </div>
               <div className="flex justify-between pt-2">
                 <span className="opacity-60 uppercase font-sans font-bold">Registered Format</span>
@@ -70,7 +70,7 @@ export default async function VerifyRegistrationPage({ params }: { params: Promi
           </BrutalCard>
 
           <BrutalCard shadow={true}>
-            <h2 className="text-2xl font-black uppercase italic mb-6 border-b-2 border-on-surface pb-2">Primary Commander</h2>
+            <h2 className="text-2xl font-black uppercase italic mb-6 border-b-2 border-on-surface pb-2">Participant Details</h2>
             <div className="space-y-4 font-mono text-sm">
               <div className="flex justify-between border-b border-on-surface/10 pb-2">
                 <span className="opacity-60 uppercase font-sans font-bold">Name</span>
@@ -93,9 +93,9 @@ export default async function VerifyRegistrationPage({ params }: { params: Promi
 
           {reg.teamName && (
             <BrutalCard shadow={true}>
-               <h2 className="text-2xl font-black uppercase italic mb-6 border-b-2 border-on-surface pb-2">Squadron Details</h2>
+               <h2 className="text-2xl font-black uppercase italic mb-6 border-b-2 border-on-surface pb-2">Team Details</h2>
                <div className="mb-4">
-                 <p className="opacity-60 uppercase font-sans font-bold text-xs uppercase mb-1">Squadron / Team Name</p>
+                 <p className="opacity-60 uppercase font-sans font-bold text-xs uppercase mb-1">Team Name</p>
                  <p className="font-display font-black text-2xl uppercase tracking-tighter text-primary-container">{reg.teamName}</p>
                </div>
 
@@ -121,7 +121,7 @@ export default async function VerifyRegistrationPage({ params }: { params: Promi
 
           {/* Decision Terminal */}
           <div className="bg-on-surface text-surface p-8 hard-shadow-gold italic">
-            <h3 className="font-display text-sm font-bold uppercase tracking-[0.3em] mb-6 text-primary-container">Transmission Decision</h3>
+            <h3 className="font-display text-sm font-bold uppercase tracking-[0.3em] mb-6 text-primary-container">Action</h3>
             <div className="mb-6 border-b border-surface/20 pb-4 flex justify-between items-center">
               <span className="font-sans text-sm uppercase font-bold opacity-60">Current State:</span>
               <span className={`px-3 py-1 font-black uppercase text-xs not-italic ${
@@ -154,10 +154,10 @@ export default async function VerifyRegistrationPage({ params }: { params: Promi
                 />
               </div>
               <button type="submit" name="status" value="APPROVED" className="w-full bg-green-500 hover:bg-green-400 text-black font-black uppercase tracking-widest py-4 border-2 border-surface transition-colors flex items-center justify-center">
-                <span className="material-symbols-outlined mr-2">verified</span> APPROVE TRANSMISSION
+                <span className="material-symbols-outlined mr-2">verified</span> APPROVE REGISTRATION
               </button>
               <button type="submit" name="status" value="REJECTED" className="w-full bg-red-500 hover:bg-red-400 text-white font-black uppercase tracking-widest py-4 border-2 border-surface transition-colors flex items-center justify-center">
-                <span className="material-symbols-outlined mr-2">dangerous</span> REJECT TRANSMISSION
+                <span className="material-symbols-outlined mr-2">dangerous</span> REJECT REGISTRATION
               </button>
               {reg.status !== 'PENDING' && (
                 <button type="submit" name="status" value="PENDING" className="w-full bg-surface-container-low hover:bg-white text-surface font-black uppercase tracking-widest py-3 border-2 border-surface transition-colors">

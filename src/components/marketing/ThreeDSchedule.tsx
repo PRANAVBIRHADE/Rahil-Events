@@ -11,7 +11,7 @@ export default async function ThreeDSchedule() {
     { sortIndex: 1, time: '9:00 AM – 10:00 AM', day1: 'Registration + Inauguration', day2: 'Briefing + Late Registration' },
     { sortIndex: 2, time: '10:00 AM – 1:00 PM', day1: 'Round 1 of all events (Prelims)', day2: 'Finals of selected events' },
     { sortIndex: 3, time: '1:00 PM – 2:00 PM', day1: 'Lunch Break', day2: 'Lunch Break' },
-    { sortIndex: 4, time: '2:00 PM – 5:30 PM', day1: 'Round 2 / Branch events / Common events', day2: 'Finals, Project Expo, Demos' },
+    { sortIndex: 4, time: '2:00 PM – 5:30 PM', day1: 'Round 2 / Main Events', day2: 'Finals, Project Expo, Demos' },
     { sortIndex: 5, time: '5:30 PM – 6:00 PM', day1: 'Day 1 wrap-up', day2: 'Prize Distribution + Closing Ceremony' },
   ];
 

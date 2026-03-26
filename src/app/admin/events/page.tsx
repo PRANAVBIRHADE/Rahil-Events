@@ -15,7 +15,7 @@ export default async function EventManagementPage() {
       <div className="mb-12 flex justify-between items-end">
         <div>
           <span className="inline-block bg-primary-container px-3 py-1 brutal-border mb-4 font-display font-bold text-xs uppercase tracking-widest">
-            Module Registry
+            Event Registry
           </span>
           <h1 className="text-5xl font-black uppercase tracking-tighter mb-2 italic">Event Management</h1>
           <Link href="/admin/dashboard" className="font-display font-bold uppercase text-primary tracking-widest text-sm hover:underline">
@@ -29,9 +29,9 @@ export default async function EventManagementPage() {
           <table className="w-full text-left font-sans">
             <thead className="bg-surface-container-low border-b-2 border-on-surface text-[10px] font-black uppercase tracking-widest">
               <tr>
-                <th className="p-4">Module Intel</th>
+                <th className="p-4">Event Details</th>
                 <th className="p-4">Structural Parameters</th>
-                <th className="p-4">Terminal Commands</th>
+                <th className="p-4">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y-2 divide-on-surface/10">
@@ -41,8 +41,7 @@ export default async function EventManagementPage() {
                     <p className="font-black uppercase text-lg">{event.name}</p>
                     <p className="text-xs font-mono opacity-60">ID: {event.id}</p>
                     <div className="mt-2 flex gap-2">
-                       <span className="text-[10px] uppercase font-bold bg-primary/20 px-2 rounded-sm">{event.branch}</span>
-                       {event.isCommon && <span className="text-[10px] uppercase font-bold bg-gold/20 px-2 rounded-sm">UNIVERSAL</span>}
+                       <span className="text-[10px] uppercase font-bold bg-primary/20 px-2 rounded-sm">{event.category || 'EVENT'}</span>
                     </div>
                   </td>
                   <td className="p-4 w-1/3">
@@ -92,7 +91,7 @@ export default async function EventManagementPage() {
                          <form action={deleteEvent}>
                            <input type="hidden" name="id" value={event.id} />
                            <BrutalButton type="submit" variant="secondary" size="sm" className="bg-red-100 text-red-800 border-red-800">
-                             Purge Module
+                             Delete Event
                            </BrutalButton>
                          </form>
                     </div>

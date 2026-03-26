@@ -1,6 +1,6 @@
 # KRATOS 2026: Official Documentation
 
-Welcome to the comprehensive technical and operational documentation for **KRATOS 2026**, the premier inter-collegiate technical festival platform.
+Welcome to the comprehensive guide for **KRATOS 2026**, the premier inter-collegiate technical festival platform.
 
 ---
 
@@ -46,8 +46,8 @@ The platform uses a relational architecture managed by Drizzle ORM.
 - **Role**: Tracks both `PARTICIPANT` and `ADMIN` roles.
 - **Fields**: ID, Name, Email (Unique), Password (Hashed), Phone, College, Branch, Year, Role, CreatedAt.
 
-### 2. Events/Modules (`events`)
-- **Role**: The technical competitions or modules available for registration.
+### 2. Events (`events`)
+- **Role**: The technical competitions or events available for registration.
 - **Fields**: ID, Slug, Name, Description, Category, Venue, Fee, Format (`SOLO`, `TEAM`, `SOLO_TEAM`), TeamSizeMin, TeamSizeMax, ExpectedParticipants, PrizeDetails, Branch, IsCommon.
 - **Winners**: A JSONB column tracking the podium placements for post-event leaderboards.
 
@@ -106,10 +106,10 @@ The application is pre-configured and optimized for deployment on **Vercel**. Al
 ## ⚙️ Key Subsystems
 
 - **Registration Wizard**: Multi-step flow now computes total fee from global settings and stores team members individually in normalized tables.
-- **Command Center (Admin)**: Dashboard now reports total participants, total teams, pending payments, verified payments, and revenue estimate.
-- **Structured Schedule Engine**: Admin configures Day 1 / Day 2 slots with linked events and venues, rendered dynamically on the public site.
-- **Check-In Terminal**: Admin can search by team code (registration ID), member name, or phone and mark checked-in with timestamps.
-- **Settings Panel**: Registration open/close, UPI ID, fee per person, and deadline are editable at runtime from admin settings.
-- **Organizer Management**: Organizer CRUD in admin and public display on landing page.
-- **Memory Gallery**: An integrated Cloudinary widget allowing participants to upload post-event pictures, with a centralized lockout mechanism.
-- **Live Leaderboard**: A real-time data table utilizing React Suspense to stream in the winners of various modules without blocking the initial page paint.
+- **Admin Panel**: Dashboard reports total participants, total teams, pending payments, verified payments, and revenue estimate.
+- **Schedule Engine**: Admin configures Day 1 / Day 2 slots with linked events and venues, rendered dynamically on the public site.
+- **Check-In Terminal**: Admin can search by registration ID, member name, or phone and mark checked-in.
+- **Settings Panel**: Registration open/close, UPI ID, fee per person, and deadline are editable from admin settings.
+- **Organizer Management**: Organizer management in admin and public display on landing page.
+- **Memory Gallery**: An integrated tool allowing participants to upload post-event pictures.
+- **Live Leaderboard**: A real-time table showing the winners of various events.

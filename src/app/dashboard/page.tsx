@@ -130,7 +130,7 @@ export default async function DashboardPage() {
               ))}
               {dbRegistrations.length === 0 && (
                  <div className="text-center py-12 border-2 border-dashed border-on-surface/20">
-                    <p className="font-display font-black tracking-widest uppercase opacity-40">NO MODULES REGISTERED YET</p>
+                    <p className="font-display font-black tracking-widest uppercase opacity-40">NO EVENTS REGISTERED YET</p>
                  </div>
               )}
             </div>

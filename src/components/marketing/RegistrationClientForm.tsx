@@ -92,33 +92,33 @@ export default function RegistrationClientForm({
 
       {/* STEP 1: Details */}
       <BrutalCard shadow={true}>
-        <StepHeader number="01" title={isTeamFormat ? "Team Roster Specification" : "User Specification"} />
+        <StepHeader number="01" title={isTeamFormat ? "Team Details" : "Your Details"} />
         <div className="space-y-6">
           <div className="bg-primary/10 border-2 border-primary p-6 mb-8">
-            <h3 className="font-display font-black tracking-tighter uppercase mb-2">Primary Commander</h3>
-            <p className="text-xs font-bold font-sans opacity-70 mb-4">Your core user identity is already verified for this transmission.</p>
+            <h3 className="font-display font-black tracking-tighter uppercase mb-2">Team Leader</h3>
+            <p className="text-xs font-bold font-sans opacity-70 mb-4">Your basic details are verified.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-60 pointer-events-none">
-              <BrutalInput label="Verified Name" defaultValue={dbUser.name} required />
-              <BrutalInput label="Verified Contact" defaultValue={dbUser.phone || ''} required />
-              <BrutalInput label="Verified College" defaultValue={dbUser.college || ''} required />
-              <BrutalInput label="Verified Branch" defaultValue={dbUser.branch || ''} required />
-              <BrutalInput label="Verified Year" defaultValue={dbUser.year ? String(dbUser.year) : ''} required />
+              <BrutalInput label="Your Name" defaultValue={dbUser.name} required />
+              <BrutalInput label="Your Phone" defaultValue={dbUser.phone || ''} required />
+              <BrutalInput label="Your College" defaultValue={dbUser.college || ''} required />
+              <BrutalInput label="Your Branch" defaultValue={dbUser.branch || ''} required />
+              <BrutalInput label="Your Year" defaultValue={dbUser.year ? String(dbUser.year) : ''} required />
             </div>
           </div>
 
           {isTeamFormat && (
             <div className="space-y-6 mt-8 pt-8 border-t-2 border-on-surface">
-              <h3 className="font-display text-2xl font-black tracking-tighter uppercase mb-4">Platoon Configuration</h3>
+              <h3 className="font-display text-2xl font-black tracking-tighter uppercase mb-4">Team Members</h3>
               {(eventFormat === 'SOLO_TEAM' || eventFormat === 'SOLO_PAIR') && (
                 <p className="text-xs font-bold opacity-60 italic mb-4">Note: Team Details are optional for Solo/Team format events. Fill only if participating as a team.</p>
               )}
-              <BrutalInput label="Squadron / Team Name" name="teamName" placeholder="e.g. NEURAL SYNDICATE" required={isTeamRequired} />
+              <BrutalInput label="Team Name" name="teamName" placeholder="e.g. Innovators" required={isTeamRequired} />
               
               <div className="space-y-6 mt-4">
                 {Array.from({ length: memberCount }).map((_, i) => (
                   <div key={i} className="p-6 border-2 border-on-surface bg-surface-container-low relative">
                     <div className="absolute -top-3 left-4 bg-on-surface text-surface px-3 py-1 text-[10px] font-black tracking-widest uppercase">
-                      Operator 0{i + 2}
+                      Member 0{i + 2}
                     </div>
                     {i > 0 && (
                       <button 
@@ -130,7 +130,7 @@ export default function RegistrationClientForm({
                       </button>
                     )}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
-                      <BrutalInput name={`member_${i}_name`} label="Full Name" placeholder={`Operator ${i + 2} Name`} required={isTeamRequired} />
+                      <BrutalInput name={`member_${i}_name`} label="Full Name" placeholder={`Member ${i + 2} Name`} required={isTeamRequired} />
                       <BrutalInput name={`member_${i}_phone`} label="Phone" placeholder="+91 00000 00000" required={isTeamRequired} />
                       <BrutalInput name={`member_${i}_college`} label="College" placeholder="Institution Name" required={false} />
                       <BrutalInput name={`member_${i}_branch`} label="Branch" placeholder="CSE / ECE / ..." required={false} />
@@ -147,7 +147,7 @@ export default function RegistrationClientForm({
                   className="px-6 py-2 border-2 border-dashed border-on-surface/50 text-xs font-black uppercase tracking-widest hover:bg-primary-container hover:border-primary-container transition-colors flex items-center"
                 >
                   <span className="material-symbols-outlined mr-2 text-sm">add</span>
-                  Add Additional Operator
+                  Add Team Member
                 </button>
               </div>
             </div>
@@ -157,7 +157,7 @@ export default function RegistrationClientForm({
 
       {/* STEP 2: Payment */}
       <BrutalCard shadow={true}>
-        <StepHeader number="02" title="Payment Terminal" />
+        <StepHeader number="02" title="Payment" />
         <div className="flex flex-col md:flex-row gap-8 items-center bg-surface-container-low p-6 brutal-border">
           <div className="w-48 h-48 bg-white p-2 border-2 border-on-surface flex items-center justify-center relative overflow-hidden">
             <BrutalQRCode
@@ -186,7 +186,7 @@ export default function RegistrationClientForm({
 
       {/* STEP 3: Upload */}
       <BrutalCard shadow={true} shadowColor="gold">
-        <StepHeader number="03" title="Validation & Evidence" />
+        <StepHeader number="03" title="Upload Screenshot" />
         
         <CldUploadWidget 
           uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default"}
@@ -205,10 +205,10 @@ export default function RegistrationClientForm({
                 {imageUrl ? 'check_circle' : 'cloud_upload'}
               </span>
               <p className="font-display font-bold uppercase tracking-tighter text-lg">
-                {imageUrl ? 'Screenshot Attached Successfully!' : 'Upload Payment Screenshot'}
+                {imageUrl ? 'Screenshot Uploaded Successfully!' : 'Upload Payment Screenshot'}
               </p>
               <p className="text-sm opacity-60 mt-2 font-mono">
-                {imageUrl ? 'Ready for command approval.' : 'JPEG, PNG or PDF (Max 5MB)'}
+                {imageUrl ? 'Ready for submission.' : 'JPEG, PNG or PDF (Max 5MB)'}
               </p>
             </div>
           )}
@@ -217,12 +217,12 @@ export default function RegistrationClientForm({
         <div className="mt-8 flex items-start gap-4 p-4 brutal-border bg-surface-container-low">
           <input className="mt-1 w-5 h-5 brutal-border rounded-none checked:bg-primary accent-primary focus:ring-0" id="terms" type="checkbox" required />
           <label className="text-sm font-bold leading-tight opacity-70 uppercase tracking-tight" htmlFor="terms">
-            I verify that all technical details provided are accurate and the payment proof is authentic. I agree to the <span className="underline border-b-2 border-primary-container">Precision Code of Conduct</span>.
+            I confirm the details and payment proof are correct.
           </label>
         </div>
 
         <BrutalButton className="w-full mt-10" size="xl" disabled={loading}>
-          {loading ? 'Transmitting Data...' : 'Complete Registration'}
+          {loading ? 'Submitting...' : 'Complete Registration'}
         </BrutalButton>
       </BrutalCard>
     </form>

@@ -38,7 +38,7 @@ export default async function CheckInDetailPage({ params }: { params: Promise<{ 
         <div>
           <h1 className="text-5xl font-black uppercase tracking-tighter mb-2 italic">QR Check-In</h1>
           <p className="font-display font-bold uppercase text-primary tracking-widest text-sm">
-            Protocol ID: {reg.id.substring(0, 18)}
+            Ref ID: {reg.id.substring(0, 18)}
           </p>
         </div>
         <Link href="/admin/checkin" className="border-b-2 border-on-surface font-black uppercase text-xs hover:text-primary hover:border-primary transition-colors">
@@ -49,7 +49,7 @@ export default async function CheckInDetailPage({ params }: { params: Promise<{ 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         <div className="lg:col-span-5 space-y-8">
           <BrutalCard shadow={true}>
-            <h2 className="text-2xl font-black uppercase italic mb-6 border-b-2 border-on-surface pb-2">Transmission Details</h2>
+            <h2 className="text-2xl font-black uppercase italic mb-6 border-b-2 border-on-surface pb-2">Registration Details</h2>
             <div className="space-y-4 font-mono text-sm">
               <div className="flex justify-between border-b border-on-surface/10 pb-2">
                 <span className="opacity-60 uppercase font-sans font-bold">Event</span>

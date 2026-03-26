@@ -72,8 +72,8 @@ export default async function AdminDashboard() {
     <div className="max-w-[1440px] mx-auto px-6 py-12">
       <div className="mb-12 flex justify-between items-end">
         <div>
-          <h1 className="text-5xl font-black uppercase tracking-tighter mb-2 italic">Admin Command</h1>
-          <p className="font-display font-bold uppercase text-primary tracking-widest text-sm">Center for Operational Control</p>
+          <h1 className="text-5xl font-black uppercase tracking-tighter mb-2 italic">Admin Panel</h1>
+          <p className="font-display font-bold uppercase text-primary tracking-widest text-sm">Manage Kratos 2026</p>
         </div>
         <Link href="/api/admin/export" target="_blank">
           <BrutalButton variant="outline" size="sm">Export Master Excel</BrutalButton>
@@ -92,7 +92,7 @@ export default async function AdminDashboard() {
         <div className="lg:col-span-8">
           <BrutalCard className="p-0 overflow-hidden">
             <div className="p-6 border-b-2 border-on-surface bg-surface-container-low flex justify-between items-center">
-              <h2 className="text-2xl font-black uppercase italic">Recent Transmissions</h2>
+              <h2 className="text-2xl font-black uppercase italic">Recent Registrations</h2>
               <div className="flex gap-2">
                 <input 
                   type="text" 
@@ -106,7 +106,7 @@ export default async function AdminDashboard() {
                 <thead className="bg-surface-container-low border-b-2 border-on-surface text-[10px] font-black uppercase tracking-widest">
                   <tr>
                     <th className="p-4">Participant</th>
-                    <th className="p-4">Event Module</th>
+                    <th className="p-4">Event</th>
                     <th className="p-4">Fee Paid</th>
                     <th className="p-4">Status</th>
                     <th className="p-4">Action</th>
@@ -128,7 +128,7 @@ export default async function AdminDashboard() {
                         </span>
                       </td>
                       <td className="p-4">
-                        <Link href={`/admin/verify/${reg.id}`} className="text-[10px] font-black uppercase border-b-2 border-on-surface hover:text-primary hover:border-primary transition-colors">Inspect</Link>
+                        <Link href={`/admin/verify/${reg.id}`} className="text-[10px] font-black uppercase border-b-2 border-on-surface hover:text-primary hover:border-primary transition-colors">Review</Link>
                       </td>
                     </tr>
                   ))}
@@ -186,7 +186,7 @@ export default async function AdminDashboard() {
               <Link href="/admin/events" className="w-full">
                 <BrutalButton className="w-full justify-start text-red-800 border-red-800 bg-red-100" variant="secondary">
                   <span className="material-symbols-outlined mr-3">dangerous</span>
-                  Manage Modules
+                  Manage Events
                 </BrutalButton>
               </Link>
             </div>

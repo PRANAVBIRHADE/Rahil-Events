@@ -12,7 +12,7 @@ const BroadcastForm = () => {
     const result = await updateAnnouncement(formData);
     setLoading(false);
     if (result.success) {
-      alert('Broadcast Signal Updated.');
+      alert('Announcement Updated.');
     } else {
       alert(result.error);
     }
@@ -22,7 +22,7 @@ const BroadcastForm = () => {
     <BrutalCard shadow={true} shadowColor="black">
       <h3 className="text-xl font-black uppercase mb-4 border-b-2 border-on-surface pb-2 flex items-center gap-2">
         <span className="material-symbols-outlined">campaign</span>
-        Broadcast Control
+        Announcements
       </h3>
       <form action={handleSubmit} className="space-y-4">
         <div>
@@ -37,10 +37,10 @@ const BroadcastForm = () => {
         </div>
         <div className="flex items-center gap-2">
            <input type="checkbox" name="isActive" id="isActive" defaultChecked className="w-4 h-4" />
-           <label htmlFor="isActive" className="text-[10px] font-black uppercase">Enable Live Broadcast</label>
+           <label htmlFor="isActive" className="text-[10px] font-black uppercase">Show Announcement</label>
         </div>
         <BrutalButton type="submit" className="w-full" size="sm" disabled={loading}>
-          {loading ? 'MODULATING...' : 'UPDATE BROADCAST'}
+          {loading ? 'UPDATING...' : 'UPDATE ANNOUNCEMENT'}
         </BrutalButton>
       </form>
     </BrutalCard>

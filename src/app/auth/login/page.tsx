@@ -44,7 +44,7 @@ export default function LoginPage() {
     <BrutalCard shadowColor="gold">
       <div className="mb-8">
         <h1 className="text-4xl font-black uppercase italic tracking-tighter mb-2">Login</h1>
-        <p className="text-sm opacity-60 font-sans uppercase font-bold tracking-wider italic">Access Participant Dashboard</p>
+        <p className="text-sm opacity-60 font-sans uppercase font-bold tracking-wider italic">Login to your account</p>
       </div>
 
       <div className="mb-6">
@@ -72,7 +72,7 @@ export default function LoginPage() {
 
       {registered && (
         <div className="mb-6 p-4 bg-green-100 border-2 border-green-500 text-green-700 font-bold uppercase text-xs italic">
-          Profile Created Successfully. Initialize Session Below.
+          Account Created Successfully. Please login below.
         </div>
       )}
 
@@ -106,13 +106,13 @@ export default function LoginPage() {
         </div>
 
         <BrutalButton type="submit" className="w-full" size="lg" disabled={loading}>
-          {loading ? 'AUTHENTICATING...' : 'Initialize Session'}
+          {loading ? 'LOGGING IN...' : 'Login'}
         </BrutalButton>
       </form>
 
       <div className="mt-8 pt-6 border-t-2 border-on-surface text-center">
         <p className="text-sm font-sans">
-          No account? <Link href="/auth/register" className="font-bold uppercase border-b-2 border-primary-container">Register Module</Link>
+          No account? <Link href="/auth/register" className="font-bold uppercase border-b-2 border-primary-container">Sign Up here</Link>
         </p>
       </div>
     </BrutalCard>

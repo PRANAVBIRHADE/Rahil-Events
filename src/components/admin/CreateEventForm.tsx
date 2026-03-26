@@ -19,17 +19,17 @@ export default function CreateEventForm() {
     const result = await createEvent(formData);
 
     if (result.success) {
-      setMessage({ type: 'success', text: 'MODULE INITIALIZED: NEW EVENT BROADCASTED.' });
+      setMessage({ type: 'success', text: 'EVENT CREATED SUCCESSFULLY.' });
       (e.target as HTMLFormElement).reset();
     } else {
-      setMessage({ type: 'error', text: result.error || 'COMMUNICATION ERROR: FAILED TO PERSIST MODULE.' });
+      setMessage({ type: 'error', text: result.error || 'ERROR: FAILED TO CREATE EVENT.' });
     }
     setLoading(false);
   }
 
   return (
     <BrutalCard shadowColor="gold">
-      <h3 className="text-xl font-black uppercase mb-6 border-b-2 border-on-surface pb-2 italic">Module Initialization</h3>
+      <h3 className="text-xl font-bold uppercase mb-6 border-b-2 border-on-surface pb-2">Create New Event</h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         {message && (
           <div className={`p-3 border-2 text-[10px] font-bold uppercase italic ${
@@ -40,27 +40,14 @@ export default function CreateEventForm() {
         )}
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <BrutalInput label="Module Name" name="name" placeholder="e.g. BRIDGE DESIGN" required />
-          <BrutalInput label="Category" name="category" placeholder="e.g. TECH / PAPER / ROBOTICS" />
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-display font-bold uppercase tracking-widest text-on-surface">Branch</label>
-            <select name="branch" className="brutal-border bg-surface p-3 outline-none focus:border-primary font-display font-bold uppercase text-xs">
-              <option value="Civil Engineering">Civil Engineering</option>
-              <option value="Computer Science Engineering">Computer Science Engineering</option>
-              <option value="Electrical Engineering">Electrical Engineering</option>
-              <option value="Mechanical & Automation">Mechanical & Automation</option>
-              <option value="Electronics & Telecom">Electronics & Telecom</option>
-              <option value="AI & Data Science">AI & Data Science</option>
-              <option value="CSE (AIML)">CSE (AIML)</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
+          <BrutalInput label="Event Name" name="name" placeholder="e.g. Bridge Design" required />
+          <BrutalInput label="Category" name="category" placeholder="e.g. Technical / Robotics" />
         </div>
 
         <BrutalInput label="Tagline" name="tagline" placeholder="Engineering the future..." />
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <BrutalInput label="Venue" name="venue" placeholder="e.g. COMPUTING LAB 01" />
+          <BrutalInput label="Venue" name="venue" placeholder="e.g. Computing Lab 01" />
           <BrutalInput
             label="Expected Participants"
             name="expectedParticipants"
@@ -73,12 +60,10 @@ export default function CreateEventForm() {
           <BrutalInput label="Fee (INR)" name="fee" type="number" placeholder="499" required />
           <div className="flex flex-col gap-2">
             <label className="text-sm font-display font-bold uppercase tracking-widest text-on-surface">Format</label>
-            <select name="format" className="brutal-border bg-surface p-3 outline-none focus:border-primary font-display font-bold uppercase text-xs h-[46px]">
-              <option value="SOLO">SOLO</option>
-              <option value="TEAM">TEAM</option>
-              <option value="SOLO_TEAM">SOLO / TEAM BOTH</option>
-              <option value="SOLO_PAIR">SOLO / PAIR</option>
-              <option value="SOLO_TEAM_ASSIGNED">SOLO (TEAM ASSIGNED)</option>
+            <select name="format" className="brutal-border bg-surface p-3 outline-none focus:border-primary font-bold text-xs h-[46px]">
+              <option value="SOLO">Solo Event</option>
+              <option value="TEAM">Team Event</option>
+              <option value="SOLO_TEAM">Solo or Team</option>
             </select>
           </div>
           <BrutalInput label="Min Team Size" name="teamSizeMin" type="number" min="1" max="4" defaultValue="1" />
@@ -92,12 +77,12 @@ export default function CreateEventForm() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-display font-bold uppercase tracking-widest text-on-surface">Description (JSON/Markdown Structure)</label>
+          <label className="text-sm font-bold uppercase text-on-surface">Description</label>
           <textarea 
             name="description" 
             rows={3} 
-            className="brutal-border bg-surface p-3 outline-none focus:border-primary font-sans font-bold text-sm w-full"
-            placeholder="Detailed rules and module objectives..."
+            className="brutal-border bg-surface p-3 outline-none focus:border-primary font-sans text-sm w-full"
+            placeholder="Detailed rules and event objectives..."
           />
         </div>
 
@@ -112,7 +97,7 @@ export default function CreateEventForm() {
         </div>
 
         <BrutalButton type="submit" className="w-full mt-4" disabled={loading}>
-          {loading ? 'UPLOADING...' : 'BROADCAST MODULE'}
+          {loading ? 'CREATING EVENT...' : 'CREATE EVENT'}
         </BrutalButton>
       </form>
     </BrutalCard>
