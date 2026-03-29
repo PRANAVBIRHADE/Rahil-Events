@@ -16,7 +16,7 @@ const TEAM_DATA = {
     { name: 'Final Student Core Team Pending Approval', role: 'Student Department', year: 'Roster Updates Soon' },
   ],
   developers: [
-    { name: 'Rahil Hussain', role: 'Frontend Developer', github: 'https://github.com/Rahil-dope' },
+    { name: 'Rahil Hussain', role: 'Frontend Developer', LinkedIn: 'https://www.linkedin.com/in/shaikh-rahil-hussain-a54348291' },
     { name: 'Pranav Birade', role: 'Backend Developer', github: 'https://github.com/PRANAVBIRHADE' },
   ]
 };
@@ -76,7 +76,7 @@ export default function AboutPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {TEAM_DATA.faculty.map((member, i) => (
-              <BrutalCard key={i} className="flex flex-col justify-between" onClick={() => {}}>
+              <BrutalCard key={i} className="flex flex-col justify-between" onClick={() => { }}>
                 <div>
                   <h3 className="text-xl md:text-3xl font-black uppercase mb-2">{member.name}</h3>
                   <p className="text-primary font-bold uppercase tracking-widest text-sm">{member.role}</p>
@@ -103,7 +103,7 @@ export default function AboutPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {TEAM_DATA.students.map((member, i) => (
-              <BrutalCard key={i} shadowColor="gold" className="hover:bg-primary-container/20 transition-colors" onClick={() => {}}>
+              <BrutalCard key={i} shadowColor="gold" className="hover:bg-primary-container/20 transition-colors" onClick={() => { }}>
                 <h3 className="text-lg md:text-xl font-black uppercase mb-1">{member.name}</h3>
                 <p className="text-xs font-bold uppercase opacity-60 mb-4">{member.role}</p>
                 <div className="bg-on-surface text-surface text-[10px] px-2 py-0.5 inline-block font-black uppercase italic">
@@ -140,11 +140,13 @@ export default function AboutPage() {
                 <div className="relative bg-surface p-5 md:p-8 border-4 border-on-surface">
                   <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tighter text-on-surface mb-2">{dev.name}</h3>
                   <p className="font-display font-bold text-primary italic uppercase tracking-widest text-sm md:text-lg mb-4 md:mb-6">{dev.role}</p>
-                  <Link href={dev.github}>
-                    <BrutalButton size="sm" variant="outline" className="w-full md:w-auto">
-                      View Protocol
-                    </BrutalButton>
-                  </Link>
+                  {(dev.LinkedIn ?? dev.github) && (
+                    <Link href={(dev.LinkedIn ?? dev.github)!}>
+                      <BrutalButton size="sm" variant="outline" className="w-full md:w-auto">
+                        View Protocol
+                      </BrutalButton>
+                    </Link>
+                  )}
                 </div>
               </div>
             ))}

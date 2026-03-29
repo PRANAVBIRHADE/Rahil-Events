@@ -1,102 +1,80 @@
 import React from 'react';
 export const dynamic = 'force-dynamic';
 import { db } from '@/db';
-import { users } from '@/db/schema';
-import { desc } from 'drizzle-orm';
-import BrutalCard from '@/components/ui/BrutalCard';
-import BrutalButton from '@/components/ui/BrutalButton';
-import { updateUser, deleteUser } from '@/lib/actions';
+import { users, registrations } from '@/db/schema';
+import { desc, count } from 'drizzle-orm';
 import Link from 'next/link';
+import { updateUser, deleteUser } from '@/lib/actions';
+import UsersClientWrapper from '@/components/admin/UsersClientWrapper';
 
 export default async function UserManagementPage() {
-  const allUsers = await db.select().from(users).orderBy(desc(users.createdAt));
+  // Fetch all users with their registration count (includes users with 0 registrations)
+  const allUsersRaw = await db
+    .select()
+    .from(users)
+    .orderBy(desc(users.createdAt));
+
+  // Get registration counts per user
+  const regCounts = await db
+    .select({ userId: registrations.userId, count: count() })
+    .from(registrations)
+    .groupBy(registrations.userId);
+
+  const regCountMap = new Map(regCounts.map((r) => [r.userId, r.count]));
+
+  const allUsers = allUsersRaw.map((u) => ({
+    ...u,
+    registrationCount: regCountMap.get(u.id) ?? 0,
+  }));
+
+  const totalUsers = allUsers.length;
+  const admins = allUsers.filter((u) => u.role === 'ADMIN').length;
+  const noRegistrations = allUsers.filter((u) => u.registrationCount === 0).length;
+  const withRegistrations = allUsers.filter((u) => u.registrationCount > 0).length;
 
   return (
-    <div className="max-w-[1440px] mx-auto px-6 py-12">
-      <div className="mb-12 flex justify-between items-end">
-        <div>
-          <span className="inline-block bg-primary-container px-3 py-1 brutal-border mb-4 font-display font-bold text-xs uppercase tracking-widest">
-            Identity Registry
-          </span>
-          <h1 className="text-5xl font-black uppercase tracking-tighter mb-2 italic">Personnel Management</h1>
-          <Link href="/admin/dashboard" className="font-display font-bold uppercase text-primary tracking-widest text-sm hover:underline">
-            &larr; Return to Dashboard
-          </Link>
+    <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-12">
+      {/* Header */}
+      <div className="mb-10">
+        <Link
+          href="/admin/dashboard"
+          className="font-display font-bold uppercase text-primary tracking-widest text-xs hover:underline inline-flex items-center gap-1 mb-6"
+        >
+          <span className="material-symbols-outlined text-sm">arrow_back</span>
+          Back to Dashboard
+        </Link>
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div>
+            <span className="inline-block bg-primary-container px-3 py-1 brutal-border mb-3 font-display font-bold text-xs uppercase tracking-widest">
+              Accounts Registry
+            </span>
+            <h1 className="text-4xl sm:text-5xl font-black uppercase tracking-tighter italic">
+              All User Accounts
+            </h1>
+            <p className="text-sm font-bold uppercase opacity-60 mt-1 tracking-widest">
+              Every account created — with or without event registrations
+            </p>
+          </div>
         </div>
       </div>
 
-      <BrutalCard className="p-0 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left font-sans">
-            <thead className="bg-surface-container-low border-b-2 border-on-surface text-[10px] font-black uppercase tracking-widest">
-              <tr>
-                <th className="p-4">Participant Identity</th>
-                <th className="p-4">Institution Data</th>
-                <th className="p-4">Terminal Commands</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y-2 divide-on-surface/10">
-              {allUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-primary-container/5 transition-colors">
-                  <td className="p-4 w-1/3">
-                    <form action={updateUser} className="space-y-2">
-                       <input type="hidden" name="id" value={user.id} />
-                       <input 
-                         name="name" 
-                         defaultValue={user.name} 
-                         className="bg-transparent font-black uppercase text-sm w-full outline-none focus:border-b-2 border-primary"
-                       />
-                       <input 
-                         name="phone" 
-                         defaultValue={user.phone || ''} 
-                         placeholder="PHONE"
-                         className="bg-transparent font-mono text-xs w-full outline-none opacity-60 focus:border-b-2 border-primary focus:opacity-100"
-                       />
-                       <br />
-                       <span className="text-[10px] uppercase font-bold bg-primary/20 px-2 rounded-sm">{user.role}</span>
-                    </form>
-                  </td>
-                  <td className="p-4 w-1/3">
-                    {/* The form must wrap specific inputs so they are submitted together on Edit */}
-                    <form action={updateUser} id={`update-${user.id}`} className="space-y-2">
-                       <input type="hidden" name="id" value={user.id} />
-                       <input type="hidden" name="name" value={user.name} />
-                       <input type="hidden" name="phone" value={user.phone || ''} />
-                       
-                       <input 
-                         name="college" 
-                         defaultValue={user.college || ''} 
-                         placeholder="COLLEGE UNKNOWN"
-                         className="bg-transparent font-bold text-xs uppercase w-full outline-none focus:border-b-2 border-primary"
-                       />
-                       <input 
-                         name="branch" 
-                         defaultValue={user.branch || ''} 
-                         placeholder="BRANCH UNKNOWN"
-                         className="bg-transparent font-bold text-xs opacity-60 uppercase w-full outline-none focus:border-b-2 border-primary focus:opacity-100"
-                       />
-                    </form>
-                  </td>
-                  <td className="p-4 flex gap-4 items-center h-full">
-...                    {/* Connecting Edit Button to the form in Institution Data to demonstrate functional cross-linking, though normally you wrap all columns in 1 form. In React Server Components tables, we use a single form wrapping the tr if possible, or trigger form elements via form attribute. */}
-                    <div className="flex gap-2">
-                         <BrutalButton form={`update-${user.id}`} type="submit" variant="secondary" size="sm" className="bg-blue-100 text-blue-800 border-blue-800">
-                           Save Edits
-                         </BrutalButton>
-                         <form action={deleteUser}>
-                           <input type="hidden" name="id" value={user.id} />
-                           <BrutalButton type="submit" variant="secondary" size="sm" className="bg-red-100 text-red-800 border-red-800">
-                             Purge User
-                           </BrutalButton>
-                         </form>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </BrutalCard>
+      {/* Stats Row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+        {[
+          { label: 'Total Accounts', value: totalUsers, color: 'bg-blue-50 border-blue-800 text-blue-900' },
+          { label: 'Admins', value: admins, color: 'bg-purple-50 border-purple-800 text-purple-900' },
+          { label: 'No Registrations', value: noRegistrations, color: 'bg-orange-50 border-orange-800 text-orange-900' },
+          { label: 'Registered for Events', value: withRegistrations, color: 'bg-green-50 border-green-800 text-green-900' },
+        ].map((stat) => (
+          <div key={stat.label} className={`border-2 p-4 ${stat.color}`}>
+            <p className="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">{stat.label}</p>
+            <p className="text-3xl font-black font-display tracking-tighter">{stat.value}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Client-side searchable table */}
+      <UsersClientWrapper users={allUsers} updateUser={updateUser} deleteUser={deleteUser} />
     </div>
   );
 }

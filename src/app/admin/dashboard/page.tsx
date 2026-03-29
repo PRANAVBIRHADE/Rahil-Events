@@ -44,11 +44,16 @@ export default async function AdminDashboard() {
     .from(registrations)
     .where(eq(registrations.status, 'APPROVED'));
 
+  // Count ALL user accounts (including those with no registrations)
+  const { users: usersTable } = await import('@/db/schema');
+  const [totalAccountsRow] = await db.select({ value: count() }).from(usersTable);
+  const totalAccounts = totalAccountsRow?.value ?? 0;
+
   const stats = [
+    { label: 'Registered Accounts', value: totalAccounts.toString(), href: '/admin/users' },
     { label: 'Total Participants', value: participantsCount.value.toString() },
     { label: 'Total Teams', value: teamsCount.value.toString() },
     { label: 'Pending Payments', value: pendingPaymentsCount.value.toString() },
-    { label: 'Verified Payments', value: verifiedPaymentsCount.value.toString() },
     { label: 'Revenue Estimate', value: `INR ${revTotal.value || 0}` },
   ];
 
@@ -85,9 +90,15 @@ export default async function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
-        {stats.map((stat) => (
-          <StatCard key={stat.label} {...stat} />
-        ))}
+        {stats.map((stat) =>
+          stat.href ? (
+            <Link key={stat.label} href={stat.href}>
+              <StatCard label={stat.label} value={stat.value} />
+            </Link>
+          ) : (
+            <StatCard key={stat.label} label={stat.label} value={stat.value} />
+          )
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
