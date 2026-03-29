@@ -34,11 +34,6 @@ export default async function AdminDashboard() {
     .from(registrations)
     .where(eq(registrations.status, 'PENDING'));
 
-  const [verifiedPaymentsCount] = await db
-    .select({ value: count() })
-    .from(registrations)
-    .where(eq(registrations.status, 'APPROVED'));
-
   const [revTotal] = await db
     .select({ value: sum(registrations.totalFee) })
     .from(registrations)
