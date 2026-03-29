@@ -3,8 +3,8 @@ import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { db } from '@/db';
-import { users, registrations, events } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { users, registrations, events, teamMembers } from '@/db/schema';
+import { eq, inArray } from 'drizzle-orm';
 import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalButton from '@/components/ui/BrutalButton';
 import LogoutButton from '@/components/dashboard/LogoutButton';
@@ -38,6 +38,7 @@ export default async function DashboardPage() {
     id: registrations.id,
     status: registrations.status,
     teamName: registrations.teamName,
+    teamId: registrations.teamId,
     eventName: events.name,
     eventSlug: events.slug,
     format: events.format,
@@ -45,6 +46,17 @@ export default async function DashboardPage() {
   .from(registrations)
   .innerJoin(events, eq(registrations.eventId, events.id))
   .where(eq(registrations.userId, dbUser.id));
+
+  // Fetch all members for these teams
+  const teamIds = dbRegistrations.filter(r => r.teamId).map(r => r.teamId as string);
+  const dbTeamMembers = teamIds.length > 0 
+    ? await db.select().from(teamMembers).where(inArray(teamMembers.teamId, teamIds))
+    : [];
+
+  const registrationsWithMembers = dbRegistrations.map(reg => {
+    const members = reg.teamId ? dbTeamMembers.filter(m => m.teamId === reg.teamId) : [];
+    return { ...reg, members };
+  });
 
   const dbSettings = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
   const isGalleryLocked = dbSettings.length > 0 ? dbSettings[0].isGalleryLocked ?? true : true;
@@ -128,7 +140,7 @@ export default async function DashboardPage() {
             </div>
 
             <div className="space-y-6">
-              {dbRegistrations.map((reg) => (
+              {registrationsWithMembers.map((reg) => (
                 <TicketCard key={reg.id} reg={reg} userName={dbUser.name} college={dbUser.college} currentUserId={dbUser.id} />
               ))}
               {dbRegistrations.length === 0 && (

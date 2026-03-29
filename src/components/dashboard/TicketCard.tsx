@@ -15,19 +15,46 @@ type TicketCardProps = {
     eventName: string;
     eventSlug: string;
     format: string | null;
+    members?: Array<{
+      id: string;
+      name: string;
+      college: string | null;
+      branch: string | null;
+    }>;
   };
   userName: string;
   college: string | null;
   currentUserId: string;
 };
 
-export default function TicketCard({ reg, userName, college, currentUserId }: TicketCardProps) {
+function MemberPass({ 
+  reg, 
+  name, 
+  college, 
+  checkinId, 
+  isTeam, 
+  isDownloading, 
+  downloadTicket 
+}: { 
+  reg: any; 
+  name: string; 
+  college: string | null; 
+  checkinId: string; 
+  isTeam: boolean; 
+  isDownloading: boolean; 
+  downloadTicket: () => void; 
+}) {
   const ticketRef = useRef<HTMLDivElement>(null);
-  const [isDownloading, setIsDownloading] = useState(false);
+  
+  // Safe generation of the absolute URL for Admin scanning Verification
+  const baseUrl = typeof window !== 'undefined'
+    ? window.location.origin
+    : process.env.NEXT_PUBLIC_SITE_URL || 'https://kratos2026.vercel.app';
+  const verifyUrl = `${baseUrl}/admin/checkin/${checkinId}`;
 
-  const downloadTicket = async () => {
-    if (ticketRef.current && !isDownloading) {
-      setIsDownloading(true);
+  const handleDownload = async () => {
+    if (ticketRef.current) {
+      downloadTicket();
       try {
         const canvas = await html2canvas(ticketRef.current, { 
           backgroundColor: '#FFFFFF',
@@ -37,24 +64,96 @@ export default function TicketCard({ reg, userName, college, currentUserId }: Ti
         });
         const image = canvas.toDataURL('image/png', 1.0);
         const link = document.createElement('a');
-        link.download = `KRATOS_TICKET_${reg.id.substring(0,8)}.png`;
+        link.download = `KRATOS_TICKET_${name.replace(/\s+/g, '_')}_${checkinId.substring(0,8)}.png`;
         link.href = image;
         link.click();
       } catch (e) {
         console.error('Failed to generate pass:', e);
-        alert('Ticket pipeline failed. Please retry.');
-      } finally {
-        setIsDownloading(false);
       }
     }
   };
 
-  // Safe generation of the absolute URL for Admin scanning Verification
-  const baseUrl =
-    typeof window !== 'undefined'
-      ? window.location.origin
-      : process.env.NEXT_PUBLIC_SITE_URL || 'https://kratos2026.vercel.app';
-  const verifyUrl = `${baseUrl}/admin/checkin/${reg.id}`;
+  return (
+    <div className="w-full">
+      {/* Hidden printable Ticket element */}
+      <div className="absolute opacity-0 pointer-events-none z-[-1]" style={{ top: 0, left: 0 }}>
+        <div ref={ticketRef} className="w-[800px] h-[300px] bg-[#F9F9F9] border-4 border-[#000000] p-0 flex relative overflow-hidden font-sans text-[#1A1C1C]">
+          <div className="w-16 border-r-4 border-[#000000] border-dashed flex items-center justify-center relative bg-[#FFD700]">
+             <p className="transform -rotate-90 whitespace-nowrap font-black uppercase text-xl font-display tracking-widest">
+               KRATOS 2026 OFFICIAL
+             </p>
+          </div>
+          <div className="flex-1 p-8 flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-start mb-2">
+                 <h2 className="text-4xl font-black uppercase italic tracking-tighter leading-none">{reg.eventName}</h2>
+                 <span className="bg-[#000000] text-[#FFFFFF] px-2 py-1 font-black text-xs uppercase tracking-widest">ADMIT ONE</span>
+              </div>
+              <p className="font-display font-bold uppercase text-[#705D00] text-sm tracking-widest">{isTeam ? 'Team Pass' : 'Solo Pass'}</p>
+            </div>
+            <div className="mt-6 flex justify-between items-end">
+              <div className="space-y-2">
+                <div>
+                  <p className="text-[10px] font-bold uppercase opacity-50">PARTICIPANT NAME</p>
+                  <p className="text-lg font-black uppercase">{name}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase opacity-50">AFFILIATION</p>
+                  <p className="text-sm font-bold uppercase">{college || 'UNKNOWN'}</p>
+                </div>
+                {isTeam && reg.teamName && (
+                  <div>
+                    <p className="text-[10px] font-bold uppercase opacity-50">SQUADRON</p>
+                    <p className="text-sm font-bold uppercase text-[#FFD700] bg-[#000000] px-1 inline-block">{reg.teamName}</p>
+                  </div>
+                )}
+              </div>
+              <div className="text-right">
+                <p className="text-[10px] font-bold uppercase opacity-50 mb-1">REFERENCE ID</p>
+                <p className="font-mono text-sm font-bold bg-[#E5E7EB] text-[#1A1C1C] px-2 py-1">{checkinId.substring(0,18)}</p>
+              </div>
+            </div>
+          </div>
+          <div className="w-[250px] border-l-4 border-[#000000] p-6 flex flex-col items-center justify-center bg-[#FFFFFF] relative">
+            <div className="absolute top-2 left-2 right-2 flex justify-between">
+               <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
+               <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
+            </div>
+            <div className="absolute bottom-2 left-2 right-2 flex justify-between">
+               <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
+               <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
+            </div>
+            <p className="text-[10px] font-black uppercase tracking-widest mb-4">SHOW AT ENTRANCE</p>
+            <BrutalQRCode data={verifyUrl} size={150} />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col md:flex-row justify-between items-center p-4 brutal-border bg-white mt-4 gap-4">
+        <div className="flex flex-col">
+          <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Participant</span>
+          <span className="font-black uppercase text-sm">{name}</span>
+        </div>
+        <button
+          onClick={handleDownload}
+          disabled={isDownloading}
+          className={`w-full md:w-auto px-4 py-2 bg-primary text-on-primary font-display font-black tracking-widest uppercase border-2 border-on-surface shadow-[2px_2px_0px_0px_var(--on-surface)] transition-all flex items-center justify-center text-xs ${isDownloading ? 'opacity-50' : 'hover:translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_var(--on-surface)]'}`}
+        >
+          <span className={`material-symbols-outlined mr-2 text-sm ${isDownloading ? 'animate-spin' : ''}`}>
+             {isDownloading ? 'sync' : 'download'}
+          </span>
+          {isDownloading ? 'Downloading...' : 'Get Pass'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default function TicketCard({ reg, userName, college, currentUserId }: TicketCardProps) {
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const startDownload = () => setIsDownloading(true);
+  const endDownload = () => setIsDownloading(false);
 
   const isTeam = reg.format === 'TEAM' || reg.format === 'SOLO_TEAM' || reg.format === 'SOLO_PAIR';
 
@@ -112,99 +211,57 @@ export default function TicketCard({ reg, userName, college, currentUserId }: Ti
 
   // APPROVED TICKET VIEW
   return (
-    <div className="flex flex-col items-center gap-6">
-      
-      {/* Hidden printable Ticket element for html2canvas */}
-      <div className="absolute opacity-0 pointer-events-none z-[-1]" style={{ top: 0, left: 0 }}>
-        <div ref={ticketRef} className="w-[800px] h-[300px] bg-[#F9F9F9] border-4 border-[#000000] p-0 flex relative overflow-hidden font-sans text-[#1A1C1C]">
-          {/* Left Tear Section */}
-          <div className="w-16 border-r-4 border-[#000000] border-dashed flex items-center justify-center relative bg-[#FFD700]">
-             <p className="transform -rotate-90 whitespace-nowrap font-black uppercase text-xl font-display tracking-widest">
-               KRATOS 2026 OFFICIAL
-             </p>
-          </div>
-          
-          {/* Main Info */}
-          <div className="flex-1 p-8 flex flex-col justify-between">
-            <div>
-              <div className="flex justify-between items-start mb-2">
-                 <h2 className="text-4xl font-black uppercase italic tracking-tighter leading-none">{reg.eventName}</h2>
-                 <span className="bg-[#000000] text-[#FFFFFF] px-2 py-1 font-black text-xs uppercase tracking-widest">ADMIT ONE</span>
-              </div>
-              <p className="font-display font-bold uppercase text-[#705D00] text-sm tracking-widest">{isTeam ? 'Team Pass' : 'Solo Pass'}</p>
-            </div>
-            
-            <div className="mt-6 flex justify-between items-end">
-              <div className="space-y-2">
-                <div>
-                  <p className="text-[10px] font-bold uppercase opacity-50">PARTICIPANT NAME</p>
-                  <p className="text-lg font-black uppercase">{userName}</p>
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold uppercase opacity-50">AFFILIATION</p>
-                  <p className="text-sm font-bold uppercase">{college || 'UNKNOWN'}</p>
-                </div>
-                {isTeam && (
-                  <div>
-                    <p className="text-[10px] font-bold uppercase opacity-50">SQUADRON</p>
-                    <p className="text-sm font-bold uppercase text-[#FFD700] bg-[#000000] px-1 inline-block">{reg.teamName}</p>
-                  </div>
-                )}
-              </div>
-              <div className="text-right">
-                  <p className="text-[10px] font-bold uppercase opacity-50 mb-1">REGISTRATION ID</p>
-                  <p className="font-mono text-sm font-bold bg-[#E5E7EB] text-[#1A1C1C] px-2 py-1">{reg.id.substring(0,18)}</p>
-              </div>
-            </div>
-          </div>
-          
-          {/* Right QR Section */}
-          <div className="w-[250px] border-l-4 border-[#000000] p-6 flex flex-col items-center justify-center bg-[#FFFFFF] relative">
-            <div className="absolute top-2 left-2 right-2 flex justify-between">
-               <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
-               <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
-            </div>
-            <div className="absolute bottom-2 left-2 right-2 flex justify-between">
-               <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
-               <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
-            </div>
-            <p className="text-[10px] font-black uppercase tracking-widest mb-4">SHOW AT ENTRANCE</p>
-            <BrutalQRCode data={verifyUrl} size={150} />
-          </div>
-        </div>
-      </div>
-
-      {/* Visible Dashboard UI Form */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center p-6 brutal-border bg-surface-container-low gap-4 w-full">
+    <div className="w-full brutal-border bg-surface-container-low p-6">
+      <div className="flex justify-between items-center mb-6 border-b-2 border-on-surface pb-4">
         <div>
           <div className="flex items-center gap-3 mb-1">
-            <h3 className="text-xl font-black uppercase">{reg.eventName}</h3>
-            <span className="px-2 py-0.5 border-2 bg-green-200 text-green-900 border-green-900 text-[10px] font-black uppercase tracking-tighter">APPROVED TICKET</span>
+            <h3 className="text-2xl font-black uppercase italic">{reg.eventName}</h3>
+            <span className="px-2 py-0.5 border-2 bg-green-200 text-green-900 border-green-900 text-[10px] font-black uppercase tracking-tighter">APPROVED PASSES</span>
           </div>
           <p className="text-xs font-sans opacity-70 italic">
             FORMAT: {isTeam ? `TEAM/PAIR (${reg.teamName || 'NO NAME'})` : 'SOLO'} | REF: <span className="font-mono">{reg.id.substring(0,8)}</span>
           </p>
-          {isTeam && (
-            <div className="mt-4">
-              <TeamChat registrationId={reg.id} currentUserId={currentUserId} />
-            </div>
-          )}
-        </div>
-        <div className="flex gap-3 w-full md:w-auto">
-          <div className="flex flex-col md:flex-row items-center gap-4 w-full">
-            <button
-               onClick={downloadTicket}
-               disabled={isDownloading}
-               className={`w-full md:w-auto px-6 py-3 bg-primary text-on-primary font-display font-black tracking-widest uppercase border-2 border-on-surface shadow-[4px_4px_0px_0px_var(--on-surface)] transition-all flex items-center justify-center ${isDownloading ? 'opacity-50' : 'hover:translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_var(--on-surface)]'}`}
-            >
-              <span className={`material-symbols-outlined mr-2 ${isDownloading ? 'animate-spin' : ''}`}>
-                 {isDownloading ? 'sync' : 'download'}
-              </span>
-              {isDownloading ? 'Encoding Image...' : 'Download Pass'}
-            </button>
-          </div>
         </div>
       </div>
+
+      <div className="space-y-4">
+        {/* Pass for Leader */}
+        <MemberPass 
+          reg={reg} 
+          name={userName} 
+          college={college} 
+          checkinId={reg.id} 
+          isTeam={isTeam} 
+          isDownloading={isDownloading}
+          downloadTicket={() => {
+            startDownload();
+            setTimeout(endDownload, 2000);
+          }}
+        />
+
+        {/* Passes for Team Members */}
+        {isTeam && reg.members && reg.members.map((member) => (
+          <MemberPass 
+            key={member.id}
+            reg={reg} 
+            name={member.name} 
+            college={member.college} 
+            checkinId={member.id} 
+            isTeam={isTeam} 
+            isDownloading={isDownloading}
+            downloadTicket={() => {
+              startDownload();
+              setTimeout(endDownload, 2000);
+            }}
+          />
+        ))}
+      </div>
+
+      {isTeam && (
+        <div className="mt-8 pt-8 border-t-2 border-on-surface/10">
+          <TeamChat registrationId={reg.id} currentUserId={currentUserId} />
+        </div>
+      )}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@/db';
-import { users, events, announcements, registrations, systemSettings, teams, teamMembers, scheduleSlots, organizers, squadPosts, teamMessages } from '@/db/schema';
+import { registrations, users, events, teamMembers, teams, systemSettings, organizers, scheduleSlots, squadPosts, teamMessages, galleryPhotos, announcements } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
@@ -486,15 +486,35 @@ export async function markRegistrationCheckedIn(formData: FormData) {
       .update(registrations)
       .set({ checkedIn: true, checkedInAt: new Date() })
       .where(and(eq(registrations.id, id), eq(registrations.status, 'APPROVED')));
-
-    revalidatePath('/admin/checkin');
+    
+    revalidatePath(`/admin/verify/${id}`);
+    revalidatePath('/admin/registrations');
     revalidatePath('/admin/checkin/' + id);
+    return { success: true };
   } catch (error) {
     console.error(error);
+    return { error: 'Check-in failed.' };
   }
 }
 
-import { galleryPhotos } from '@/db/schema';
+export async function markMemberCheckedIn(formData: FormData) {
+  const id = formData.get('id') as string;
+  try {
+    await db
+      .update(teamMembers)
+      .set({ checkedIn: true, checkedInAt: new Date() })
+      .where(eq(teamMembers.id, id));
+    
+    revalidatePath('/admin/registrations');
+    revalidatePath('/admin/checkin/' + id);
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: 'Member check-in failed.' };
+  }
+}
+
+
 
 export async function updateGalleryLock(isGalleryLocked: boolean) {
   try {

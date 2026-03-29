@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { events } from '@/db/schema';
 
 type EventRecord = InferSelectModel<typeof events>;
-type EventCardRecord = Pick<EventRecord, 'id' | 'name' | 'description' | 'tagline' | 'slug' | 'fee' | 'format'>;
+type EventCardRecord = Pick<EventRecord, 'id' | 'name' | 'description' | 'tagline' | 'slug' | 'fee' | 'format' | 'teamSize' | 'teamSizeMin'>;
 
 const getFormatLabel = (format: string | null) => {
   switch (format) {
@@ -51,6 +51,14 @@ function FilterContent({ allEvents }: { allEvents: EventCardRecord[] }) {
               <p className="mb-4 md:mb-8 opacity-70 font-sans text-sm md:text-base group-hover:text-on-primary-container">
                 {event.description || event.tagline || 'Event details coming soon...'}
               </p>
+              <div className="flex gap-2 mb-4">
+                <span className="text-[10px] font-black uppercase tracking-widest bg-on-surface text-surface px-2 py-0.5">
+                  Min: {event.teamSizeMin || 1}
+                </span>
+                <span className="text-[10px] font-black uppercase tracking-widest bg-on-surface text-surface px-2 py-0.5">
+                  Max: {event.teamSize || 1}
+                </span>
+              </div>
             </div>
             <Link
               href={`/events/${event.slug}/register`}

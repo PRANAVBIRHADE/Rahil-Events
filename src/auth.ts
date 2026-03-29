@@ -36,12 +36,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         );
 
         if (!isPasswordCorrect) return null;
+        
+        // RESTRICTION: Only Admin identifiers allowed via Credentials Protocol
+        if (user.role !== 'ADMIN') {
+          console.warn(`[SECURITY] Unauthorized login attempt by non-admin: ${user.email}`);
+          return null;
+        }
 
         return {
           id: user.id,
           name: user.name,
           email: user.email,
-          role: user.role ?? 'PARTICIPANT',
+          role: user.role,
         } satisfies AppUser;
       },
     }),

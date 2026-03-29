@@ -63,6 +63,8 @@ export const teamMembers = pgTable('team_members', {
   branch: text('branch'),
   year: integer('year'),
   phone: text('phone'),
+  checkedIn: boolean('checked_in').default(false).notNull(),
+  checkedInAt: timestamp('checked_in_at'),
   createdAt: timestamp('created_at').defaultNow(),
 });
 
