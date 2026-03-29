@@ -30,15 +30,14 @@ export function getPlayerRank(xp: number) {
  * @param userId User UUID
  * @param amount XP amount to award
  */
-export async function awardXP(userId: string, amount: number, tx?: any) {
-  const client = tx || db;
-  const [user] = await client.select().from(users).where(eq(users.id, userId));
+export async function awardXP(userId: string, amount: number) {
+  const [user] = await db.select().from(users).where(eq(users.id, userId));
   if (!user) return;
 
   const newXp = (user.xp || 0) + amount;
   const newLevel = Math.floor(newXp / XP_PER_LEVEL) + 1;
 
-  await client.update(users)
+  await db.update(users)
     .set({ 
       xp: newXp,
       level: newLevel

@@ -186,46 +186,44 @@ export async function updateScheduleSlots(formData: FormData) {
   ];
 
   try {
-    await db.transaction(async (tx) => {
-      for (const day of [1, 2] as const) {
-        for (const slot of slotDefs) {
-          const isBreak = slot.sortIndex === 3;
-          const linkedEventIdRaw = formData.get(`day${day}_event_${slot.sortIndex}`) as string | null;
-          const linkedEventId = !linkedEventIdRaw || linkedEventIdRaw === 'null' ? null : linkedEventIdRaw;
-          const venueRaw = formData.get(`day${day}_venue_${slot.sortIndex}`) as string | null;
-          const venue = venueRaw && venueRaw.trim().length > 0 ? venueRaw.trim() : null;
+    for (const day of [1, 2] as const) {
+      for (const slot of slotDefs) {
+        const isBreak = slot.sortIndex === 3;
+        const linkedEventIdRaw = formData.get(`day${day}_event_${slot.sortIndex}`) as string | null;
+        const linkedEventId = !linkedEventIdRaw || linkedEventIdRaw === 'null' ? null : linkedEventIdRaw;
+        const venueRaw = formData.get(`day${day}_venue_${slot.sortIndex}`) as string | null;
+        const venue = venueRaw && venueRaw.trim().length > 0 ? venueRaw.trim() : null;
 
-          const existing = await tx
-            .select()
-            .from(scheduleSlots)
-            .where(
-              and(
-                eq(scheduleSlots.day, day),
-                eq(scheduleSlots.sortIndex, slot.sortIndex),
-              ),
-            )
-            .limit(1);
+        const existing = await db
+          .select()
+          .from(scheduleSlots)
+          .where(
+            and(
+              eq(scheduleSlots.day, day),
+              eq(scheduleSlots.sortIndex, slot.sortIndex),
+            ),
+          )
+          .limit(1);
 
-          if (existing.length === 0) {
-            await tx.insert(scheduleSlots).values({
-              day,
-              sortIndex: slot.sortIndex,
-              timeSlot: slot.timeSlot,
-              venue,
-              linkedEventId: isBreak ? null : linkedEventId,
-              isBreak,
-            });
-          } else {
-            await tx.update(scheduleSlots).set({
-              timeSlot: slot.timeSlot,
-              venue,
-              linkedEventId: isBreak ? null : linkedEventId,
-              isBreak,
-            }).where(eq(scheduleSlots.id, existing[0].id));
-          }
+        if (existing.length === 0) {
+          await db.insert(scheduleSlots).values({
+            day,
+            sortIndex: slot.sortIndex,
+            timeSlot: slot.timeSlot,
+            venue,
+            linkedEventId: isBreak ? null : linkedEventId,
+            isBreak,
+          });
+        } else {
+          await db.update(scheduleSlots).set({
+            timeSlot: slot.timeSlot,
+            venue,
+            linkedEventId: isBreak ? null : linkedEventId,
+            isBreak,
+          }).where(eq(scheduleSlots.id, existing[0].id));
         }
       }
-    });
+    }
 
     revalidatePath('/admin/schedule');
     revalidatePath('/');
@@ -416,47 +414,45 @@ export async function createRegistration(formData: FormData) {
       }
     }
 
-    await db.transaction(async (tx) => {
-      const [insertedTeam] = await tx
-        .insert(teams)
-        .values({ eventId, name: resolvedTeamName })
-        .returning({ id: teams.id });
+    const [insertedTeam] = await db
+      .insert(teams)
+      .values({ eventId, name: resolvedTeamName })
+      .returning({ id: teams.id });
 
-      if (!insertedTeam) {
-        throw new Error('Failed to create team record');
-      }
+    if (!insertedTeam) {
+      throw new Error('Failed to create team record');
+    }
 
-      await tx.insert(teamMembers).values(
-        allMembers.map((m) => ({
-          teamId: insertedTeam.id,
-          name: m.name,
-          college: m.college,
-          branch: m.branch,
-          year: m.year ?? null,
-          phone: m.phone,
-        })),
-      );
-
-      // Persist legacy JSON `members` for backward compatibility with existing admin UI.
-      const legacyAdditionalMembers =
-        additionalMembers.length > 0 ? additionalMembers.map((m) => ({ name: m.name, phone: m.phone })) : null;
-
-      await tx.insert(registrations).values({
-        userId: dbUser.id,
-        eventId,
+    await db.insert(teamMembers).values(
+      allMembers.map((m) => ({
         teamId: insertedTeam.id,
-        teamName: resolvedTeamName,
-        members: legacyAdditionalMembers,
-        transactionId: requiresPayment ? transactionId : null,
-        paymentScreenshot: requiresPayment ? paymentScreenshot : null,
-        paymentNotes,
-        totalFee,
-        status: requiresPayment ? 'PENDING' : 'APPROVED',
-      });
+        name: m.name,
+        college: m.college,
+        branch: m.branch,
+        year: m.year ?? null,
+        phone: m.phone,
+      })),
+    );
 
-      // Award XP for deployment within the transaction
-      await awardXP(dbUser.id, XP_PER_REGISTRATION, tx);
+    // Persist legacy JSON `members` for backward compatibility with existing admin UI.
+    const legacyAdditionalMembers =
+      additionalMembers.length > 0 ? additionalMembers.map((m) => ({ name: m.name, phone: m.phone })) : null;
+
+    await db.insert(registrations).values({
+      userId: dbUser.id,
+      eventId,
+      teamId: insertedTeam.id,
+      teamName: resolvedTeamName,
+      members: legacyAdditionalMembers,
+      transactionId: requiresPayment ? transactionId : null,
+      paymentScreenshot: requiresPayment ? paymentScreenshot : null,
+      paymentNotes,
+      totalFee,
+      status: requiresPayment ? 'PENDING' : 'APPROVED',
     });
+
+    // Award XP for deployment
+    await awardXP(dbUser.id, XP_PER_REGISTRATION);
 
     revalidatePath('/dashboard');
     return { success: true };
