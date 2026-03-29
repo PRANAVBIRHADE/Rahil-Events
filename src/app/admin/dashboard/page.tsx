@@ -5,6 +5,7 @@ import BrutalButton from '@/components/ui/BrutalButton';
 import CreateEventForm from '@/components/admin/CreateEventForm';
 import BroadcastForm from '@/components/admin/BroadcastForm';
 import GalleryAdminToggle from '@/components/admin/GalleryAdminToggle';
+import LogoutButton from '@/components/dashboard/LogoutButton';
 import { db } from '@/db';
 import { registrations, users, events, systemSettings, teamMembers } from '@/db/schema';
 import { eq, desc, count, sum } from 'drizzle-orm';
@@ -75,9 +76,12 @@ export default async function AdminDashboard() {
           <h1 className="text-5xl font-black uppercase tracking-tighter mb-2 italic">Admin Panel</h1>
           <p className="font-display font-bold uppercase text-primary tracking-widest text-sm">Manage Kratos 2026</p>
         </div>
-        <Link href="/api/admin/export" target="_blank">
-          <BrutalButton variant="outline" size="sm">Export Master Excel</BrutalButton>
-        </Link>
+        <div className="flex gap-4">
+          <Link href="/api/admin/export" target="_blank">
+            <BrutalButton variant="outline" size="sm">Export Master Excel</BrutalButton>
+          </Link>
+          <LogoutButton />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
