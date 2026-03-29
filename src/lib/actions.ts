@@ -360,67 +360,71 @@ export async function createRegistration(formData: FormData) {
     return { error: 'Identity incomplete. Please complete profile (college, branch, year, phone).' };
   }
 
-  const feeSettings = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
-  const feePerPerson = feeSettings.length > 0 && feeSettings[0].feePerPerson ? feeSettings[0].feePerPerson : 0;
-
-  const [event] = await db.select().from(events).where(eq(events.id, eventId));
-  if (!event) return { error: 'Event not found.' };
-
-  const allMembers = [
-    {
-      name: dbUser.name,
-      phone: dbUser.phone as string,
-      college: dbUser.college,
-      branch: dbUser.branch,
-      year: dbUser.year ?? null,
-    },
-    ...additionalMembers,
-  ];
-
-  const memberCount = allMembers.length;
-  const teamSizeMin = event.teamSizeMin ?? 1;
-  const teamSizeMax = event.teamSize ?? 1;
-  if (memberCount < teamSizeMin || memberCount > teamSizeMax) {
-    return { error: `Invalid team size. Allowed: ${teamSizeMin}-${teamSizeMax}.` };
-  }
-
-  const resolvedTeamName = teamName || `${dbUser.name}'s Team`;
-  const resolvedFeePerPerson =
-    event.fee === 0
-      ? 0
-      : feePerPerson && feePerPerson > 0
-        ? feePerPerson
-        : event.fee;
-  const totalFee = resolvedFeePerPerson * memberCount;
-  const requiresPayment = totalFee > 0;
-
-  if (requiresPayment && (!paymentScreenshot || !transactionId)) {
-    return { error: 'Payment screenshot and transaction ID are required for paid events.' };
-  }
-
-  // Check existing registration
-  const existing = await db.select().from(registrations).where(and(eq(registrations.eventId, eventId), eq(registrations.userId, dbUser.id)));
-  
-  if (existing.length > 0) {
-    if (existing[0].status === 'REJECTED') {
-      // OVERWRITE PROTOCOL: Delete the rejected packet so they can retry smoothly.
-      const existingTeamId = existing[0].teamId;
-      await db.delete(registrations).where(eq(registrations.id, existing[0].id));
-      if (existingTeamId) {
-        await db.delete(teamMembers).where(eq(teamMembers.teamId, existingTeamId as string));
-        await db.delete(teams).where(eq(teams.id, existingTeamId as string));
-      }
-    } else {
-      return { error: 'You have already deployed a packet for this module.' };
-    }
-  }
-
   try {
+    const feeSettings = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
+    const feePerPerson = feeSettings.length > 0 && feeSettings[0].feePerPerson ? feeSettings[0].feePerPerson : 0;
+
+    const [event] = await db.select().from(events).where(eq(events.id, eventId));
+    if (!event) return { error: 'Event not found.' };
+
+    const allMembers = [
+      {
+        name: dbUser.name,
+        phone: dbUser.phone as string,
+        college: dbUser.college,
+        branch: dbUser.branch,
+        year: dbUser.year ?? null,
+      },
+      ...additionalMembers,
+    ];
+
+    const memberCount = allMembers.length;
+    const teamSizeMin = event.teamSizeMin ?? 1;
+    const teamSizeMax = event.teamSize ?? 1;
+    if (memberCount < teamSizeMin || memberCount > teamSizeMax) {
+      return { error: `Invalid team size. Allowed: ${teamSizeMin}-${teamSizeMax}.` };
+    }
+
+    const resolvedTeamName = teamName || `${dbUser.name}'s Team`;
+    const resolvedFeePerPerson =
+      event.fee === 0
+        ? 0
+        : feePerPerson && feePerPerson > 0
+          ? feePerPerson
+          : event.fee;
+    const totalFee = resolvedFeePerPerson * memberCount;
+    const requiresPayment = totalFee > 0;
+
+    if (requiresPayment && (!paymentScreenshot || !transactionId)) {
+      return { error: 'Payment screenshot and transaction ID are required for paid events.' };
+    }
+
+    // Check existing registration
+    const existing = await db.select().from(registrations).where(and(eq(registrations.eventId, eventId), eq(registrations.userId, dbUser.id)));
+    
+    if (existing.length > 0) {
+      if (existing[0].status === 'REJECTED') {
+        // OVERWRITE PROTOCOL: Delete the rejected packet so they can retry smoothly.
+        const existingTeamId = existing[0].teamId;
+        await db.delete(registrations).where(eq(registrations.id, existing[0].id));
+        if (existingTeamId) {
+          await db.delete(teamMembers).where(eq(teamMembers.teamId, existingTeamId as string));
+          await db.delete(teams).where(eq(teams.id, existingTeamId as string));
+        }
+      } else {
+        return { error: 'You have already deployed a packet for this module.' };
+      }
+    }
+
     await db.transaction(async (tx) => {
       const [insertedTeam] = await tx
         .insert(teams)
         .values({ eventId, name: resolvedTeamName })
         .returning({ id: teams.id });
+
+      if (!insertedTeam) {
+        throw new Error('Failed to create team record');
+      }
 
       await tx.insert(teamMembers).values(
         allMembers.map((m) => ({
@@ -449,16 +453,17 @@ export async function createRegistration(formData: FormData) {
         totalFee,
         status: requiresPayment ? 'PENDING' : 'APPROVED',
       });
-    });
 
-    // Award XP for deployment
-    await awardXP(dbUser.id, XP_PER_REGISTRATION);
+      // Award XP for deployment within the transaction
+      await awardXP(dbUser.id, XP_PER_REGISTRATION, tx);
+    });
 
     revalidatePath('/dashboard');
     return { success: true };
   } catch (error) {
-    console.error(error);
-    return { error: 'Registration injection failed due to backend database timeout.' };
+    console.error('REGISTRATION_FLOW_ERROR:', error);
+    const message = error instanceof Error ? error.message : 'Unknown database fault';
+    return { error: `CRITICAL ERROR: Registration injection failed (${message}). Please contact support if this persists.` };
   }
 }
 
