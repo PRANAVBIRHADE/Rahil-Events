@@ -230,10 +230,7 @@ export default async function AdminCheckInPage({ searchParams }: { searchParams:
                         </td>
                         <td className="p-4 text-center">
                           {result.checkedIn ? null : (
-                            <form action={async (formData) => {
-                              'use server';
-                              await markRegistrationCheckedIn(formData);
-                            }}>
+                            <form action={markRegistrationCheckedIn}>
                               <input type="hidden" name="id" value={result.regId} />
                               <BrutalButton
                                 type="submit"

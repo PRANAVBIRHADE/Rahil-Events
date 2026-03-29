@@ -91,10 +91,7 @@ export default async function EventManagementPage() {
                          <BrutalButton form={`update-event-${event.id}`} type="submit" variant="secondary" size="sm" className="bg-blue-100 text-blue-800 border-blue-800">
                            Overwrite Data
                          </BrutalButton>
-                         <form action={async (formData) => {
-                           'use server';
-                           await deleteEvent(formData);
-                         }}>
+                         <form action={deleteEvent}>
                            <input type="hidden" name="id" value={event.id} />
                            <BrutalButton type="submit" variant="secondary" size="sm" className="bg-red-100 text-red-800 border-red-800">
                              Delete Event

@@ -1,181 +1,148 @@
 import React from 'react';
-import { db } from '@/db';
-import { registrations, users, events, teamMembers, teams } from '@/db/schema';
-import { eq, and } from 'drizzle-orm';
-import { notFound, redirect } from 'next/navigation';
-import BrutalCard from '@/components/ui/BrutalCard';
 import Link from 'next/link';
-import { markRegistrationCheckedIn, markMemberCheckedIn } from '@/lib/actions';
+import { db } from '@/db';
+import { eq } from 'drizzle-orm';
+import { events, registrations, teamMembers, users } from '@/db/schema';
+import BrutalCard from '@/components/ui/BrutalCard';
+import BrutalButton from '@/components/ui/BrutalButton';
+import { markRegistrationCheckedIn } from '@/lib/actions';
+import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-export default async function CheckinConfirmationPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function CheckInDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  // Try finding as Registration (Leader)
-  const [regData] = await db.select({
-    reg: registrations,
-    user: users,
-    event: events,
-  })
-  .from(registrations)
-  .innerJoin(users, eq(registrations.userId, users.id))
-  .innerJoin(events, eq(registrations.eventId, events.id))
-  .where(eq(registrations.id, id))
-  .limit(1);
-
-  let participantInfo = null;
-
-  if (regData) {
-    participantInfo = {
-      type: 'LEADER',
-      id: regData.reg.id,
-      name: regData.user.name,
-      email: regData.user.email,
-      eventName: regData.event.name,
-      teamName: regData.reg.teamName,
-      status: regData.reg.status,
-      checkedIn: regData.reg.checkedIn,
-      checkedInAt: regData.reg.checkedInAt,
-    };
-  } else {
-    // Try finding as Team Member
-    const [memberData] = await db.select({
-      member: teamMembers,
-      team: teams,
+  const [data] = await db
+    .select({
+      reg: registrations,
+      user: users,
       event: events,
     })
-    .from(teamMembers)
-    .innerJoin(teams, eq(teamMembers.teamId, teams.id))
-    .innerJoin(events, eq(teams.eventId, events.id))
-    .where(eq(teamMembers.id, id))
-    .limit(1);
+    .from(registrations)
+    .innerJoin(users, eq(registrations.userId, users.id))
+    .innerJoin(events, eq(registrations.eventId, events.id))
+    .where(eq(registrations.id, id));
 
-    if (memberData) {
-      participantInfo = {
-        type: 'MEMBER',
-        id: memberData.member.id,
-        name: memberData.member.name,
-        email: null,
-        eventName: memberData.event.name,
-        teamName: memberData.team.name,
-        status: 'APPROVED', 
-        checkedIn: memberData.member.checkedIn,
-        checkedInAt: memberData.member.checkedInAt,
-      };
-    }
-  }
+  if (!data) return notFound();
 
-  if (!participantInfo) return notFound();
+  const { reg, user, event } = data;
 
-  const isApproved = participantInfo.status === 'APPROVED';
+  const teamMemberRows = reg.teamId
+    ? await db.select().from(teamMembers).where(eq(teamMembers.teamId, reg.teamId))
+    : [];
 
   return (
-    <div className="max-w-[1440px] mx-auto px-6 py-12 text-on-surface">
+    <div className="max-w-[1440px] mx-auto px-6 py-12">
       <div className="mb-12 flex justify-between items-end">
         <div>
-          <h1 className="text-5xl font-black uppercase tracking-tighter mb-2 italic">Entry Authorization</h1>
-          <p className="font-display font-bold uppercase text-primary tracking-widest text-sm">Target ID: {id.substring(0,18)}</p>
+          <h1 className="text-5xl font-black uppercase tracking-tighter mb-2 italic">QR Check-In</h1>
+          <p className="font-display font-bold uppercase text-primary tracking-widest text-sm">
+            Ref ID: {reg.id.substring(0, 18)}
+          </p>
         </div>
-        <Link href="/admin/scanner" className="border-b-2 border-on-surface font-black uppercase text-xs hover:text-primary hover:border-primary transition-colors">
-          &larr; Return to Scanner
+        <Link href="/admin/checkin" className="border-b-2 border-on-surface font-black uppercase text-xs hover:text-primary hover:border-primary transition-colors">
+          &larr; Back to Search
         </Link>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-        <div className="lg:col-span-12">
-            <BrutalCard shadow={true} className={participantInfo.checkedIn ? 'bg-green-50 border-green-600' : ''}>
-               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 p-4">
-                  <div className="space-y-4 flex-1">
-                     <div className="flex items-center gap-4">
-                        <span className={`px-3 py-1 text-[10px] font-black uppercase border-2 ${participantInfo.type === 'LEADER' ? 'bg-primary-container text-on-primary-container border-on-primary-container' : 'bg-surface-container-highest text-on-surface border-on-surface'}`}>
-                           {participantInfo.type} PASS
-                        </span>
-                        {!isApproved && (
-                           <span className="px-3 py-1 text-[10px] font-black uppercase border-2 bg-red-600 text-white border-black animate-pulse">
-                              UNAUTHORIZED / PENDING
-                           </span>
-                        )}
-                        {participantInfo.checkedIn && (
-                            <span className="px-3 py-1 text-[10px] font-black uppercase border-2 bg-green-600 text-white border-black">
-                                ALREADY IN TERMINAL
-                            </span>
-                        )}
-                     </div>
+        <div className="lg:col-span-5 space-y-8">
+          <BrutalCard shadow={true}>
+            <h2 className="text-2xl font-black uppercase italic mb-6 border-b-2 border-on-surface pb-2">Registration Details</h2>
+            <div className="space-y-4 font-mono text-sm">
+              <div className="flex justify-between border-b border-on-surface/10 pb-2">
+                <span className="opacity-60 uppercase font-sans font-bold">Event</span>
+                <span className="font-bold">{event.name}</span>
+              </div>
+              <div className="flex justify-between border-b border-on-surface/10 pb-2">
+                <span className="opacity-60 uppercase font-sans font-bold">Payment Status</span>
+                <span className="font-bold">{reg.status}</span>
+              </div>
+              <div className="flex justify-between border-b border-on-surface/10 pb-2">
+                <span className="opacity-60 uppercase font-sans font-bold">Check-in</span>
+                <span className="font-bold">{reg.checkedIn ? 'CHECKED-IN' : 'NOT CHECKED-IN'}</span>
+              </div>
+              {reg.checkedInAt ? (
+                <div className="flex justify-between pt-2">
+                  <span className="opacity-60 uppercase font-sans font-bold">Checked-in At</span>
+                  <span className="font-bold">{new Date(reg.checkedInAt).toLocaleString()}</span>
+                </div>
+              ) : null}
+            </div>
+          </BrutalCard>
 
-                     <h2 className="text-6xl font-black uppercase tracking-tighter leading-none italic">{participantInfo.name}</h2>
-                     
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-                        <div>
-                           <p className="text-[10px] font-black uppercase opacity-60 mb-1">Assigned Module</p>
-                           <p className="text-2xl font-black uppercase text-primary tracking-tight">{participantInfo.eventName}</p>
-                        </div>
-                        <div>
-                           <p className="text-[10px] font-black uppercase opacity-60 mb-1">Deployment Squadron (Team)</p>
-                           <p className="text-2xl font-black uppercase tracking-tight">{participantInfo.teamName || 'SOLO OP'}</p>
-                        </div>
-                     </div>
-                  </div>
+          <BrutalCard shadow={true}>
+            <h2 className="text-2xl font-black uppercase italic mb-6 border-b-2 border-on-surface pb-2">Team</h2>
+            <div className="space-y-3">
+              <div className="font-display font-black text-2xl uppercase tracking-tighter text-primary-container">
+                {reg.teamName || user.name}
+              </div>
+              {teamMemberRows.length > 0 ? (
+                <div className="space-y-3">
+                  {teamMemberRows.map((m, i) => (
+                    <div key={i} className="bg-surface-container-low p-3 brutal-border flex justify-between items-center text-sm font-mono gap-4">
+                      <div className="min-w-0">
+                        <p className="font-bold uppercase truncate">{m.name}</p>
+                        <p className="text-[10px] opacity-60 uppercase truncate">
+                          {m.college || 'N/A'} {m.branch ? `(${m.branch})` : ''}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="opacity-60 text-xs uppercase">{m.phone || user.phone}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="opacity-60 text-xs uppercase">No team member rows stored yet.</p>
+              )}
+            </div>
+          </BrutalCard>
+        </div>
 
-                  <div className="w-full md:w-80 space-y-4">
-                     {participantInfo.checkedIn ? (
-                        <div className="bg-green-100 p-8 border-4 border-green-600 hard-shadow-green text-green-900 text-center italic">
-                           <span className="material-symbols-outlined text-6xl mb-4 block">verified</span>
-                           <h3 className="text-2xl font-black uppercase mb-1">Access Granted</h3>
-                           <p className="text-xs font-bold uppercase opacity-70">
-                              Logged: {participantInfo.checkedInAt?.toLocaleString()}
-                           </p>
-                        </div>
-                     ) : (
-                        <form action={async (formData) => {
-                          'use server';
-                          const checkinId = formData.get('id') as string;
-                          const type = formData.get('type') as string;
-                          
-                          if (type === 'LEADER') {
-                            await markRegistrationCheckedIn(formData);
-                          } else {
-                            await markMemberCheckedIn(formData);
-                          }
-                          redirect(`/admin/checkin/${checkinId}`);
-                        }} className="space-y-4">
-                           <input type="hidden" name="id" value={participantInfo.id} />
-                           <input type="hidden" name="type" value={participantInfo.type} />
-                           
-                           <button 
-                            disabled={!isApproved}
-                            className={`w-full py-8 font-black uppercase tracking-widest text-2xl border-4 transition-all flex items-center justify-center gap-3 ${
-                              isApproved 
-                                ? 'bg-primary text-on-primary border-on-surface hover:translate-x-2 hover:-translate-y-2 hover:shadow-[8px_8px_0px_0px_black] active:translate-x-0 active:translate-y-0 active:shadow-none' 
-                                : 'bg-surface-container-highest text-on-surface/30 border-on-surface opacity-50 cursor-not-allowed shadow-none'
-                            }`}
-                           >
-                              {isApproved ? (
-                                <>
-                                  <span className="material-symbols-outlined text-4xl">stadium</span>
-                                  GRANT ENTRY
-                                </>
-                              ) : (
-                                'RESTRICTED ACCESS'
-                              )}
-                           </button>
-                           {!isApproved && (
-                             <p className="text-[10px] font-bold uppercase text-red-600 text-center italic">
-                               Payment verification required before entry authorization.
-                             </p>
-                           )}
-                        </form>
-                     )}
-                     
-                     <div className="pt-4 border-t-2 border-on-surface/10">
-                        <p className="text-[10px] font-bold uppercase opacity-40 mb-2">Technical Identification</p>
-                        <p className="font-mono text-[9px] break-all opacity-50">{id}</p>
-                     </div>
-                  </div>
-               </div>
-            </BrutalCard>
+        <div className="lg:col-span-7 space-y-8">
+          <div className="bg-on-surface text-surface p-8 hard-shadow-gold italic">
+            <h3 className="font-display text-sm font-bold uppercase tracking-[0.3em] mb-6 text-primary-container">Check-In Terminal</h3>
+
+            {reg.checkedIn ? (
+              <div className="border-b border-surface/20 pb-4 mb-6">
+                <p className="text-sm uppercase font-bold">Already checked in.</p>
+                {reg.checkedInAt ? (
+                  <p className="text-[10px] opacity-60 font-mono mt-2">
+                    {new Date(reg.checkedInAt).toLocaleString()}
+                  </p>
+                ) : null}
+              </div>
+            ) : (
+              <div className="border-b border-surface/20 pb-4 mb-6">
+                <p className="text-sm uppercase font-bold opacity-80">
+                  Payment must be `APPROVED` to check-in.
+                </p>
+              </div>
+            )}
+
+            <form action={markRegistrationCheckedIn} className="space-y-4">
+              <input type="hidden" name="id" value={reg.id} />
+              <BrutalButton
+                type="submit"
+                size="lg"
+                variant="outline"
+                disabled={reg.checkedIn || reg.status !== 'APPROVED'}
+                className="w-full"
+              >
+                Mark as Checked-In
+              </BrutalButton>
+              {reg.status !== 'APPROVED' ? (
+                <p className="text-[10px] opacity-60 uppercase">
+                  Payment is not approved yet. This registration cannot be checked-in.
+                </p>
+              ) : null}
+            </form>
+          </div>
         </div>
       </div>
     </div>
   );
 }
+

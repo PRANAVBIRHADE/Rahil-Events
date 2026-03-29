@@ -2,43 +2,12 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 import BrutalCard from '@/components/ui/BrutalCard';
-import BrutalInput from '@/components/ui/BrutalInput';
 import BrutalButton from '@/components/ui/BrutalButton';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const registered = searchParams.get('registered');
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-
-    const result = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-    });
-
-    setLoading(false);
-
-    if (result?.error) {
-      setError('Invalid credentials or system synchronization error.');
-    } else {
-      router.push('/dashboard');
-    }
-  }
 
   return (
     <BrutalCard shadowColor="gold">
@@ -64,56 +33,13 @@ export default function LoginPage() {
         </BrutalButton>
       </div>
 
-      <div className="flex items-center gap-4 mb-6">
-        <div className="h-[2px] w-full bg-on-surface/10 uppercase"></div>
-        <span className="text-[10px] font-black uppercase text-on-surface/40">OR E-MAIL</span>
-        <div className="h-[2px] w-full bg-on-surface/10"></div>
-      </div>
-
-      {registered && (
-        <div className="mb-6 p-4 bg-green-100 border-2 border-green-500 text-green-700 font-bold uppercase text-xs italic">
-          Account Created Successfully. Please login below.
-        </div>
-      )}
-
-      {error && (
-        <div className="mb-6 p-4 bg-red-100 border-2 border-red-500 text-red-500 font-bold uppercase text-xs italic">
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <BrutalInput 
-          name="email"
-          id="email"
-          label="Email Address" 
-          type="email" 
-          placeholder="ENGINEER@COLLEGE.EDU" 
-          required 
-        />
-        <div className="space-y-1">
-          <BrutalInput 
-            name="password"
-            id="password"
-            label="Password" 
-            type="password" 
-            placeholder="••••••••" 
-            required 
-          />
-          <div className="flex justify-end">
-            <Link href="/auth/forgot" className="text-xs font-bold uppercase hover:underline">Forgot Password?</Link>
-          </div>
-        </div>
-
-        <BrutalButton type="submit" className="w-full" size="lg" disabled={loading}>
-          {loading ? 'LOGGING IN...' : 'Login'}
-        </BrutalButton>
-      </form>
-
       <div className="mt-8 pt-6 border-t-2 border-on-surface text-center">
-        <p className="text-sm font-sans">
+        <p className="text-sm font-sans mb-4">
           No account? <Link href="/auth/register" className="font-bold uppercase border-b-2 border-primary-container">Sign Up here</Link>
         </p>
+        <Link href="/auth/adminlogin" className="text-xs font-bold uppercase opacity-50 hover:opacity-100 hover:text-primary transition-colors">
+          Admin Portal Login &rarr;
+        </Link>
       </div>
     </BrutalCard>
   );
