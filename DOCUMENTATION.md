@@ -62,7 +62,7 @@ All tables live in **Neon Postgres** and are managed through **Drizzle ORM** (`s
 | `organizers` | Public-facing organizer directory |
 | `gallery_photos` | Participant-uploaded photos (Cloudinary URLs) |
 | `announcements` | Single active scrolling announcement |
-| `system_settings` | Registration deadline, gallery lock, results timing |
+| `system_settings` | Deadline, gallery lock, results timing, **and Landing Page Image assets** |
 
 > Schema changes are applied with `npx drizzle-kit push` (development) or migrations in production.
 
@@ -143,13 +143,19 @@ Quick overview metrics:
 - Results page is locked until that time
 - Admin sets the YouTube embed URL and per-event winners (top 3) from the results panel
 
-### Settings
+### Settings & Image CMS
 
 - Registration open/closed toggle
 - Registration deadline (stored as UTC, formatted in local time for the `datetime-local` input)
 - Gallery lock toggle
 - Results reveal timestamp
 - Active announcement text
+- **Landing Page Image Assets**: Upload Hero and About section images directly to Cloudinary via the dashboard. These are stored in `system_settings` and served automatically on the landing page.
+
+### Contact & Organizers
+
+- **Organizers**: Manage faculty and student coordinator cards.
+- **Contact Page**: A hybrid system displaying official college info, the organizer directory, and an embedded Google Map pointing to the Nanded campus.
 
 ---
 

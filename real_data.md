@@ -20,14 +20,13 @@ This document is the single source of truth for all real-world data needed to ru
 
 | Field | Fill here | Notes |
 | --- | --- | --- |
-| Official college name | Matoshri Pratishthan Group of Institutions, School of Engineering Nanded | Use full legal/public name |
-| Short college name | M. P. G. I | Example: `Matoshri Engineering College` |
-| Festival name | KRATOS 2026 | Change only if branding changes |
-| Festival subtitle/tagline | Build. Compete. Innovate. | Used in hero, metadata, posters |
-| Hosting department | Student Department | Example: `Computer Engineering Department` |
-| Parent trust / society name |  | Optional, if used publicly |
-| Official college website | https://mpgi.ac.in/school-of-engineering/ | Full URL |
-| NAAC / accreditation line | Recognized by AICTE, DTE, Affiliated to Dr. Babasaheb Ambedkar Technological University, Lonere | Optional public branding line |
+| Official college name | Matoshri Pratishthan Group of Institutions, Nanded | Full legal name |
+| Short college name | M. P. G. I |  |
+| Festival name | KRATOS 2026 |  |
+| Festival subtitle/tagline | Build. Compete. Innovate. |  |
+| Hosting department | School of Engineering |  |
+| Official college website | https://mpgi.ac.in/school-of-engineering/ |  |
+| NAAC / accreditation line | Recognized by AICTE, Affiliated to DBATU, Lonere |  |
 
 ### 2. Campus and venue identity
 

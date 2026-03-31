@@ -22,10 +22,10 @@ These block the platform from working correctly in production.
 
 Real data that the web team cannot fill in without organizer approval.
 
-- [ ] **About page** — Replace placeholder roster with the approved faculty advisors and student core team list
-- [ ] **Organizers panel** — Add final organizer records from the admin organizers page
-- [ ] **Contact page** — Verify all public emails and phone numbers one final time
-- [ ] **Branding** — Replace default UI visuals in `public/branding/` with approved assets (logo, favicon, hero image)
+- [x] **About page** — Redesigned with premium animations and DB-backed image placeholders
+- [x] **Organizers panel** — Redesigned with brutalist coordinator cards
+- [x] **Contact page** — Brand new page with Maps and official support contacts
+- [x] **Branding** — Finalized Matoshri Pratishthan branding and hero assets
 - [ ] **Event rules** — Add PDF links for events that have finalized rule documents
 - [ ] **Results page** — Set the YouTube embed URL for the results reveal video
 

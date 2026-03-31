@@ -16,9 +16,11 @@
 
 ---
 
-## 📖 About
-
-KRATOS 2026 is a full-stack festival operations platform that powers end-to-end management of an inter-collegiate technical festival — from public event discovery and participant registration all the way through admin verification, event-day check-in, result publishing, and gallery uploads.
+## 🏗️ Quick Start Guides
+For a fast, simplified setup and usage guide, see our **ReadDoc Series**:
+1. [**`readdoc1-get-started.md`**](./docs/readdoc1-get-started.md) — Local setup, environment variables, and running the dev server.
+2. [**`readdoc2-new-features.md`**](./docs/readdoc2-new-features.md) — Overview of the latest UI polish, branding, and new sections.
+3. [**`readdoc3-admin-manual.md`**](./docs/readdoc3-admin-manual.md) — How to manage events, verify payments, and upload landing page images.
 
 ---
 
@@ -31,20 +33,22 @@ KRATOS 2026 is a full-stack festival operations platform that powers end-to-end 
 | Language | TypeScript 5 |
 | Database | Neon Postgres via Drizzle ORM |
 | Auth | Auth.js v5 beta (Credentials + Google OAuth) |
-| Media | Cloudinary (proof uploads + gallery) |
+| Media | Cloudinary (CMS assets + participant uploads) |
 
 ---
 
 ## ✅ What's Working
 
-- **Public pages** — landing, events, schedule, gallery, about, contact, privacy, terms, sponsorships
-- **Auth** — Google sign-in and email/password credentials
-- **Profile gate** — participants must complete profile before registering
-- **Registrations** — solo and team flows; free events auto-approve, paid events require proof upload
-- **Admin panel** — events, organizers, schedule, registrations, settings, results, check-in, users
-- **CSV exports** — master registrations and payment proofs
-- **Tickets** — downloadable entry passes with QR-based check-in links
-- **Real-time** — live viewer counter on results page, scrolling announcements
+- **Public pages** — landing (dynamic), events, schedule, gallery, about, contact (with maps), privacy, terms, sponsorships.
+- **Image CMS** — Directly upload Hero and About section images from the admin panel (saved in DB).
+- **Premium Branding** — Full institutional synchronization with **Matoshri Pratishthan**, featuring staggered animations.
+- **Auth** — Google sign-in and email/password credentials.
+- **Profile gate** — Participants must complete profile before registering.
+- **Registrations** — Solo and team flows; free events auto-approve, paid events require proof upload.
+- **Admin panel** — Events, organizers, schedule, registrations, **system settings**, results, check-in, users.
+- **CSV exports** — Master registrations and payment proofs.
+- **Tickets** — Downloadable entry passes with QR-based check-in links.
+- **Real-time** — Live spectator counter and scrolling mission-comms announcements.
 
 ---
 
@@ -72,10 +76,10 @@ SEED_ADMIN_PASSWORD=
 # 1. Install dependencies
 npm install
 
-# 2. Push database schema
+# 2. Push database schema (Initial setup)
 npx drizzle-kit push
 
-# 3. (Optional) Seed event data
+# 3. (Optional) Seed base event data
 npx tsx src/db/seed.ts
 
 # 4. (Optional) Create admin account
@@ -92,7 +96,7 @@ npm run dev
 1. Set **all** environment variables on your hosting platform.
 2. Push the database schema → `npx drizzle-kit push` (on production DB).
 3. Run `npx tsx src/db/seed-admin.ts` to bootstrap the first admin account.
-4. Confirm Cloudinary preset, cloud name, and `NEXT_PUBLIC_SITE_URL` (used for ticket QR links).
+4. Confirm Cloudinary preset, cloud name, and `NEXT_PUBLIC_SITE_URL`.
 5. Validate the build → `npm run lint && npm run build`.
 
 ---
@@ -105,9 +109,12 @@ npm run dev
 | [`FEATURES.md`](./FEATURES.md) | Complete feature inventory for participants, admins, and system |
 | [`real_data.md`](./real_data.md) | Single source of truth for all real-world festival data |
 | [`PROJECT_TODO.md`](./PROJECT_TODO.md) | Remaining manual tasks before production launch |
+| [**`readdoc1`**](./docs/readdoc1-get-started.md) | **Simplified Step 1: Getting Started** |
+| [**`readdoc2`**](./docs/readdoc2-new-features.md) | **Simplified Step 2: New Features** |
+| [**`readdoc3`**](./docs/readdoc3-admin-manual.md) | **Simplified Step 3: Admin Manual** |
 
 ---
 
 <div align="center">
-Built with ❤️ by <a href="https://github.com/Rahil-dope">Rahil Hussain</a> &amp; <a href="https://github.com/PRANAVBIRHADE">Pranav Birhade</a>
+Built with ❤️ for **Matoshri Pratishthan Group of Institutions** by <a href="https://github.com/Rahil-dope">Rahil Hussain</a> &amp; <a href="https://github.com/PRANAVBIRHADE">Pranav Birhade</a>
 </div>

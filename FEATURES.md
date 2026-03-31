@@ -53,9 +53,11 @@
 - Mark participants as checked-in; only approved registrations can be checked in
 
 ### Content & Results
-- Publish and manage **organizer contact cards** visible on the public site
-- Set the **results reveal time** and YouTube embed URL
-- Enter per-event top-3 winner results
+- **Landing Page CMS** — Upload and update Hero and About section images directly from the Admin dashboard.
+- **Organizer Directory** — Manage faculty and student contact cards with brutalist styling.
+- **Results Reveal** — Set the reveal time and YouTube live stream URL.
+- **Winner Management** — Define top 3 winners per event once competitions conclude.
+- **Live Tech Comms** — Update scrolling announcement text in real-time.
 
 ---
 
