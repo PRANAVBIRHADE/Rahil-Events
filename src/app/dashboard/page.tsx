@@ -3,14 +3,13 @@ import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { db } from '@/db';
-import { users, registrations, events, teamMembers } from '@/db/schema';
+import { users, registrations, events, teamMembers, systemSettings, galleryPhotos } from '@/db/schema';
 import { eq, inArray } from 'drizzle-orm';
 import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalButton from '@/components/ui/BrutalButton';
 import LogoutButton from '@/components/dashboard/LogoutButton';
 import TicketCard from '@/components/dashboard/TicketCard';
 import GalleryUploadClient from '@/components/dashboard/GalleryUploadClient';
-import { systemSettings, galleryPhotos } from '@/db/schema';
 import { getPlayerRank } from '@/lib/xp';
 import { Zap } from 'lucide-react';
 
@@ -42,22 +41,19 @@ export default async function DashboardPage() {
     eventName: events.name,
     eventSlug: events.slug,
     format: events.format,
+    schedule: events.schedule,
+    venue: events.venue,
   })
   .from(registrations)
   .innerJoin(events, eq(registrations.eventId, events.id))
   .where(eq(registrations.userId, dbUser.id));
 
-  // Fetch all members for these teams
-  const teamIds = dbRegistrations.filter(r => r.teamId).map(r => r.teamId as string);
-  const dbTeamMembers = teamIds.length > 0 
+  // Fetch all team members for these registrations
+  const teamIds = dbRegistrations.map(r => r.teamId).filter(id => !!id) as string[];
+  
+  const allTeamMembers = teamIds.length > 0 
     ? await db.select().from(teamMembers).where(inArray(teamMembers.teamId, teamIds))
     : [];
-
-  const registrationsWithMembers = dbRegistrations.map(reg => {
-    const members = reg.teamId ? dbTeamMembers.filter(m => m.teamId === reg.teamId) : [];
-    return { ...reg, members };
-  });
-
   const dbSettings = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
   const isGalleryLocked = dbSettings.length > 0 ? dbSettings[0].isGalleryLocked ?? true : true;
 
@@ -140,8 +136,15 @@ export default async function DashboardPage() {
             </div>
 
             <div className="space-y-6">
-              {registrationsWithMembers.map((reg) => (
-                <TicketCard key={reg.id} reg={reg} userName={dbUser.name} college={dbUser.college} currentUserId={dbUser.id} />
+              {dbRegistrations.map((reg) => (
+                <TicketCard 
+                  key={reg.id} 
+                  reg={reg} 
+                  userName={dbUser.name} 
+                  college={dbUser.college} 
+                  currentUserId={dbUser.id}
+                  teamMembers={allTeamMembers.filter(m => m.teamId === reg.teamId)}
+                />
               ))}
               {dbRegistrations.length === 0 && (
                  <div className="text-center py-12 border-2 border-dashed border-on-surface/20">
@@ -156,6 +159,45 @@ export default async function DashboardPage() {
               </Link>
             </div>
           </BrutalCard>
+
+          {/* Mission Timeline - Chronological View */}
+          {dbRegistrations.length > 0 && (
+            <BrutalCard shadowColor="black" className="bg-on-surface text-surface">
+              <div className="flex justify-between items-center mb-8 border-b border-surface/20 pb-4">
+                <h2 className="text-2xl font-black uppercase italic tracking-tighter">Mission Timeline</h2>
+                <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Synchronized Schedule</p>
+              </div>
+              <div className="space-y-4">
+                {dbRegistrations
+                  .filter(r => r.status === 'APPROVED')
+                  .sort((a, b) => (a.schedule || '').localeCompare(b.schedule || ''))
+                  .map((reg) => (
+                    <div key={reg.id} className="flex gap-6 items-center p-4 border-2 border-surface/20 hover:border-primary-container transition-colors group">
+                      <div className="w-24 shrink-0 text-center border-r-2 border-surface/20 pr-4">
+                        <p className="text-[10px] font-black uppercase opacity-60 mb-1">Schedule</p>
+                        <p className="font-mono text-xs font-bold">{reg.schedule || 'TBA'}</p>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-black uppercase text-lg leading-none mb-1 group-hover:text-primary-container transition-colors">{reg.eventName}</h4>
+                        <p className="text-[10px] font-black uppercase tracking-widest opacity-60">{reg.venue || 'Main Campus'}</p>
+                      </div>
+                      <div className="hidden md:block">
+                         <span className={`px-2 py-0.5 border text-[10px] font-black uppercase ${
+                           reg.status === 'APPROVED' ? 'bg-green-500/20 text-green-400 border-green-500/40' : 'bg-orange-500/20 text-orange-400 border-orange-500/40'
+                         }`}>
+                           {reg.status}
+                         </span>
+                      </div>
+                    </div>
+                  ))}
+                {dbRegistrations.filter(r => r.status === 'APPROVED').length === 0 && (
+                  <p className="text-center py-8 font-display font-bold uppercase opacity-40 text-xs tracking-widest">
+                    AWAITING VERIFICATION TO SYNC TIMELINE
+                  </p>
+                )}
+              </div>
+            </BrutalCard>
+          )}
 
           {/* User Gallery Photos Module */}
           <GalleryUploadClient isLocked={isGalleryLocked} photos={userPhotos} />

@@ -12,7 +12,7 @@ export default function ContactPage() {
           <span className="text-sm font-display font-bold uppercase tracking-widest text-primary mb-2 block">Communication Channel</span>
           <h1 className="text-4xl md:text-7xl font-black uppercase tracking-tighter mb-8">Contact Command</h1>
           <p className="text-xl opacity-70 max-w-2xl font-sans">
-            Have questions regarding the modules, registration, or logistics? Access our direct communication lines below.
+            Have questions regarding the events, registration, or logistics? Access our direct communication lines below.
           </p>
         </div>
 

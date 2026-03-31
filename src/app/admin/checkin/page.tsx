@@ -128,7 +128,7 @@ export default async function AdminCheckInPage({ searchParams }: { searchParams:
           <p className="font-display font-bold uppercase text-primary tracking-widest text-sm">Search team + mark checked-in</p>
         </div>
         <Link href="/admin/dashboard" className="border-b-2 border-on-surface font-black uppercase text-xs hover:text-primary hover:border-primary transition-colors">
-          &larr; Return to Command Center
+          &larr; Return to Admin Panel
         </Link>
       </div>
 
@@ -186,10 +186,10 @@ export default async function AdminCheckInPage({ searchParams }: { searchParams:
               <table className="w-full text-left font-sans">
                 <thead className="bg-surface-container-low border-b-2 border-on-surface text-[10px] font-black uppercase tracking-widest">
                   <tr>
-                    <th className="p-4">Team / Protocol</th>
+                    <th className="p-4">Registration ID / Team</th>
                     <th className="p-4">Event</th>
                     <th className="p-4">Payment Status</th>
-                    <th className="p-4">Check-in</th>
+                    <th className="p-4">Check-in Status</th>
                     <th className="p-4 text-center">Action</th>
                   </tr>
                 </thead>
@@ -197,7 +197,7 @@ export default async function AdminCheckInPage({ searchParams }: { searchParams:
                   {results.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="p-16 text-center opacity-40">
-                        NO REGISTRATION MATCHES FOUND
+                        NO SEARCH RESULTS FOUND
                       </td>
                     </tr>
                   ) : (
@@ -212,25 +212,28 @@ export default async function AdminCheckInPage({ searchParams }: { searchParams:
                           <div className="font-black uppercase text-xs text-primary truncate max-w-[220px]">{result.eventName}</div>
                         </td>
                         <td className="p-4">
-                          <span className="px-2 py-0.5 border-2 text-[10px] font-black uppercase bg-surface">
+                          <span className={`px-2 py-0.5 border-2 text-[10px] font-black uppercase ${result.regStatus === 'APPROVED' ? 'bg-green-100 text-green-800 border-green-800' : 'bg-surface border-on-surface opacity-30'}`}>
                             {result.regStatus}
                           </span>
                         </td>
                         <td className="p-4">
                           {result.checkedIn ? (
-                            <div className="text-xs font-bold uppercase">
-                              CHECKED-IN
+                            <div className="text-xs font-bold uppercase text-blue-600">
+                              VERIFIED ENTRY
                               {result.checkedInAt ? (
                                 <div className="text-[10px] opacity-60 font-mono">{result.checkedInAt.toLocaleString()}</div>
                               ) : null}
                             </div>
                           ) : (
-                            <div className="text-xs font-bold uppercase opacity-60">NOT CHECKED-IN</div>
+                            <div className="text-xs font-bold uppercase opacity-60">WAITING AT GATE</div>
                           )}
                         </td>
                         <td className="p-4 text-center">
                           {result.checkedIn ? null : (
-                            <form action={markRegistrationCheckedIn}>
+                            <form action={async (formData) => {
+                              'use server';
+                              await markRegistrationCheckedIn(formData);
+                            }}>
                               <input type="hidden" name="id" value={result.regId} />
                               <BrutalButton
                                 type="submit"
@@ -239,7 +242,7 @@ export default async function AdminCheckInPage({ searchParams }: { searchParams:
                                 disabled={result.regStatus !== 'APPROVED'}
                                 className="w-full"
                               >
-                                Mark as Checked-In
+                                AUTHORIZE ENTRY
                               </BrutalButton>
                             </form>
                           )}

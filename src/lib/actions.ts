@@ -2,7 +2,7 @@
 
 import { db } from '@/db';
 import { registrations, users, events, teamMembers, teams, systemSettings, organizers, scheduleSlots, squadPosts, teamMessages, galleryPhotos, announcements } from '@/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, inArray } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
 import { auth } from '@/auth';
@@ -58,7 +58,7 @@ export async function createEvent(formData: FormData) {
     return { success: true };
   } catch (error) {
     console.error(error);
-    return { error: 'Failed to initialize event module.' };
+    return { error: 'Failed to initialize event.' };
   }
 }
 
@@ -113,7 +113,7 @@ export async function registerAdmin(formData: FormData) {
   try {
     const existingUser = await db.select().from(users).where(eq(users.email, email));
     if (existingUser.length > 0) {
-      return { error: 'Module Identifier already registered.' };
+      return { error: 'Event Identifier already registered.' };
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -410,7 +410,7 @@ export async function createRegistration(formData: FormData) {
           await db.delete(teams).where(eq(teams.id, existingTeamId as string));
         }
       } else {
-        return { error: 'You have already deployed a packet for this module.' };
+        return { error: 'You have already deployed a packet for this event.' };
       }
     }
 
@@ -424,7 +424,7 @@ export async function createRegistration(formData: FormData) {
     }
 
     await db.insert(teamMembers).values(
-      allMembers.map((m) => ({
+      additionalMembers.map((m) => ({
         teamId: insertedTeam.id,
         name: m.name,
         college: m.college,
@@ -475,7 +475,46 @@ export async function updateRegistrationStatus(formData: FormData) {
     return { success: true };
   } catch (error) {
     console.error(error);
-    return { error: 'Failed to update transmission status.' };
+    return { error: 'Failed to update registration status.' };
+  }
+}
+
+export async function bulkUpdateRegistrationStatus(ids: string[], status: 'APPROVED' | 'REJECTED') {
+  const session = await auth();
+  if (session?.user?.role !== 'ADMIN') {
+    return { error: 'Unauthorized. Admin access required.' };
+  }
+
+  try {
+    await db.update(registrations)
+      .set({ status })
+      .where(inArray(registrations.id, ids));
+
+    revalidatePath('/admin/registrations');
+    revalidatePath('/admin/dashboard');
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: 'Failed to perform bulk update.' };
+  }
+}
+
+export async function bulkDeleteRegistrations(ids: string[]) {
+  const session = await auth();
+  if (session?.user?.role !== 'ADMIN') {
+    return { error: 'Unauthorized. Admin access required.' };
+  }
+
+  try {
+    await db.delete(registrations)
+      .where(inArray(registrations.id, ids));
+
+    revalidatePath('/admin/registrations');
+    revalidatePath('/admin/dashboard');
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: 'Failed to perform bulk deletion.' };
   }
 }
 
@@ -544,7 +583,7 @@ export async function uploadGalleryPhoto(imageUrl: string) {
 
   const [settings] = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
   if (settings && settings.isGalleryLocked) {
-    return { error: 'Central Command has locked the Memory Core.' };
+    return { error: 'Admin has locked the Gallery.' };
   }
 
   const existingPhotos = await db.select().from(galleryPhotos).where(eq(galleryPhotos.userId, dbUser.id));
@@ -737,7 +776,7 @@ export async function sendTeamMessage(registrationId: string, content: string) {
   try {
     // Verify membership
     const [reg] = await db.select().from(registrations).where(eq(registrations.id, registrationId));
-    if (!reg) return { error: 'Team module not found.' };
+    if (!reg) return { error: 'Team event not found.' };
 
     await db.insert(teamMessages).values({
       registrationId,
@@ -748,7 +787,7 @@ export async function sendTeamMessage(registrationId: string, content: string) {
     return { success: true };
   } catch (error) {
     console.error(error);
-    return { error: 'Failed to transmit team comms.' };
+    return { error: 'Failed to transmit team messages.' };
   }
 }
 

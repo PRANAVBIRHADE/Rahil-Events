@@ -6,11 +6,13 @@ import ThreeDSchedule from '@/components/marketing/ThreeDSchedule';
 import Gallery from '@/components/marketing/Gallery';
 import CTA from '@/components/marketing/CTA';
 import OrganizersSection from '@/components/marketing/OrganizersSection';
+import AboutSection from '@/components/marketing/AboutSection';
 
 export default function LandingPage() {
   return (
     <>
       <Hero />
+      <AboutSection />
       <Features />
       <EventsGrid />
       <ThreeDSchedule />

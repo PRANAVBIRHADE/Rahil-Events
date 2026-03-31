@@ -43,9 +43,16 @@ function FilterContent({ allEvents }: { allEvents: EventCardRecord[] }) {
                 <span className="material-symbols-outlined text-4xl group-hover:scale-110 transition-transform">
                   local_activity
                 </span>
-                <span className="text-[10px] font-black uppercase tracking-widest border-2 border-on-surface px-2 py-1">
-                  {getFormatLabel(event.format)}
-                </span>
+                <div className="flex flex-col items-end gap-1">
+                  <span className="text-[10px] font-black uppercase tracking-widest border-2 border-on-surface px-2 py-1">
+                    {getFormatLabel(event.format)}
+                  </span>
+                  {(event.format === 'TEAM' || event.format === 'SOLO_TEAM' || event.format === 'SOLO_PAIR') && (
+                    <span className="text-[9px] font-bold uppercase opacity-70">
+                      Team Size: {event.teamSizeMin || 1}-{event.teamSize || 1}
+                    </span>
+                  )}
+                </div>
               </div>
               <h3 className="text-2xl md:text-3xl font-black uppercase mb-3 md:mb-4 leading-none">{event.name}</h3>
               <p className="mb-4 md:mb-8 opacity-70 font-sans text-sm md:text-base group-hover:text-on-primary-container">

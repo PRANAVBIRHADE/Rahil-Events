@@ -8,14 +8,16 @@ type User = {
   id: string;
   name: string;
   email: string;
+  password: string | null;
   college: string | null;
   branch: string | null;
   year: number | null;
   phone: string | null;
-  role: 'ADMIN' | 'PARTICIPANT' | null;
-  xp: number | null;
-  level: number | null;
-  createdAt: Date | null;
+  role: 'ADMIN' | 'PARTICIPANT' | 'VOLUNTEER';
+  xp: number;
+  level: number;
+  createdAt: Date;
+  updatedAt: Date;
   registrationCount: number;
 };
 

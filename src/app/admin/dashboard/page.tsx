@@ -162,6 +162,12 @@ export default async function AdminDashboard() {
                   Registration Settings
                 </BrutalButton>
               </Link>
+              <Link href="/admin/scanner" className="w-full">
+                <BrutalButton className="w-full justify-start bg-primary text-on-primary border-on-surface" variant="outline">
+                  <span className="material-symbols-outlined mr-3">qr_code_scanner</span>
+                  Entry Scanner Terminal
+                </BrutalButton>
+              </Link>
               <Link href="/admin/organizers" className="w-full">
                 <BrutalButton className="w-full justify-start" variant="outline">
                   <span className="material-symbols-outlined mr-3">people</span>

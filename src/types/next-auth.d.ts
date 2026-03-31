@@ -1,7 +1,7 @@
 import type { DefaultSession } from 'next-auth';
 import type { JWT as DefaultJWT } from 'next-auth/jwt';
 
-type UserRole = 'PARTICIPANT' | 'ADMIN';
+type UserRole = 'PARTICIPANT' | 'ADMIN' | 'VOLUNTEER';
 
 declare module 'next-auth' {
   interface Session {

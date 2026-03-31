@@ -10,7 +10,7 @@ type AppUser = {
   id: string;
   name: string;
   email: string;
-  role: 'PARTICIPANT' | 'ADMIN';
+  role: 'PARTICIPANT' | 'ADMIN' | 'VOLUNTEER';
 };
 
 export const { handlers, auth, signIn, signOut } = NextAuth({

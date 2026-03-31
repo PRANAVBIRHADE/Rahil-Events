@@ -10,18 +10,18 @@ const AnnouncementBar = async () => {
     .orderBy(desc(announcements.updatedAt))
     .limit(1);
 
-  if (activeAnnouncements.length === 0) return null;
-
-  const message = activeAnnouncements[0].content;
+  const message = activeAnnouncements.length > 0
+    ? activeAnnouncements[0].content
+    : '🚀 REGISTRATIONS OPEN — KRATOS 2026 ON 20-21 APRIL | REGISTER BEFORE 18 APRIL | MAHARANA PRATAP GROUP OF INSTITUTIONS';
 
   return (
     <div className="bg-on-surface text-primary-container py-1 overflow-hidden border-b-2 border-primary-container relative z-40">
       <div className="flex whitespace-nowrap animate-marquee px-6">
         <span className="text-sm font-display font-black uppercase tracking-widest inline-block mr-12">
-          {message} | SYSTEM BROADCAST | {message} | KRATOS 2026 | {message}
+          {message} | KRATOS 2026 | {message} | REGISTER BEFORE 18 APRIL
         </span>
         <span className="text-sm font-display font-black uppercase tracking-widest inline-block mr-12">
-          {message} | SYSTEM BROADCAST | {message} | KRATOS 2026 | {message}
+          {message} | KRATOS 2026 | {message} | REGISTER BEFORE 18 APRIL
         </span>
       </div>
     </div>

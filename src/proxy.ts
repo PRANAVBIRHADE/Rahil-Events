@@ -12,7 +12,18 @@ export default auth((req) => {
     if (!isLoggedIn) {
       return Response.redirect(new URL("/auth/adminlogin", nextUrl));
     }
-    if (role !== 'ADMIN') {
+    
+    // Admin has full access
+    if (role === 'ADMIN') return;
+
+    // Volunteers only have access to scanner and checkin terminals
+    const isVolunteerAllowedRoute = nextUrl.pathname.startsWith("/admin/scanner") || nextUrl.pathname.startsWith("/admin/checkin");
+    
+    if (role === 'VOLUNTEER' && !isVolunteerAllowedRoute) {
+      return Response.redirect(new URL("/dashboard", nextUrl));
+    }
+
+    if (role === 'PARTICIPANT') {
       return Response.redirect(new URL("/dashboard", nextUrl));
     }
   }

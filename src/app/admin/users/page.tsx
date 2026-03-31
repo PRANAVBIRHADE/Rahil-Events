@@ -74,7 +74,7 @@ export default async function UserManagementPage() {
       </div>
 
       {/* Client-side searchable table */}
-      <UsersClientWrapper users={allUsers} updateUser={updateUser} deleteUser={deleteUser} />
+      <UsersClientWrapper users={allUsers as any} updateUser={updateUser} deleteUser={deleteUser} />
     </div>
   );
 }
