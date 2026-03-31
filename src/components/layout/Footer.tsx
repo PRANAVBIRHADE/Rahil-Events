@@ -41,8 +41,8 @@ const Footer = () => {
             LINKS
           </p>
           <nav className="flex flex-col gap-3 font-sans text-sm font-bold">
-            <Link href="https://mpgin.edu.in" className="hover:text-primary transition-colors">Official Website</Link>
-            <Link href="https://mpgin.edu.in/engineering" className="hover:text-primary transition-colors">School of Engineering</Link>
+            <Link href="https://mpgi.ac.in/" className="hover:text-primary transition-colors">Official Website</Link>
+            <Link href="https://mpgi.ac.in/school-of-engineering/" className="hover:text-primary transition-colors">School of Engineering</Link>
             <Link href="mailto:info@mpgin.edu.in" className="hover:text-primary transition-colors">Email</Link>
             <Link href="tel:+912462269900" className="hover:text-primary transition-colors">Call</Link>
             <Link href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
