@@ -1,40 +1,122 @@
+'use client';
+
 import React from 'react';
-import { db } from '@/db';
-import { organizers } from '@/db/schema';
-import { desc } from 'drizzle-orm';
-import BrutalCard from '@/components/ui/BrutalCard';
+import { motion } from 'framer-motion';
 
-export const dynamic = 'force-dynamic';
-
-export default async function OrganizersSection() {
-  const all = await db.select().from(organizers).orderBy(desc(organizers.createdAt));
-
-  if (all.length === 0) return null;
-
+const OrganizersSection = () => {
   return (
-    <section className="py-24 bg-surface relative">
+    <section id="organizers" className="py-24 bg-[#FEFCE8] relative overflow-hidden">
       <div className="max-w-[1440px] mx-auto px-6">
-        <div className="mb-12">
-          <h2 className="text-5xl md:text-7xl font-black uppercase italic mb-4 tracking-tighter">
-            Organizers <span className="text-primary-container">KRATOS 2026</span>
-          </h2>
-          <p className="font-display font-bold uppercase tracking-widest text-primary text-sm border-l-4 border-primary pl-4">
-            Public contact directory
-          </p>
+        
+        {/* ── HEADER ── */}
+        <div className="mb-16">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-5xl md:text-7xl font-black uppercase tracking-tighter italic leading-none mb-4"
+          >
+            ORGANIZERS <span className="text-[#D4AF37]">KRATOS 2026</span>
+          </motion.h2>
+          
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="flex items-center gap-4"
+          >
+            <div className="w-1.5 h-6 bg-[#D4AF37]"></div>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-[#D4AF37]">
+              MEET THE PEOPLE HELPING RUN THE FESTIVAL
+            </p>
+          </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {all.map((organizer) => (
-            <BrutalCard key={organizer.id} className="p-8" shadowColor="gold">
-              <div className="space-y-3">
-                <div className="font-black uppercase text-2xl">{organizer.organizerName}</div>
-                <div className="text-xs font-bold uppercase opacity-70">{organizer.role || 'TBA'}</div>
-                <div className="font-mono text-sm opacity-80">{organizer.contact || 'TBA'}</div>
+        {/* ── CARDS GRID ── */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          {/* Card 1: Faculty Coordinator */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="p-8 brutal-border bg-white hard-shadow-gold flex flex-col h-full min-h-[350px]"
+          >
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-6 block">
+              FACULTY COORDINATOR
+            </span>
+            <div className="mb-auto">
+              <h3 className="text-2xl font-black uppercase mb-1 tracking-tight">DR L WAGHMARE</h3>
+              <p className="text-xs font-bold opacity-60 uppercase mb-6 italic">HEAD OF THE INSTITUTE</p>
+              
+              <div className="space-y-1 pt-6 border-t border-on-surface/10 font-mono text-[11px] font-bold opacity-70 leading-relaxed uppercase">
+                <p>lmwaghmare@yahoo.com</p>
+                <p>+91 9822663185</p>
               </div>
-            </BrutalCard>
-          ))}
+            </div>
+          </motion.div>
+
+          {/* Card 2: Head Organizer */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="p-8 brutal-border bg-white hard-shadow-gold flex flex-col h-full min-h-[350px]"
+          >
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-6 block">
+              HEAD ORGANIZER
+            </span>
+            <div className="mb-auto">
+              <h3 className="text-2xl font-black uppercase mb-1 tracking-tight">MR LAKHAN RATHOD</h3>
+              <p className="text-xs font-bold opacity-60 uppercase mb-6 italic">OUTREACH COORDINATOR</p>
+              
+              <div className="space-y-1 pt-6 border-t border-on-surface/10 font-mono text-[11px] font-bold opacity-70 leading-relaxed uppercase">
+                <p>lakhan180689@gmail.com</p>
+                <p>+91 9763433187</p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Card 3: Team Members */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="p-8 brutal-border bg-white flex flex-col h-full min-h-[350px]"
+          >
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-6 block">
+              TEAM MEMBERS
+            </span>
+            
+            <div className="space-y-8">
+              <div>
+                <h4 className="text-lg font-black uppercase leading-none">MR AZHAR AHMED</h4>
+                <p className="text-[10px] font-bold opacity-50 uppercase tracking-tighter">NODAL COORDINATOR</p>
+                <p className="text-[10px] font-mono opacity-80 mt-1">azhar.ahmed.eep@gmail.com | +91 9272579279</p>
+              </div>
+
+              <div className="pt-4 border-t border-on-surface/10">
+                <h4 className="text-lg font-black uppercase leading-none">RAHIL HUSSAIN</h4>
+                <p className="text-[10px] font-bold opacity-50 uppercase tracking-tighter">FRONTEND DEVELOPER</p>
+                <p className="text-[10px] font-mono opacity-80 mt-1">https://github.com/Rahil-dope</p>
+              </div>
+
+              <div className="pt-4 border-t border-on-surface/10">
+                <h4 className="text-lg font-black uppercase leading-none">PRANAV BIRADE</h4>
+                <p className="text-[10px] font-bold opacity-50 uppercase tracking-tighter">BACKEND DEVELOPER</p>
+                <p className="text-[10px] font-mono opacity-80 mt-1">https://github.com/PRANAVBIRHADE</p>
+              </div>
+            </div>
+          </motion.div>
+
         </div>
       </div>
     </section>
   );
-}
+};
+
+export default OrganizersSection;

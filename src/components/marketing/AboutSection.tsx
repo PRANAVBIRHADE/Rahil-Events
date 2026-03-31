@@ -11,7 +11,7 @@ type AboutSectionProps = {
 
 const AboutSection = ({ img1, img2, img3 }: AboutSectionProps) => {
   return (
-    <section className="py-20 px-6 max-w-[1440px] mx-auto bg-[#FEFCE8] overflow-hidden">
+    <section id="about" className="py-20 px-6 max-w-[1440px] mx-auto bg-[#FEFCE8] overflow-hidden">
       <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-start">
         
         {/* ── LEFT CONTENT ── */}
