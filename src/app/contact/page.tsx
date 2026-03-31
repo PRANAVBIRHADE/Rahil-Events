@@ -105,7 +105,7 @@ export default function ContactPage() {
           {/* Google Map */}
           <div className="lg:col-span-7 brutal-border bg-white p-4 h-[500px] lg:h-auto overflow-hidden">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3769.756209425121!2d77.291771!3d19.118318!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bce84050484bce3%3A0xe0e3f3bce840504!2sMatoshri%20Pratishthan%20Group%20of%20Institutions!5e0!3m2!1sen!2sin!4v1711882000000!5m2!1sen!2sin"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3770.414376889991!2d77.2543895!3d19.089468999999994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bce29f6fffffffd%3A0xf705e1b2a364d350!2sMatoshri%20Pratishthan%20Group%20of%20Institutions!5e0!3m2!1sen!2sin!4v1774950391879!5m2!1sen!2sin"
               className="w-full h-full brutal-border"
               style={{ border: 0 }}
               allowFullScreen={true}
