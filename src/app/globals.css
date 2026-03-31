@@ -53,16 +53,26 @@
 }
 
 @utility hard-shadow {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 4px 4px 0px 0px var(--foreground);
+  &:hover:not(:disabled) {
+    transform: translate(-1px, -1px);
+    box-shadow: 6px 6px 0px 0px var(--foreground);
+  }
 }
 
 @utility hard-shadow-gold {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 6px 6px 0px 0px var(--primary-container);
+  &:hover:not(:disabled) {
+    transform: translate(-1px, -1px);
+    box-shadow: 8px 8px 0px 0px var(--primary-container);
+  }
 }
 
 @utility tactile-click {
   transition: all 0.1s ease;
-  &:active {
+  &:active:not(:disabled) {
     transform: translate(2px, 2px);
     box-shadow: 0px 0px 0px 0px var(--foreground);
   }

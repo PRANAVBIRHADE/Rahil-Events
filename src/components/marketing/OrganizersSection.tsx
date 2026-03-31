@@ -34,14 +34,26 @@ const OrganizersSection = () => {
         </div>
 
         {/* ── CARDS GRID ── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { 
+              opacity: 1,
+              transition: { staggerChildren: 0.2 }
+            }
+          }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+        >
           
           {/* Card 1: Faculty Coordinator */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }
+            }}
             className="p-8 brutal-border bg-white hard-shadow-gold flex flex-col h-full min-h-[350px]"
           >
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-6 block">
@@ -60,10 +72,10 @@ const OrganizersSection = () => {
 
           {/* Card 2: Head Organizer */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }
+            }}
             className="p-8 brutal-border bg-white hard-shadow-gold flex flex-col h-full min-h-[350px]"
           >
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-6 block">
@@ -82,11 +94,11 @@ const OrganizersSection = () => {
 
           {/* Card 3: Team Members */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5 }}
-            className="p-8 brutal-border bg-white flex flex-col h-full min-h-[350px]"
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }
+            }}
+            className="p-8 brutal-border bg-white hard-shadow flex flex-col h-full min-h-[350px]"
           >
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-6 block">
               TEAM MEMBERS
@@ -102,18 +114,18 @@ const OrganizersSection = () => {
               <div className="pt-4 border-t border-on-surface/10">
                 <h4 className="text-lg font-black uppercase leading-none">RAHIL HUSSAIN</h4>
                 <p className="text-[10px] font-bold opacity-50 uppercase tracking-tighter">FRONTEND DEVELOPER</p>
-                <p className="text-[10px] font-mono opacity-80 mt-1">https://github.com/Rahil-dope</p>
+                <p className="text-[10px] font-mono opacity-80 mt-1 lowercase">https://github.com/Rahil-dope</p>
               </div>
 
               <div className="pt-4 border-t border-on-surface/10">
                 <h4 className="text-lg font-black uppercase leading-none">PRANAV BIRADE</h4>
                 <p className="text-[10px] font-bold opacity-50 uppercase tracking-tighter">BACKEND DEVELOPER</p>
-                <p className="text-[10px] font-mono opacity-80 mt-1">https://github.com/PRANAVBIRHADE</p>
+                <p className="text-[10px] font-mono opacity-80 mt-1 lowercase">https://github.com/PRANAVBIRHADE</p>
               </div>
             </div>
           </motion.div>
 
-        </div>
+        </motion.div>
       </div>
     </section>
   );

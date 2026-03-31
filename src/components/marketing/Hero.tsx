@@ -17,36 +17,45 @@ const Hero = ({ heroImage }: HeroProps) => {
 
         {/* ── LEFT COLUMN ── */}
         <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7 }}
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0, x: -60 },
+            visible: { 
+              opacity: 1, 
+              x: 0,
+              transition: { 
+                duration: 0.8,
+                ease: [0.16, 1, 0.3, 1],
+                staggerChildren: 0.15 
+              }
+            }
+          }}
           className="w-full md:w-[60%] flex flex-col"
         >
           {/* Institution logo + name */}
-          <div className="flex items-center gap-3 mb-6">
+          <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="flex items-center gap-3 mb-6">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/branding/college-logo.png"
               alt="MPGI Logo"
-              className="w-12 h-12 object-contain brutal-border p-0.5 bg-white"
+              className="w-12 h-12 object-contain brutal-border p-0.5 bg-white transition-transform hover:scale-110 duration-300"
             />
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary leading-tight">
-                Maharana Pratap Group of Institutions
+                Matoshri Pratishthan Group of Institutions
               </p>
               <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface/60 leading-tight">
-                Faculty of Engineering, Kanpur
+                School of Engineering, Nanded
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Main heading */}
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
+            variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }}
             className="font-display font-black uppercase leading-[0.85] tracking-tighter mb-6"
-            style={{ fontSize: 'clamp(4rem, 12vw, 9rem)' }}
+            style={{ fontSize: 'clamp(4.5rem, 13vw, 10rem)' }}
           >
             KRATOS
             <br />
@@ -55,9 +64,7 @@ const Hero = ({ heroImage }: HeroProps) => {
 
           {/* Description */}
           <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
+            variants={{ hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0 } }}
             className="text-base md:text-lg font-sans max-w-lg mb-8 border-l-4 border-on-surface pl-5 leading-relaxed text-on-surface/80"
           >
             Join two days of student events, team competitions, and technical showcases at Maharana Pratap Group of Institutions.
@@ -65,20 +72,18 @@ const Hero = ({ heroImage }: HeroProps) => {
 
           {/* Stat cards row */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.65 }}
-            className="grid grid-cols-3 gap-0 brutal-border mb-8"
+            variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } }}
+            className="grid grid-cols-3 gap-0 brutal-border mb-8 bg-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]"
           >
-            <div className="p-4 border-r-2 border-on-surface">
+            <div className="p-4 border-r-2 border-on-surface hover:bg-secondary-container transition-colors duration-300">
               <p className="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface/50 mb-1">Dates</p>
               <p className="font-display font-black uppercase text-sm md:text-base leading-tight">20 – 21 April 2026</p>
             </div>
-            <div className="p-4 border-r-2 border-on-surface">
+            <div className="p-4 border-r-2 border-on-surface hover:bg-secondary-container transition-colors duration-300">
               <p className="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface/50 mb-1">Venue</p>
               <p className="font-display font-black uppercase text-sm md:text-base leading-tight">Main Engineering Campus</p>
             </div>
-            <div className="p-4">
+            <div className="p-4 hover:bg-secondary-container transition-colors duration-300">
               <p className="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface/50 mb-1">Open For</p>
               <p className="font-display font-black uppercase text-sm md:text-base leading-tight">All Branches</p>
             </div>
@@ -86,9 +91,7 @@ const Hero = ({ heroImage }: HeroProps) => {
 
           {/* Countdown */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.75 }}
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
             className="mb-8 w-fit"
           >
             <CountdownTimer />
@@ -96,9 +99,7 @@ const Hero = ({ heroImage }: HeroProps) => {
 
           {/* CTA Buttons */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9 }}
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
             className="flex flex-wrap gap-4"
           >
             <Link href="/auth/register">
@@ -107,7 +108,7 @@ const Hero = ({ heroImage }: HeroProps) => {
               </BrutalButton>
             </Link>
             <Link href="/#events">
-              <BrutalButton size="lg" variant="outline">
+              <BrutalButton size="lg" variant="outline" className="border-2 border-on-surface hover:bg-surface-container-low">
                 View All Events
               </BrutalButton>
             </Link>
@@ -116,9 +117,9 @@ const Hero = ({ heroImage }: HeroProps) => {
 
         {/* ── RIGHT COLUMN — Tilted campus photo ── */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.85, rotate: -5 }}
-          animate={{ opacity: 1, scale: 1, rotate: 3 }}
-          transition={{ delay: 0.4, duration: 0.9, type: 'spring', stiffness: 80 }}
+          initial={{ opacity: 0, scale: 0.8, rotate: -8, x: 40 }}
+          animate={{ opacity: 1, scale: 1, rotate: 3, x: 0 }}
+          transition={{ delay: 0.4, duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="w-full md:w-[40%] relative flex justify-center md:justify-end mt-8 md:mt-0"
         >
           <div className="brutal-border hard-shadow-gold bg-on-surface w-full md:w-[420px] h-56 md:h-96 overflow-hidden">
