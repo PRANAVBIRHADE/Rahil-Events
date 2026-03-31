@@ -1,43 +1,55 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 
 const Footer = () => {
   return (
-    <footer className="w-full border-t-2 border-on-surface bg-on-surface text-surface mt-auto">
-      <div className="max-w-[1440px] mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
-        <div>
-          <h3 className="text-3xl font-black uppercase tracking-tighter italic mb-4">KRATOS 2026</h3>
-          <p className="font-sans text-sm opacity-60 max-w-xs mb-6">
-            Jijau Nagar, Latur Nanded Highway, Vishnupuri, Nanded, Maharashtra 431606.
-          </p>
-          <div className="flex gap-4">
-             <Link href="https://instagram.com" className="w-10 h-10 brutal-border bg-surface text-on-surface flex items-center justify-center hover:bg-primary-container transition-colors">
-                <span className="material-symbols-outlined text-xl">share</span>
-             </Link>
-             <Link href="https://github.com/Rahil-dope" className="w-10 h-10 brutal-border bg-surface text-on-surface flex items-center justify-center hover:bg-primary-container transition-colors">
-                <span className="material-symbols-outlined text-xl">code</span>
-             </Link>
+    <footer className="w-full border-t-2 border-on-surface bg-[#FEFCE8] text-on-surface mt-auto">
+      <div className="max-w-[1440px] mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-24">
+        
+        {/* ── COLUMN 1: BRAND & ADDRESS ── */}
+        <div className="flex flex-col">
+          <h3 className="text-2xl font-black uppercase tracking-tighter mb-6">KRATOS 2K26</h3>
+          <div className="space-y-4 text-sm font-sans leading-relaxed opacity-80 max-w-sm">
+            <p className="font-bold">
+              Matoshri Pratishthan Group of Institutions, School of Engineering, Nanded
+            </p>
+            <p>
+              Jijau Nagar, Off Nanded-Latur Highway, Khupsarwadi, Post Vishnupuri, Nanded, Maharashtra 431606
+            </p>
           </div>
         </div>
 
-        <div className="space-y-4">
-          <h4 className="font-display font-black uppercase tracking-widest text-xs opacity-40">Navigation</h4>
-          <nav className="flex flex-col gap-2 font-display font-bold uppercase text-sm">
-            <Link href="/events" className="hover:text-primary transition-colors italic">- Browse Events</Link>
-            <Link href="/schedule" className="hover:text-primary transition-colors italic">- Main Schedule</Link>
-            <Link href="/squads" className="hover:text-primary transition-colors italic">- Find Squads</Link>
-            <Link href="/dashboard" className="hover:text-primary transition-colors italic">- My Dashboard</Link>
+        {/* ── COLUMN 2: CONTACT ── */}
+        <div className="flex flex-col">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 mb-6">
+            CONTACT
+          </p>
+          <div className="space-y-3 font-sans text-sm font-bold">
+            <p className="hover:text-primary transition-colors cursor-pointer">+91 2462 269900</p>
+            <p className="hover:text-primary transition-colors cursor-pointer underline decoration-1 underline-offset-4">info@mpgin.edu.in</p>
+            <Link href="/contact" className="hover:text-primary transition-colors">
+              Contact Page
+            </Link>
+          </div>
+        </div>
+
+        {/* ── COLUMN 3: LINKS ── */}
+        <div className="flex flex-col">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 mb-6">
+            LINKS
+          </p>
+          <nav className="flex flex-col gap-3 font-sans text-sm font-bold">
+            <Link href="https://mpgin.edu.in" className="hover:text-primary transition-colors">Official Website</Link>
+            <Link href="https://mpgin.edu.in/engineering" className="hover:text-primary transition-colors">School of Engineering</Link>
+            <Link href="mailto:info@mpgin.edu.in" className="hover:text-primary transition-colors">Email</Link>
+            <Link href="tel:+912462269900" className="hover:text-primary transition-colors">Call</Link>
+            <Link href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
           </nav>
         </div>
 
-        <div className="space-y-4 text-right md:text-left">
-          <h4 className="font-display font-black uppercase tracking-widest text-xs opacity-40">Contact Support</h4>
-          <p className="font-mono text-sm">9834147160</p>
-          <p className="font-mono text-sm">kratos2026@mpgi.ac.in</p>
-          <div className="pt-4 border-t border-surface/20">
-             <p className="text-[10px] font-black uppercase tracking-widest opacity-40">© 2026 KRATOS | Student Department | Matoshri Pratishthan Group of Institutions, Nanded</p>
-          </div>
-        </div>
       </div>
     </footer>
   );
