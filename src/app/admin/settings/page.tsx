@@ -6,6 +6,7 @@ import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalButton from '@/components/ui/BrutalButton';
 import Link from 'next/link';
 import { updateRegistrationSettings } from '@/lib/actions';
+import ImageSettingsClient from '@/components/admin/ImageSettingsClient';
 
 export const dynamic = 'force-dynamic';
 
@@ -94,6 +95,15 @@ export default async function AdminSettingsPage() {
           </div>
         </form>
       </BrutalCard>
+
+      <ImageSettingsClient 
+         images={{
+            heroImage: settings?.heroImage ?? null,
+            aboutImage1: settings?.aboutImage1 ?? null,
+            aboutImage2: settings?.aboutImage2 ?? null,
+            aboutImage3: settings?.aboutImage3 ?? null,
+         }}
+      />
     </div>
   );
 }

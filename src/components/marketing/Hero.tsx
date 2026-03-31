@@ -6,7 +6,11 @@ import BrutalButton from '@/components/ui/BrutalButton';
 import CountdownTimer from '@/components/marketing/CountdownTimer';
 import { motion } from 'framer-motion';
 
-const Hero = () => {
+type HeroProps = {
+  heroImage?: string | null;
+};
+
+const Hero = ({ heroImage }: HeroProps) => {
   return (
     <section className="relative px-6 py-10 md:py-16 max-w-[1440px] mx-auto overflow-visible">
       <div className="flex flex-col md:flex-row items-start gap-10 md:gap-16 relative z-10">
@@ -120,7 +124,7 @@ const Hero = () => {
           <div className="brutal-border hard-shadow-gold bg-on-surface w-full md:w-[420px] h-56 md:h-96 overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/event-card.png"
+              src={heroImage || "/event-card.png"}
               alt="MPGI Campus"
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
             />

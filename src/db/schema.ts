@@ -108,6 +108,10 @@ export const systemSettings = pgTable('system_settings', {
   upiId: text('upi_id'),
   feePerPerson: integer('fee_per_person').default(0).notNull(),
   deadline: timestamp('deadline'),
+  heroImage: text('hero_image'),
+  aboutImage1: text('about_image_1'),
+  aboutImage2: text('about_image_2'),
+  aboutImage3: text('about_image_3'),
 });
 
 export const liveViewers = pgTable('live_viewers', {

@@ -574,6 +574,28 @@ export async function updateGalleryLock(isGalleryLocked: boolean) {
   }
 }
 
+export async function updateSystemImage(field: 'heroImage' | 'aboutImage1' | 'aboutImage2' | 'aboutImage3', imageUrl: string) {
+  const session = await auth();
+  if (session?.user?.role !== 'ADMIN') {
+    return { error: 'Unauthorized access. Requires ADMIN role.' };
+  }
+
+  try {
+    const existing = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
+    if (existing.length === 0) {
+      await db.insert(systemSettings).values({ id: 1, [field]: imageUrl });
+    } else {
+      await db.update(systemSettings).set({ [field]: imageUrl }).where(eq(systemSettings.id, 1));
+    }
+    revalidatePath('/admin/settings');
+    revalidatePath('/');
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: `Failed to update ${field}` };
+  }
+}
+
 export async function uploadGalleryPhoto(imageUrl: string) {
   const session = await auth();
   if (!session?.user?.email) return { error: 'Unauthorized sequence.' };
