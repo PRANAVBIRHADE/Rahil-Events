@@ -21,13 +21,13 @@ const Hero = ({ heroImage }: HeroProps) => {
           animate="visible"
           variants={{
             hidden: { opacity: 0, x: -60 },
-            visible: { 
-              opacity: 1, 
+            visible: {
+              opacity: 1,
               x: 0,
-              transition: { 
+              transition: {
                 duration: 0.8,
                 ease: [0.16, 1, 0.3, 1],
-                staggerChildren: 0.15 
+                staggerChildren: 0.15
               }
             }
           }}
@@ -67,7 +67,7 @@ const Hero = ({ heroImage }: HeroProps) => {
             variants={{ hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0 } }}
             className="text-base md:text-lg font-sans max-w-lg mb-8 border-l-4 border-on-surface pl-5 leading-relaxed text-on-surface/80"
           >
-            Join two days of student events, team competitions, and technical showcases at Maharana Pratap Group of Institutions.
+            Join two days of student events, team competitions, and technical showcases at MPGI SOE Nanded.
           </motion.p>
 
           {/* Stat cards row */}
