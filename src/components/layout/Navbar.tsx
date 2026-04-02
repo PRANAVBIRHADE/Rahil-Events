@@ -35,7 +35,7 @@ const Navbar = () => {
 
         {/* Dashboard Align */}
         <div className="flex gap-4 z-50">
-          <Link href="/dashboard" className="hidden md:block">
+          <Link href="https://kratos-events.vercel.app/auth/register" className="hidden md:block">
             <BrutalButton size="md" variant="outline" className="px-6 py-2">
               Dashboard
             </BrutalButton>
@@ -64,7 +64,7 @@ const Navbar = () => {
             <Link href="/contact" onClick={closeMenu} className="hover:text-primary transition-colors border-b-4 border-on-surface/10 pb-4">Contact</Link>
             <Link href="/#gallery" onClick={closeMenu} className="hover:text-primary transition-colors border-b-4 border-on-surface/10 pb-4">Gallery</Link>
             
-            <Link href="/dashboard" onClick={closeMenu} className="mt-8 w-full">
+            <Link href="https://kratos-events.vercel.app/auth/register" onClick={closeMenu} className="mt-8 w-full">
               <BrutalButton size="xl" className="w-full">
                 Dashboard
               </BrutalButton>

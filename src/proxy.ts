@@ -27,7 +27,7 @@ export default auth((req) => {
   }
 
   if (isDashboardRoute && !isLoggedIn) {
-    return Response.redirect(new URL("/auth/login", nextUrl));
+    return Response.redirect(new URL("/auth/register", nextUrl));
   }
 });
 
