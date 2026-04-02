@@ -1,130 +1,92 @@
-<div align="center">
+# KRATOS 2026 - MPGI Technical Festival Platform
 
-# KRATOS 2026
+![Kratos 2026](public/branding/college-logo.png)
 
-**Annual Technical Festival Platform - Matoshri Pratishthan Group of Institutions, Nanded**
+**KRATOS 2026** is the official web platform for the Annual Technical Festival of Matoshri Pratishthan Group of Institutions (MPGI), School of Engineering, Nanded. 
 
-[![Next.js](https://img.shields.io/badge/Next.js-16.2.0-black?logo=next.js)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38BDF8?logo=tailwindcss)](https://tailwindcss.com/)
-[![Drizzle ORM](https://img.shields.io/badge/Drizzle_ORM-0.45-C5F74F?logo=drizzle)](https://orm.drizzle.team/)
-
-> **Live dates:** 20-21 April 2026 - Registration closes 18 April 2026
-
-</div>
+Designed with a bold "brutalist" aesthetic, this full-stack application serves as the central hub for student registrations, event tracking, administrative moderation, and digital on-campus event verification.
 
 ---
 
-## Quick Start Guides
+## 🌟 Platform Highlights
 
-For a fast, simplified setup and usage guide, see our **ReadDoc Series**:
+*   **Student Dashboard:** A personalized space where students view their generated timeline ("My Schedule"), upload event photos, and present their fast-track QR Entry Pass.
+*   **Operational Admin Backend:** An extensive control room for organizers. Securely verify payments, manipulate event schedules, and securely check-in attendees via the smartphone QR Web-Scanner.
+*   **Walk-in Rescue Terminal:** A highly optimized Fast-Track desk allowing event volunteers to rapidly inject off-the-street registrations into the system in under ten seconds.
+*   **Responsive Brutalism:** Styled with raw, high-contrast, edge-to-edge aesthetics utilizing strong borders and bold typography to create a memorable brand identity.
+*   **Resilient Architecture:** Bulletproof data pipelines utilizing modern data indexing, global error boundaries, IP-based rate limiting, and an offline fallback service worker for unstable campus networks.
 
-1. [**`readdoc1-get-started.md`**](./docs/readdoc1-get-started.md) - Local setup, environment variables, and running the dev server.
-2. [**`readdoc2-new-features.md`**](./docs/readdoc2-new-features.md) - Overview of the latest UI polish, branding, and new sections.
-3. [**`readdoc3-admin-manual.md`**](./docs/readdoc3-admin-manual.md) - How to manage events, verify payments, and upload landing page images.
-4. [**`readdoc4-future-scope.md`**](./docs/readdoc4-future-scope.md) - Post-launch improvements and pragmatic future enhancements.
-
----
-
-## Tech Stack
-
-<div align="center">
-
-| Layer | Technology |
-|:---:|:---|
-| **Framework** | Next.js 16.2.0 (App Router, Turbopack) |
-| **UI** | React 19.2 + Tailwind CSS v4 + Framer Motion |
-| **Language** | TypeScript 5 |
-| **Database** | Neon Postgres via Drizzle ORM |
-| **Auth** | Auth.js v5 beta (Credentials + Google OAuth) |
-| **Media** | Cloudinary (CMS assets + participant uploads) |
-
-</div>
+For a non-technical breakdown of how the platform operates day-to-day, please read the [**FEATURES.md**](./FEATURES.md).
 
 ---
 
-## Highlights & Features
+## ⚙️ Tech Stack & Architecture
 
-> [!TIP]
-> The platform provides a comprehensive administrative and participant experience tailored for large-scale collegiate events.
+This platform leverages modern serverless web architecture to ensure extreme performance during high-traffic registration spikes.
 
-- **Premium Branding**: Full institutional synchronization with **Matoshri Pratishthan**, featuring polished animations and modern aesthetics.
-- **Image CMS via Cloudinary**: Seamless uploads for Hero images, About section images, and payment proofs.
-- **Authentication**: Robust Google OAuth plus email/password login. Profile completion is required before event registration.
-- **Registrations**: Support for individual and team registrations. Free events auto-approve; paid events use a proof upload pipeline.
-- **Admin Panel**: Full control over events, organizers, schedules, dynamic check-ins, system settings, results, and users.
-- **Data Portability**: CSV exports for registrations and payment proofs.
-- **Instant Ticketing**: Downloadable entry passes with QR-based digital check-ins.
-- **Live Updates**: Real-time viewer counters and scrolling announcements powered from the database.
+*   **Framework:** Next.js 15 (App Router with Server Components & Server Actions)
+*   **Language:** TypeScript
+*   **Database:** Neon (Serverless PostgreSQL)
+*   **ORM:** Drizzle ORM
+*   **Authentication:** NextAuth.js (v5 Beta) - Supporting Google OAuth and secure Local Credentials
+*   **Styling:** Tailwind CSS v4 + Framer Motion (for macro-animations)
+*   **Media Pipeline:** Cloudinary (for compressed artifact offloading and image transformation)
+*   **Deploy Target:** Vercel
 
 ---
 
-## Environment Variables
+## 🚀 Quick Start Guide
 
-> [!WARNING]
-> Duplicate `.env.example` to `.env.local` and fill in all values before startup. Do not commit credentials.
+Follow these steps to spin up the local development environment.
 
-```env
-DATABASE_URL=
-AUTH_SECRET=
-AUTH_GOOGLE_ID=
-AUTH_GOOGLE_SECRET=
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
-NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=
-NEXT_PUBLIC_SITE_URL=
-SEED_ADMIN_EMAIL=
-SEED_ADMIN_PASSWORD=
+### 1. Requirements
+*   Node.js 18+ or 20+
+*   npm or pnpm
+*   A free Neon Postgres Database URL
+*   A Cloudinary account (for image uploads)
+
+### 2. Environment Setup
+Rename `.env.example` to `.env.local` and configure your keys.
+```bash
+cp .env.example .env.local
 ```
 
----
+> **Crucial:** Generate your Auth Secret using `npx auth secret`.
 
-## Local Setup
-
+### 3. Installation
 ```bash
-# 1. Install dependencies
 npm install
+```
 
-# 2. Push database schema (initial setup)
-npx drizzle-kit push
+### 4. Database Bootstrap
+Synchronize the local code schema with your Neon Postgres database.
+```bash
+npm run db:push
+npm run seed:admin
+```
+*(Note: `seed:admin` securely registers the primary platform super-admin using the credentials provided in your `.env.local`)*
 
-# 3. (Optional) Seed base event data
-npx tsx src/db/seed.ts
-
-# 4. (Optional) Create admin account
-npx tsx src/db/seed-admin.ts
-
-# 5. Start dev server
+### 5. Launch the Server
+```bash
 npm run dev
 ```
+Access the application at `http://localhost:3000`.
 
 ---
 
-## Deployment Checklist
+## 🔒 Security & Roles
 
-> [!IMPORTANT]
-> Ensure all checklist criteria are met for a safe production deployment.
+The system relies on an internal Role-Based Access Control matrix.
 
-- [ ] Set **all** environment variables on the hosting provider (for example Vercel or Railway)
-- [ ] Push the database schema: `npx drizzle-kit push`
-- [ ] Bootstrap the root admin account: `npx tsx src/db/seed-admin.ts`
-- [ ] Validate the Cloudinary `preset`, `cloud name`, and `NEXT_PUBLIC_SITE_URL`
-- [ ] Ensure the build succeeds locally via `npm run lint && npm run build`
+*   `PARTICIPANT`: The default role. Can register for events, view their schedule, and upload to the gallery.
+*   `VOLUNTEER`: Staff member. Cannot alter event parameters, but can utilize the QR scanner to verify entries and use the Fast-Track Desk.
+*   `ADMIN`: Superuser. Total read/write control over events, results, broadcasts, and data export. 
 
 ---
 
-## Documentation Index
+## 📄 Documentation
 
-| Resource | Purpose |
-|:---|:---|
-| [`DOCUMENTATION.md`](./DOCUMENTATION.md) | In-depth architecture, data model, admin operations, and runtime rules |
-| [`FEATURES.md`](./FEATURES.md) | Granular inventory for participants, admins, and system entities |
-| [`docs/readdoc4-future-scope.md`](./docs/readdoc4-future-scope.md) | Post-launch roadmap focused on UX, operations, and stability |
-| [`real_data.md`](./real_data.md) | Single source of truth for all real-world festival parameters |
-| [`PROJECT_TODO.md`](./PROJECT_TODO.md) | Final manual checks prior to launch |
+For deep-dive documentation on database schemas and deployment architectures, see [**DOCUMENTATION.md**](./DOCUMENTATION.md).
 
-<br/>
-
-<div align="center">
-Built with love for <b>Matoshri Pratishthan Group of Institutions</b> by <a href="https://github.com/Rahil-dope">Rahil Hussain</a> &amp; <a href="https://github.com/PRANAVBIRHADE">Pranav Birhade</a>
-</div>
+---
+*Built for KRATOS 2026. Code by the Lead Engineering Team.*
