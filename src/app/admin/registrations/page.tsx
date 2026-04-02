@@ -4,11 +4,14 @@ import { registrations, users, events, teamMembers } from '@/db/schema';
 import { desc, eq } from 'drizzle-orm';
 import Link from 'next/link';
 import TrafficRegistryClient from '@/components/admin/TrafficRegistryClient';
+import { requireStaffPageAccess } from '@/lib/authz';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function AdminRegistrationsPage() {
+  const session = await requireStaffPageAccess();
+
   const allRegistrations = await db.select({
     id: registrations.id,
     participantName: users.name,
@@ -42,7 +45,11 @@ export default async function AdminRegistrationsPage() {
         </Link>
       </div>
 
-      <TrafficRegistryClient registrations={allRegistrations} teamMembers={allTeamMembers} />
+      <TrafficRegistryClient
+        registrations={allRegistrations}
+        teamMembers={allTeamMembers}
+        canManageRegistrations={session.user.role === 'ADMIN'}
+      />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
+import { getRequestIp, applyRateLimit } from '@/lib/rate-limit';
 
 type AppUser = {
   id: string;
@@ -23,8 +24,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         if (!credentials?.email || !credentials?.password) return null;
+
+        const rateLimitResult = applyRateLimit({
+          namespace: 'staff-login',
+          identifier: getRequestIp(request),
+          limit: 8,
+          windowMs: 10 * 60 * 1000,
+        });
+
+        if (!rateLimitResult.allowed) {
+          return null;
+        }
 
         const [user] = await db.select().from(users).where(eq(users.email, credentials.email as string));
 
@@ -37,8 +49,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!isPasswordCorrect) return null;
 
-        if (user.role !== 'ADMIN') {
-          return null; // Enforce ADMIN-only access for email/password as requested
+        if (user.role !== 'ADMIN' && user.role !== 'VOLUNTEER') {
+          return null;
         }
 
         return {

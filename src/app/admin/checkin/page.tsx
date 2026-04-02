@@ -6,6 +6,8 @@ import { events, registrations, teamMembers, users } from '@/db/schema';
 import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalButton from '@/components/ui/BrutalButton';
 import { markRegistrationCheckedIn } from '@/lib/actions';
+import { requireStaffPageAccess } from '@/lib/authz';
+import RapidCheckInForm from '@/components/admin/RapidCheckInForm';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,15 +15,21 @@ type SearchParams = {
   teamCode?: string;
   name?: string;
   phone?: string;
+  eventId?: string;
 };
 
 export default async function AdminCheckInPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  await requireStaffPageAccess();
+
   const resolvedSearchParams = await searchParams;
   const teamCode = resolvedSearchParams.teamCode?.trim() || '';
   const name = resolvedSearchParams.name?.trim() || '';
   const phone = resolvedSearchParams.phone?.trim() || '';
+  const eventId = resolvedSearchParams.eventId?.trim() || '';
 
-  const shouldSearch = teamCode.length > 0 || name.length > 0 || phone.length > 0;
+  const allEvents = await db.select({ id: events.id, name: events.name }).from(events);
+
+  const shouldSearch = teamCode.length > 0 || name.length > 0 || phone.length > 0 || eventId.length > 0;
 
   let results: Array<{
     regId: string;
@@ -37,53 +45,24 @@ export default async function AdminCheckInPage({ searchParams }: { searchParams:
   }> = [];
 
   if (shouldSearch) {
+    type SqlFragment = ReturnType<typeof sql>;
+    const conditions: SqlFragment[] = [];
+
     if (teamCode) {
-      const rows = await db
-        .select({
-          regId: registrations.id,
-          eventName: events.name,
-          teamName: registrations.teamName,
-          regStatus: registrations.status,
-          checkedIn: registrations.checkedIn,
-          checkedInAt: registrations.checkedInAt,
-          memberName: teamMembers.name,
-          memberPhone: teamMembers.phone,
-          memberCollege: teamMembers.college,
-          userPhone: users.phone,
-        })
-        .from(registrations)
-        .innerJoin(users, eq(registrations.userId, users.id))
-        .innerJoin(events, eq(registrations.eventId, events.id))
-        .innerJoin(teamMembers, eq(registrations.teamId, teamMembers.teamId))
-        .where(sql`CAST(${registrations.id} AS text) ILIKE ${`${teamCode}%`}`);
+      conditions.push(sql`CAST(${registrations.id} AS text) ILIKE ${`${teamCode}%`}`);
+    }
+    if (name) {
+      conditions.push(sql`LOWER(${teamMembers.name}) LIKE ${`%${name.toLowerCase()}%`}`);
+    }
+    if (phone) {
+      conditions.push(sql`LOWER(${teamMembers.phone}) LIKE ${`%${phone.toLowerCase()}%`}`);
+    }
+    if (eventId) {
+      conditions.push(sql`${registrations.eventId} = ${eventId}`);
+    }
 
-      const byId = new Map<string, (typeof rows)[number]>();
-      for (const row of rows) byId.set(row.regId, row);
-      results = Array.from(byId.values()).map((row) => ({
-        regId: row.regId,
-        eventName: row.eventName,
-        teamName: row.teamName,
-        regStatus: row.regStatus ?? 'PENDING',
-        checkedIn: row.checkedIn,
-        checkedInAt: row.checkedInAt ?? null,
-        memberName: row.memberName,
-        memberPhone: row.memberPhone ?? null,
-        memberCollege: row.memberCollege ?? null,
-        userPhone: row.userPhone ?? null,
-      }));
-    } else {
-      type SqlFragment = ReturnType<typeof sql>;
-      const conditions: SqlFragment[] = [];
-
-      if (name) {
-        conditions.push(sql`LOWER(${teamMembers.name}) LIKE ${`%${name.toLowerCase()}%`}`);
-      }
-      if (phone) {
-        conditions.push(sql`LOWER(${teamMembers.phone}) LIKE ${`%${phone.toLowerCase()}%`}`);
-      }
-
-      const whereClause = conditions.length > 1 ? sql`${conditions[0]} AND ${conditions[1]}` : conditions[0];
-
+    if (conditions.length > 0) {
+      const whereClause = conditions.reduce((acc, curr) => sql`${acc} AND ${curr}`);
       const rows = await db
         .select({
           regId: registrations.id,
@@ -132,8 +111,26 @@ export default async function AdminCheckInPage({ searchParams }: { searchParams:
         </Link>
       </div>
 
+      <div className="mb-8">
+        <RapidCheckInForm events={allEvents} />
+      </div>
+
       <BrutalCard className="p-6" shadowColor="gold">
-        <form className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end" method="get">
+        <h2 className="text-xl font-black uppercase italic mb-4">Manual Look-up</h2>
+        <form className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end" method="get">
+          <div>
+            <label className="text-xs font-bold uppercase tracking-widest opacity-60">Event Filter</label>
+            <select
+              name="eventId"
+              defaultValue={eventId}
+              className="w-full p-3 brutal-border bg-surface text-sm font-mono font-bold uppercase outline-none focus:border-primary"
+            >
+              <option value="">All Events</option>
+              {allEvents.map((e) => (
+                <option key={e.id} value={e.id}>{e.name}</option>
+              ))}
+            </select>
+          </div>
           <div>
             <label className="text-xs font-bold uppercase tracking-widest opacity-60">Team Code</label>
             <input
@@ -162,7 +159,7 @@ export default async function AdminCheckInPage({ searchParams }: { searchParams:
             />
           </div>
 
-          <div className="md:col-span-3 flex gap-4 pt-2">
+          <div className="md:col-span-4 flex gap-4 pt-2">
             <BrutalButton type="submit" variant="secondary" size="sm">
               SEARCH &amp; SHOW
             </BrutalButton>

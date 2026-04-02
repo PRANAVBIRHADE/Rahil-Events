@@ -6,10 +6,13 @@ import { desc } from 'drizzle-orm';
 import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalButton from '@/components/ui/BrutalButton';
 import { createOrganizer, deleteOrganizer } from '@/lib/actions';
+import { requireAdminPageAccess } from '@/lib/authz';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminOrganizersPage() {
+  await requireAdminPageAccess();
+
   const allOrganizers = await db.select().from(organizers).orderBy(desc(organizers.createdAt));
 
   return (

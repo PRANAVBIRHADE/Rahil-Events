@@ -2,13 +2,51 @@
 
 import { db } from '@/db';
 import { registrations, users, events, teamMembers, teams, systemSettings, organizers, scheduleSlots, squadPosts, teamMessages, galleryPhotos, announcements } from '@/db/schema';
-import { eq, and, inArray } from 'drizzle-orm';
+import { eq, and, inArray, or } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
 import { auth } from '@/auth';
 import { awardXP, XP_PER_REGISTRATION } from './xp';
+import { assertAdminAction, assertStaffAction, getActionSession } from './authz';
+import {
+  getNotificationCapabilities,
+  getRegistrationKillSwitchMessage,
+  hasAdminSetupKey,
+  isRegistrationKillSwitchEnabled,
+} from './env';
+import { assertRateLimit, getActionIp } from './rate-limit';
+import { sendNotificationCampaign } from './notifications';
+
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
+}
+
+function normalizeRapidCode(rawCode: string) {
+  const trimmed = rawCode.trim();
+
+  if (!trimmed) return '';
+
+  const userRouteMarker = '/admin/checkin/user/';
+  const registrationRouteMarker = '/admin/checkin/';
+
+  if (trimmed.includes(userRouteMarker)) {
+    return trimmed.split(userRouteMarker).pop()?.split(/[?#]/)[0]?.trim() || '';
+  }
+
+  if (trimmed.includes(registrationRouteMarker)) {
+    return trimmed.split(registrationRouteMarker).pop()?.split(/[?#]/)[0]?.trim() || '';
+  }
+
+  return trimmed;
+}
 
 export async function createEvent(formData: FormData) {
+  try {
+    await assertAdminAction();
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Unauthorized. Admin access required.') };
+  }
+
   const name = formData.get('name') as string;
   const tagline = formData.get('tagline') as string;
   const description = formData.get('description') as string;
@@ -63,6 +101,17 @@ export async function createEvent(formData: FormData) {
 }
 
 export async function registerUser(formData: FormData) {
+  try {
+    assertRateLimit({
+      namespace: 'account-register',
+      identifier: await getActionIp(),
+      limit: 5,
+      windowMs: 10 * 60 * 1000,
+    });
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Too many requests.') };
+  }
+
   const name = formData.get('name') as string;
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
@@ -102,18 +151,52 @@ export async function registerUser(formData: FormData) {
 }
 
 export async function registerAdmin(formData: FormData) {
+  try {
+    assertRateLimit({
+      namespace: 'staff-register',
+      identifier: await getActionIp(),
+      limit: 4,
+      windowMs: 15 * 60 * 1000,
+    });
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Too many requests.') };
+  }
+
   const name = formData.get('name') as string;
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
+  const requestedRole = ((formData.get('role') as string) || 'VOLUNTEER').toUpperCase();
+  const setupKey = (formData.get('setupKey') as string) || '';
 
   if (!name || !email || !password) {
     return { error: 'Missing required credentials.' };
   }
 
+  if (requestedRole !== 'ADMIN' && requestedRole !== 'VOLUNTEER') {
+    return { error: 'Invalid role requested.' };
+  }
+
+  const session = await getActionSession();
+  const isAdminSession = session?.user?.role === 'ADMIN';
+
+  if (requestedRole === 'ADMIN' && !isAdminSession) {
+    return { error: 'Only a signed-in super admin can create another super admin.' };
+  }
+
+  if (!isAdminSession) {
+    if (!hasAdminSetupKey()) {
+      return { error: 'ADMIN_SETUP_KEY is not configured. Ask the deployment owner to configure staff onboarding.' };
+    }
+
+    if (setupKey !== process.env.ADMIN_SETUP_KEY) {
+      return { error: 'Invalid staff setup key.' };
+    }
+  }
+
   try {
     const existingUser = await db.select().from(users).where(eq(users.email, email));
     if (existingUser.length > 0) {
-      return { error: 'Event Identifier already registered.' };
+      return { error: 'This email is already registered.' };
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -122,7 +205,7 @@ export async function registerAdmin(formData: FormData) {
       name,
       email,
       password: hashedPassword,
-      role: 'ADMIN',
+      role: requestedRole,
     });
 
     return { success: true };
@@ -133,6 +216,12 @@ export async function registerAdmin(formData: FormData) {
 }
 
 export async function updateAnnouncement(formData: FormData) {
+  try {
+    await assertAdminAction();
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Unauthorized. Admin access required.') };
+  }
+
   const content = formData.get('content') as string;
   const isActive = formData.get('isActive') === 'on';
 
@@ -157,6 +246,8 @@ export async function updateAnnouncement(formData: FormData) {
 }
 
 export async function updateSchedules(formData: FormData) {
+  await assertAdminAction();
+
   try {
     const entries = Array.from(formData.entries());
     
@@ -177,6 +268,8 @@ export async function updateSchedules(formData: FormData) {
 }
 
 export async function updateScheduleSlots(formData: FormData) {
+  await assertAdminAction();
+
   const slotDefs = [
     { sortIndex: 1, timeSlot: '10:30 AM - 11:00 AM' },
     { sortIndex: 2, timeSlot: '11:00 AM - 01:00 PM' },
@@ -234,6 +327,8 @@ export async function updateScheduleSlots(formData: FormData) {
 }
 
 export async function deleteEvent(formData: FormData) {
+  await assertAdminAction();
+
   const id = formData.get('id') as string;
   try {
     await db.delete(registrations).where(eq(registrations.eventId, id));
@@ -245,6 +340,8 @@ export async function deleteEvent(formData: FormData) {
 }
 
 export async function updateEvent(formData: FormData) {
+  await assertAdminAction();
+
   const id = formData.get('id') as string;
   const fee = parseInt(formData.get('fee') as string);
   const teamSize = parseInt(formData.get('teamSize') as string);
@@ -271,6 +368,8 @@ export async function updateEvent(formData: FormData) {
 }
 
 export async function deleteUser(formData: FormData) {
+  await assertAdminAction();
+
   const id = formData.get('id') as string;
   try {
     await db.delete(registrations).where(eq(registrations.userId, id));
@@ -280,6 +379,8 @@ export async function deleteUser(formData: FormData) {
 }
 
 export async function updateUser(formData: FormData) {
+  await assertAdminAction();
+
   const id = formData.get('id') as string;
   const name = formData.get('name') as string;
   const college = formData.get('college') as string;
@@ -287,8 +388,10 @@ export async function updateUser(formData: FormData) {
   const yearRaw = (formData.get('year') as string) || null;
   const year = yearRaw ? parseInt(yearRaw) : null;
   const phone = formData.get('phone') as string;
+  const roleRaw = (formData.get('role') as string) || 'PARTICIPANT';
+  const role = roleRaw === 'ADMIN' || roleRaw === 'VOLUNTEER' || roleRaw === 'PARTICIPANT' ? roleRaw : 'PARTICIPANT';
   try {
-    await db.update(users).set({ name, college, branch, year, phone }).where(eq(users.id, id));
+    await db.update(users).set({ name, college, branch, year, phone, role }).where(eq(users.id, id));
     revalidatePath('/admin/users');
   } catch (e) { console.error(e); }
 }
@@ -318,6 +421,10 @@ export async function completeProfile(formData: FormData) {
 }
 
 export async function createRegistration(formData: FormData) {
+  if (isRegistrationKillSwitchEnabled()) {
+    return { error: getRegistrationKillSwitchMessage() };
+  }
+
   const eventId = formData.get('eventId') as string;
   const paymentScreenshot = (formData.get('paymentScreenshot') as string) || null;
   const teamName = formData.get('teamName') as string || null;
@@ -353,6 +460,17 @@ export async function createRegistration(formData: FormData) {
 
   const [dbUser] = await db.select().from(users).where(eq(users.email, session.user.email));
   if (!dbUser) return { error: 'Identity not found in global registry.' };
+
+  try {
+    assertRateLimit({
+      namespace: 'event-registration',
+      identifier: `${await getActionIp()}:${dbUser.id}`,
+      limit: 6,
+      windowMs: 10 * 60 * 1000,
+    });
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Too many requests.') };
+  }
 
   if (!dbUser.college || !dbUser.branch || !dbUser.phone || !dbUser.year) {
     return { error: 'Identity incomplete. Please complete profile (college, branch, year, phone).' };
@@ -463,7 +581,267 @@ export async function createRegistration(formData: FormData) {
   }
 }
 
+export async function createWalkInRegistration(formData: FormData) {
+  try {
+    await assertStaffAction();
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Unauthorized. Staff access required.') };
+  }
+
+  const eventId = (formData.get('eventId') as string) || '';
+  const name = (formData.get('name') as string) || '';
+  const phone = (formData.get('phone') as string) || '';
+  const emailInput = ((formData.get('email') as string) || '').trim().toLowerCase();
+  const college = ((formData.get('college') as string) || 'Walk-In Participant').trim();
+  const branch = ((formData.get('branch') as string) || 'Desk Entry').trim();
+  const yearRaw = (formData.get('year') as string) || '1';
+  const parsedYear = parseInt(yearRaw, 10);
+  const year = Number.isNaN(parsedYear) ? 1 : parsedYear;
+  const teamNameInput = ((formData.get('teamName') as string) || '').trim();
+  const paymentMode = (((formData.get('paymentMode') as string) || 'CASH').trim().toUpperCase());
+  const paymentNotesInput = ((formData.get('paymentNotes') as string) || '').trim();
+  const membersText = ((formData.get('members') as string) || '').trim();
+
+  if (!eventId || !name.trim() || !phone.trim()) {
+    return { error: 'Event, name, and phone are required for desk registration.' };
+  }
+
+  const additionalMembers = membersText
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [memberName = '', memberPhone = ''] = line.split('|').map((part) => part.trim());
+      return {
+        name: memberName,
+        phone: memberPhone,
+      };
+    })
+    .filter((member) => member.name);
+
+  try {
+    const [event] = await db.select().from(events).where(eq(events.id, eventId));
+
+    if (!event) {
+      return { error: 'Selected event was not found.' };
+    }
+
+    const memberCount = 1 + additionalMembers.length;
+    const minTeamSize = event.teamSizeMin ?? 1;
+    const maxTeamSize = event.teamSize ?? 1;
+
+    if (memberCount < minTeamSize || memberCount > maxTeamSize) {
+      return { error: `This event accepts ${minTeamSize}-${maxTeamSize} participant(s).` };
+    }
+
+    const normalizedEmail =
+      emailInput || `walkin-${phone.replace(/[^\d]/g, '') || Date.now()}@kratos.local`;
+
+    const [existingUser] = await db
+      .select()
+      .from(users)
+      .where(or(eq(users.email, normalizedEmail), eq(users.phone, phone.trim())))
+      .limit(1);
+
+    const userRecord =
+      existingUser ??
+      (
+        await db
+          .insert(users)
+          .values({
+            name: name.trim(),
+            email: normalizedEmail,
+            phone: phone.trim(),
+            college,
+            branch,
+            year,
+            role: 'PARTICIPANT',
+            xp: 0,
+            level: 1,
+          })
+          .returning()
+      )[0];
+
+    if (!userRecord) {
+      return { error: 'Unable to create the walk-in participant record.' };
+    }
+
+    await db
+      .update(users)
+      .set({
+        name: userRecord.name || name.trim(),
+        phone: userRecord.phone || phone.trim(),
+        college: userRecord.college || college,
+        branch: userRecord.branch || branch,
+        year: userRecord.year || year,
+      })
+      .where(eq(users.id, userRecord.id));
+
+    const [existingRegistration] = await db
+      .select({ id: registrations.id })
+      .from(registrations)
+      .where(and(eq(registrations.userId, userRecord.id), eq(registrations.eventId, eventId)))
+      .limit(1);
+
+    if (existingRegistration) {
+      return { error: 'This participant is already registered for the selected event.' };
+    }
+
+    const resolvedTeamName =
+      teamNameInput || (memberCount > 1 ? `${name.trim()} Desk Team` : `${name.trim()} Solo Entry`);
+
+    const [insertedTeam] = await db
+      .insert(teams)
+      .values({ eventId, name: resolvedTeamName })
+      .returning({ id: teams.id });
+
+    if (!insertedTeam) {
+      return { error: 'Unable to create the walk-in team record.' };
+    }
+
+    if (additionalMembers.length > 0) {
+      await db.insert(teamMembers).values(
+        additionalMembers.map((member) => ({
+          teamId: insertedTeam.id,
+          name: member.name,
+          phone: member.phone || null,
+          college,
+          branch,
+          year,
+        })),
+      );
+    }
+
+    const totalFee = (event.fee || 0) * memberCount;
+    const paymentNotes = ['Desk registration', `Payment mode: ${paymentMode}`, paymentNotesInput]
+      .filter(Boolean)
+      .join(' | ');
+
+    const [registration] = await db
+      .insert(registrations)
+      .values({
+        userId: userRecord.id,
+        eventId,
+        teamId: insertedTeam.id,
+        teamName: resolvedTeamName,
+        members:
+          additionalMembers.length > 0
+            ? additionalMembers.map((member) => ({ name: member.name, phone: member.phone || null }))
+            : null,
+        transactionId: totalFee > 0 ? `DESK-${paymentMode}-${Date.now()}` : null,
+        paymentNotes,
+        totalFee,
+        status: 'APPROVED',
+      })
+      .returning({ id: registrations.id });
+
+    revalidatePath('/admin/desk');
+    revalidatePath('/admin/registrations');
+    revalidatePath('/admin/checkin');
+    revalidatePath('/admin/dashboard');
+
+    return {
+      success: true,
+      registrationId: registration?.id ?? null,
+      participantName: userRecord.name,
+    };
+  } catch (error) {
+    console.error(error);
+    return { error: getErrorMessage(error, 'Desk registration failed.') };
+  }
+}
+
+export async function sendOperationalNotification(formData: FormData) {
+  try {
+    await assertAdminAction();
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Unauthorized. Admin access required.') };
+  }
+
+  const subject = ((formData.get('subject') as string) || 'KRATOS 2026 Update').trim();
+  const message = ((formData.get('message') as string) || '').trim();
+  const audience = ((formData.get('audience') as string) || 'APPROVED').trim().toUpperCase();
+  const eventId = ((formData.get('eventId') as string) || '').trim();
+  const sendEmail = formData.get('sendEmail') === 'on';
+  const sendWhatsapp = formData.get('sendWhatsapp') === 'on';
+
+  if (!message) {
+    return { error: 'Notification message is required.' };
+  }
+
+  if (!sendEmail && !sendWhatsapp) {
+    return { error: 'Select at least one delivery channel.' };
+  }
+
+  const capabilities = getNotificationCapabilities();
+
+  if (sendEmail && !capabilities.email) {
+    return { error: 'SMTP configuration is missing. Email delivery is not available yet.' };
+  }
+
+  if (sendWhatsapp && !capabilities.whatsapp) {
+    return { error: 'Twilio WhatsApp configuration is missing. WhatsApp delivery is not available yet.' };
+  }
+
+  try {
+    let recipients: Array<{ email: string | null; phone: string | null }> = [];
+
+    if (audience === 'ALL_USERS') {
+      recipients = await db
+        .select({ email: users.email, phone: users.phone })
+        .from(users)
+        .where(eq(users.role, 'PARTICIPANT'));
+    } else if (audience === 'EVENT') {
+      if (!eventId) {
+        return { error: 'Choose an event when targeting event participants.' };
+      }
+
+      recipients = await db
+        .select({ email: users.email, phone: users.phone })
+        .from(registrations)
+        .innerJoin(users, eq(registrations.userId, users.id))
+        .where(eq(registrations.eventId, eventId));
+    } else {
+      recipients = await db
+        .select({ email: users.email, phone: users.phone })
+        .from(registrations)
+        .innerJoin(users, eq(registrations.userId, users.id))
+        .where(eq(registrations.status, 'APPROVED'));
+    }
+
+    if (recipients.length === 0) {
+      return { error: 'No matching recipients were found for this notification.' };
+    }
+
+    const result = await sendNotificationCampaign({
+      subject,
+      message,
+      emails: recipients.map((recipient) => recipient.email || ''),
+      phones: recipients.map((recipient) => recipient.phone || ''),
+      sendEmail,
+      sendWhatsapp,
+    });
+
+    return {
+      success: true,
+      emailSent: result.emailSent,
+      whatsappSent: result.whatsappSent,
+      failureCount: result.failures.length,
+      failures: result.failures,
+    };
+  } catch (error) {
+    console.error(error);
+    return { error: getErrorMessage(error, 'Notification dispatch failed.') };
+  }
+}
+
 export async function updateRegistrationStatus(formData: FormData) {
+  try {
+    await assertAdminAction();
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Unauthorized. Admin access required.') };
+  }
+
   const id = formData.get('id') as string;
   const status = formData.get('status') as 'PENDING' | 'APPROVED' | 'REJECTED';
   const paymentNotes = (formData.get('paymentNotes') as string) || null;
@@ -480,9 +858,10 @@ export async function updateRegistrationStatus(formData: FormData) {
 }
 
 export async function bulkUpdateRegistrationStatus(ids: string[], status: 'APPROVED' | 'REJECTED') {
-  const session = await auth();
-  if (session?.user?.role !== 'ADMIN') {
-    return { error: 'Unauthorized. Admin access required.' };
+  try {
+    await assertAdminAction();
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Unauthorized. Admin access required.') };
   }
 
   try {
@@ -500,9 +879,10 @@ export async function bulkUpdateRegistrationStatus(ids: string[], status: 'APPRO
 }
 
 export async function bulkDeleteRegistrations(ids: string[]) {
-  const session = await auth();
-  if (session?.user?.role !== 'ADMIN') {
-    return { error: 'Unauthorized. Admin access required.' };
+  try {
+    await assertAdminAction();
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Unauthorized. Admin access required.') };
   }
 
   try {
@@ -519,6 +899,12 @@ export async function bulkDeleteRegistrations(ids: string[]) {
 }
 
 export async function markRegistrationCheckedIn(formData: FormData) {
+  try {
+    await assertStaffAction();
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Unauthorized. Staff access required.') };
+  }
+
   const id = formData.get('id') as string;
   try {
     await db
@@ -537,6 +923,12 @@ export async function markRegistrationCheckedIn(formData: FormData) {
 }
 
 export async function markMemberCheckedIn(formData: FormData) {
+  try {
+    await assertStaffAction();
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Unauthorized. Staff access required.') };
+  }
+
   const id = formData.get('id') as string;
   try {
     await db
@@ -553,9 +945,153 @@ export async function markMemberCheckedIn(formData: FormData) {
   }
 }
 
+export async function rapidCheckIn(formData: FormData) {
+  try {
+    await assertStaffAction();
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Unauthorized. Staff access required.') };
+  }
+
+  const eventId = ((formData.get('eventId') as string) || '').trim();
+  const rawCodes = ((formData.get('codes') as string) || '').trim();
+
+  if (!eventId) {
+    return { error: 'Select an event before running rapid check-in.' };
+  }
+
+  const codes = Array.from(
+    new Set(
+      rawCodes
+        .split(/[\r\n,]+/)
+        .map((code) => normalizeRapidCode(code))
+        .filter(Boolean),
+    ),
+  );
+
+  if (codes.length === 0) {
+    return { error: 'Enter at least one participant, registration, or pass code.' };
+  }
+
+  let checkedInCount = 0;
+  let alreadyCheckedInCount = 0;
+  let blockedCount = 0;
+  const unresolved: string[] = [];
+
+  for (const code of codes) {
+    const [registrationMatch] = await db
+      .select({
+        id: registrations.id,
+        checkedIn: registrations.checkedIn,
+        status: registrations.status,
+      })
+      .from(registrations)
+      .where(and(eq(registrations.id, code), eq(registrations.eventId, eventId)))
+      .limit(1);
+
+    if (registrationMatch) {
+      if (registrationMatch.status !== 'APPROVED') {
+        blockedCount += 1;
+        continue;
+      }
+
+      if (registrationMatch.checkedIn) {
+        alreadyCheckedInCount += 1;
+      } else {
+        await db
+          .update(registrations)
+          .set({ checkedIn: true, checkedInAt: new Date() })
+          .where(eq(registrations.id, registrationMatch.id));
+        checkedInCount += 1;
+      }
+
+      continue;
+    }
+
+    const userRegistrations = await db
+      .select({
+        id: registrations.id,
+        checkedIn: registrations.checkedIn,
+        status: registrations.status,
+      })
+      .from(registrations)
+      .where(and(eq(registrations.userId, code), eq(registrations.eventId, eventId)));
+
+    if (userRegistrations.length > 0) {
+      for (const registration of userRegistrations) {
+        if (registration.status !== 'APPROVED') {
+          blockedCount += 1;
+          continue;
+        }
+
+        if (registration.checkedIn) {
+          alreadyCheckedInCount += 1;
+          continue;
+        }
+
+        await db
+          .update(registrations)
+          .set({ checkedIn: true, checkedInAt: new Date() })
+          .where(eq(registrations.id, registration.id));
+        checkedInCount += 1;
+      }
+
+      continue;
+    }
+
+    const [memberMatch] = await db
+      .select({
+        id: teamMembers.id,
+        checkedIn: teamMembers.checkedIn,
+        status: registrations.status,
+      })
+      .from(teamMembers)
+      .innerJoin(registrations, eq(teamMembers.teamId, registrations.teamId))
+      .where(and(eq(teamMembers.id, code), eq(registrations.eventId, eventId)))
+      .limit(1);
+
+    if (memberMatch) {
+      if (memberMatch.status !== 'APPROVED') {
+        blockedCount += 1;
+        continue;
+      }
+
+      if (memberMatch.checkedIn) {
+        alreadyCheckedInCount += 1;
+      } else {
+        await db
+          .update(teamMembers)
+          .set({ checkedIn: true, checkedInAt: new Date() })
+          .where(eq(teamMembers.id, memberMatch.id));
+        checkedInCount += 1;
+      }
+
+      continue;
+    }
+
+    unresolved.push(code);
+  }
+
+  revalidatePath('/admin/checkin');
+  revalidatePath('/admin/registrations');
+
+  return {
+    success: true,
+    checkedInCount,
+    alreadyCheckedInCount,
+    blockedCount,
+    unresolved,
+  };
+}
+
 
 
 export async function updateGalleryLock(isGalleryLocked: boolean) {
+  try {
+    await assertAdminAction();
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Unauthorized. Admin access required.') };
+  }
+
   try {
     const existing = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
     if (existing.length === 0) {
@@ -575,9 +1111,10 @@ export async function updateGalleryLock(isGalleryLocked: boolean) {
 }
 
 export async function updateSystemImage(field: 'heroImage' | 'aboutImage1' | 'aboutImage2' | 'aboutImage3', imageUrl: string) {
-  const session = await auth();
-  if (session?.user?.role !== 'ADMIN') {
-    return { error: 'Unauthorized access. Requires ADMIN role.' };
+  try {
+    await assertAdminAction();
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Unauthorized. Admin access required.') };
   }
 
   try {
@@ -647,6 +1184,12 @@ export async function deleteGalleryPhoto(id: string) {
 }
 
 export async function updateResultsSettings(formData: FormData) {
+  try {
+    await assertAdminAction();
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Unauthorized. Admin access required.') };
+  }
+
   const revealTimeStr = formData.get('revealTime') as string;
   const videoUrl = formData.get('videoUrl') as string;
   
@@ -675,6 +1218,12 @@ export async function updateResultsSettings(formData: FormData) {
 }
 
 export async function updateRegistrationSettings(formData: FormData) {
+  try {
+    await assertAdminAction();
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Unauthorized. Admin access required.') };
+  }
+
   const registrationOpen = formData.get('registrationOpen') === 'on';
   const upiId = (formData.get('upiId') as string) || null;
   const feePerPersonRaw = formData.get('feePerPerson') as string;
@@ -714,6 +1263,8 @@ export async function updateRegistrationSettings(formData: FormData) {
 }
 
 export async function createOrganizer(formData: FormData) {
+  await assertAdminAction();
+
   const organizerName = (formData.get('organizerName') as string) || '';
   const role = (formData.get('role') as string) || null;
   const contact = (formData.get('contact') as string) || null;
@@ -735,6 +1286,8 @@ export async function createOrganizer(formData: FormData) {
 }
 
 export async function deleteOrganizer(formData: FormData) {
+  await assertAdminAction();
+
   const id = formData.get('id') as string;
   try {
     await db.delete(organizers).where(eq(organizers.id, id));
@@ -745,6 +1298,12 @@ export async function deleteOrganizer(formData: FormData) {
 }
 
 export async function updateEventWinners(eventId: string, winners: unknown) {
+  try {
+    await assertAdminAction();
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Unauthorized. Admin access required.') };
+  }
+
   try {
     await db.update(events).set({ winners }).where(eq(events.id, eventId));
     revalidatePath('/admin/results');

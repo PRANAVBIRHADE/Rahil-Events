@@ -18,10 +18,10 @@ const AnnouncementBar = async () => {
     <div className="bg-on-surface text-primary-container py-1 overflow-hidden border-b-2 border-primary-container relative z-40">
       <div className="flex whitespace-nowrap animate-marquee px-6">
         <span className="text-sm font-display font-black uppercase tracking-widest inline-block mr-12">
-          {message} | KRATOS 2026 | {message} | REGISTER BEFORE 18 APRIL
+          {message} &bull; {message} &bull; {message}
         </span>
         <span className="text-sm font-display font-black uppercase tracking-widest inline-block mr-12">
-          {message} | KRATOS 2026 | {message} | REGISTER BEFORE 18 APRIL
+          {message} &bull; {message} &bull; {message}
         </span>
       </div>
     </div>

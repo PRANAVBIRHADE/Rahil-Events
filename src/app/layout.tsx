@@ -5,6 +5,7 @@ import Navbar from "@/components/layout/Navbar";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import Footer from "@/components/layout/Footer";
 import GlobalMotionLayer from "@/components/layout/GlobalMotionLayer";
+import ServiceWorkerRegistration from "@/components/layout/ServiceWorkerRegistration";
 
 export const metadata: Metadata = {
   title: "KRATOS 2026 | Technical Festival",
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col pt-32 font-sans selection:bg-primary-container selection:text-on-primary-container relative">
         <GlobalMotionLayer />
         <IntroSequence />
+        <ServiceWorkerRegistration />
         <div className="fixed top-0 w-full z-50">
           <Navbar />
           <AnnouncementBar />
@@ -39,21 +41,6 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                  }, function(err) {
-                    console.log('ServiceWorker registration failed: ', err);
-                  });
-                });
-              }
-            `,
-          }}
-        />
       </body>
     </html>
   );

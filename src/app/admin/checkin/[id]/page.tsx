@@ -7,10 +7,13 @@ import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalButton from '@/components/ui/BrutalButton';
 import { markRegistrationCheckedIn, markMemberCheckedIn } from '@/lib/actions';
 import { notFound } from 'next/navigation';
+import { requireStaffPageAccess } from '@/lib/authz';
 
 export const dynamic = 'force-dynamic';
 
 export default async function CheckInDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  await requireStaffPageAccess();
+
   const { id } = await params;
 
   // 1. Try to fetch as a main registration (Leader)

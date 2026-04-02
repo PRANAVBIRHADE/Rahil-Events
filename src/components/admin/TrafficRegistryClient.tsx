@@ -33,9 +33,10 @@ type TeamMember = {
 type Props = {
   registrations: Registration[];
   teamMembers: TeamMember[];
+  canManageRegistrations?: boolean;
 };
 
-export default function TrafficRegistryClient({ registrations, teamMembers }: Props) {
+export default function TrafficRegistryClient({ registrations, teamMembers, canManageRegistrations = true }: Props) {
   const [activeTab, setActiveTab] = useState<'ALL' | 'EVENTS' | 'TEAMS'>('ALL');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isUpdating, setIsUpdating] = useState(false);
@@ -138,12 +139,14 @@ export default function TrafficRegistryClient({ registrations, teamMembers }: Pr
                 <thead className="bg-surface-container-low border-b-2 border-on-surface text-[10px] font-black uppercase tracking-widest sticky top-0 z-10 shadow-sm">
                   <tr>
                     <th className="p-4 w-10">
-                      <input 
-                        type="checkbox" 
-                        checked={selectedIds.size === registrations.length && registrations.length > 0} 
-                        onChange={toggleSelectAll}
-                        className="w-4 h-4"
-                      />
+                      {canManageRegistrations && (
+                        <input 
+                          type="checkbox" 
+                          checked={selectedIds.size === registrations.length && registrations.length > 0} 
+                          onChange={toggleSelectAll}
+                          className="w-4 h-4"
+                        />
+                      )}
                     </th>
                     <th className="p-4">Timestamp</th>
                     <th className="p-4">Participant</th>
@@ -156,12 +159,14 @@ export default function TrafficRegistryClient({ registrations, teamMembers }: Pr
                   {registrations.map((reg) => (
                     <tr key={reg.id} className={`hover:bg-primary-container/10 transition-colors ${selectedIds.has(reg.id) ? 'bg-primary-container/20' : ''}`}>
                       <td className="p-4">
-                        <input 
-                          type="checkbox" 
-                          checked={selectedIds.has(reg.id)} 
-                          onChange={() => toggleSelect(reg.id)}
-                          className="w-4 h-4"
-                        />
+                        {canManageRegistrations && (
+                          <input 
+                            type="checkbox" 
+                            checked={selectedIds.has(reg.id)} 
+                            onChange={() => toggleSelect(reg.id)}
+                            className="w-4 h-4"
+                          />
+                        )}
                       </td>
                       <td className="p-4 text-xs font-bold opacity-60 uppercase whitespace-nowrap">
                         {reg.createdAt?.toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' }) || ''}
@@ -181,9 +186,13 @@ export default function TrafficRegistryClient({ registrations, teamMembers }: Pr
                         </span>
                       </td>
                       <td className="p-4 text-center">
-                        <Link href={`/admin/verify/${reg.id}`} className="text-[10px] font-black uppercase border-b-2 border-on-surface hover:text-primary hover:border-primary">
-                          Inspect
-                        </Link>
+                        {canManageRegistrations ? (
+                          <Link href={`/admin/verify/${reg.id}`} className="text-[10px] font-black uppercase border-b-2 border-on-surface hover:text-primary hover:border-primary">
+                            Inspect
+                          </Link>
+                        ) : (
+                          <span className="text-[10px] font-black uppercase opacity-40">LOCKED</span>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -211,7 +220,7 @@ export default function TrafficRegistryClient({ registrations, teamMembers }: Pr
                             <th className="p-3">Participant</th>
                             <th className="p-3">Team Name</th>
                             <th className="p-3">Check-In</th>
-                            <th className="p-3 text-right">Review</th>
+                            <th className="p-3 text-right">{canManageRegistrations ? 'Review' : 'Action'}</th>
                          </tr>
                       </thead>
                       <tbody className="divide-y divide-on-surface/10">
@@ -227,7 +236,11 @@ export default function TrafficRegistryClient({ registrations, teamMembers }: Pr
                                  )}
                               </td>
                               <td className="p-3 text-right">
-                                 <Link href={`/admin/verify/${r.id}`} className="underline font-black uppercase text-[9px]">Open</Link>
+                                 {canManageRegistrations ? (
+                                   <Link href={`/admin/verify/${r.id}`} className="underline font-black uppercase text-[9px]">Open</Link>
+                                 ) : (
+                                   <Link href={`/admin/checkin/${r.id}`} className="underline font-black uppercase text-[9px]">Check-in Link</Link>
+                                 )}
                               </td>
                            </tr>
                          ))}
@@ -300,7 +313,7 @@ export default function TrafficRegistryClient({ registrations, teamMembers }: Pr
       </BrutalCard>
 
       {/* Floating Bulk Action Bar */}
-      {selectedIds.size > 0 && (
+      {canManageRegistrations && selectedIds.size > 0 && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
           <BrutalCard className="flex flex-col md:flex-row items-center gap-6 px-8 py-4 bg-on-surface text-surface" shadowColor="gold">
             <div className="flex items-center gap-4">

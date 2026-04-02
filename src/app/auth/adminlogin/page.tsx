@@ -11,12 +11,12 @@ export default function AdminLoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setLoading(true);
     setError(null);
 
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(event.currentTarget);
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
@@ -29,8 +29,9 @@ export default function AdminLoginPage() {
     if (result?.error) {
       setError('AUTHORIZATION FAILED: INVALID SECURITY CLEARANCE');
     } else {
-      window.location.href = '/admin/dashboard';
+      window.location.href = '/admin/registrations';
     }
+
     setLoading(false);
   };
 
@@ -39,49 +40,46 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md">
         <header className="mb-8 text-center">
           <div className="inline-block bg-primary px-3 py-1 mb-4">
-            <span className="text-on-primary font-display font-black text-xs tracking-widest uppercase">Level 4 Clearance Required</span>
+            <span className="text-on-primary font-display font-black text-xs tracking-widest uppercase">Staff Clearance Required</span>
           </div>
           <h1 className="text-4xl font-black text-surface tracking-tighter uppercase italic">
-            Command Center<br/>Access
+            Command Center
+            <br />
+            Access
           </h1>
         </header>
 
         <BrutalCard shadowColor="black" className="bg-surface-container-low">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
+            {error ? (
               <div className="p-4 bg-red-100 border-2 border-red-800 text-red-800 text-xs font-bold uppercase italic animate-pulse">
                 [ERROR] {error}
               </div>
-            )}
-            
-            <BrutalInput 
-              label="Admin Module Identifier (Email)" 
-              name="email" 
-              type="email" 
-              placeholder="admin@kratos.fest"
-              required 
-            />
-            
-            <BrutalInput 
-              label="Security Override Key (Password)" 
-              name="password" 
-              type="password" 
-              placeholder="••••••••"
-              required 
+            ) : null}
+
+            <BrutalInput
+              label="Staff Identifier (Email)"
+              name="email"
+              type="email"
+              placeholder="staff@kratos.fest"
+              required
             />
 
-            <BrutalButton 
-              type="submit" 
-              className="w-full mt-8" 
-              size="lg"
-              disabled={loading}
-            >
+            <BrutalInput
+              label="Security Override Key (Password)"
+              name="password"
+              type="password"
+              placeholder="Enter password"
+              required
+            />
+
+            <BrutalButton type="submit" className="w-full mt-8" size="lg" disabled={loading}>
               {loading ? 'AUTHENTICATING...' : 'INITIALIZE SESSION'}
             </BrutalButton>
-          
+
             <div className="mt-8 text-center">
               <Link href="/auth/adminregister" className="text-xs font-black uppercase tracking-widest opacity-50 hover:opacity-100 hover:text-primary underline">
-                AUTHORIZE NEW COMMANDER &rarr;
+                ONBOARD STAFF PROFILE &rarr;
               </Link>
             </div>
           </form>
@@ -92,7 +90,7 @@ export default function AdminLoginPage() {
             </p>
             <div className="flex flex-col gap-3 items-center">
               <Link href="/auth/adminregister" className="text-xs font-black uppercase text-on-surface border-b-2 border-on-surface hover:bg-on-surface hover:text-surface transition-colors px-2">
-                Initialize New Commander Profile
+                Initialize New Staff Profile
               </Link>
               <Link href="/auth/login" className="text-[10px] font-black uppercase text-primary hover:underline">
                 Return to Standard Participant Login

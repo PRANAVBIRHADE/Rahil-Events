@@ -6,10 +6,13 @@ import { events, scheduleSlots } from '@/db/schema';
 import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalButton from '@/components/ui/BrutalButton';
 import { updateScheduleSlots } from '@/lib/actions';
+import { requireAdminPageAccess } from '@/lib/authz';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminSchedulePage() {
+  await requireAdminPageAccess();
+
   const allEvents = await db.select().from(events).orderBy(desc(events.createdAt));
   const existingSlots = await db.select().from(scheduleSlots);
 

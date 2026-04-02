@@ -2,9 +2,12 @@ import { db } from '@/db';
 import { registrations, users, events } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
+import { requireStaffPageAccess } from '@/lib/authz';
 
 export async function GET() {
   try {
+    await requireStaffPageAccess();
+    
     const data = await db.select({
       participantName: users.name,
       moduleName: events.name,

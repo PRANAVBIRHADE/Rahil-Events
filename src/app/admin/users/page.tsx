@@ -6,8 +6,11 @@ import { desc, count } from 'drizzle-orm';
 import Link from 'next/link';
 import { updateUser, deleteUser } from '@/lib/actions';
 import UsersClientWrapper, { type User } from '@/components/admin/UsersClientWrapper';
+import { requireAdminPageAccess } from '@/lib/authz';
 
 export default async function UserManagementPage() {
+  await requireAdminPageAccess();
+
   const allUsersRaw = await db
     .select()
     .from(users)

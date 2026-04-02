@@ -23,7 +23,7 @@ type User = {
 
 export type { User };
 
-type Filter = 'all' | 'no-reg' | 'with-reg' | 'admin';
+type Filter = 'all' | 'no-reg' | 'with-reg' | 'admin' | 'volunteer';
 
 export default function UsersClientWrapper({
   users,
@@ -44,6 +44,7 @@ export default function UsersClientWrapper({
     if (filter === 'no-reg') result = result.filter((u) => u.registrationCount === 0);
     else if (filter === 'with-reg') result = result.filter((u) => u.registrationCount > 0);
     else if (filter === 'admin') result = result.filter((u) => u.role === 'ADMIN');
+    else if (filter === 'volunteer') result = result.filter((u) => u.role === 'VOLUNTEER');
 
     if (search.trim()) {
       const q = search.toLowerCase();
@@ -65,6 +66,7 @@ export default function UsersClientWrapper({
     { key: 'no-reg', label: 'No Registrations' },
     { key: 'with-reg', label: 'Registered' },
     { key: 'admin', label: 'Admins Only' },
+    { key: 'volunteer', label: 'Volunteers' },
   ];
 
   return (
@@ -138,8 +140,17 @@ export default function UsersClientWrapper({
                       defaultValue={user.name}
                       className="bg-transparent font-black uppercase text-sm w-full outline-none focus:border-b-2 border-primary block"
                     />
+                    <select 
+                      name="role" 
+                      defaultValue={user.role || 'PARTICIPANT'} 
+                      className="mt-1 bg-transparent border-b border-primary/30 text-[10px] uppercase font-black outline-none w-full"
+                    >
+                      <option value="PARTICIPANT">Participant</option>
+                      <option value="VOLUNTEER">Volunteer</option>
+                      <option value="ADMIN">Admin</option>
+                    </select>
                   </form>
-                  <span className="font-mono text-[11px] opacity-50 truncate block max-w-[160px]">{user.email}</span>
+                  <span className="font-mono text-[11px] opacity-50 truncate block mt-1 max-w-[160px]">{user.email}</span>
                 </td>
 
                 <td className="p-4 w-1/5">

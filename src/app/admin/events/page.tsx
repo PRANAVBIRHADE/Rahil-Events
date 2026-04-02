@@ -6,8 +6,11 @@ import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalButton from '@/components/ui/BrutalButton';
 import { updateEvent, deleteEvent } from '@/lib/actions';
 import Link from 'next/link';
+import { requireAdminPageAccess } from '@/lib/authz';
 
 export default async function EventManagementPage() {
+  await requireAdminPageAccess();
+
   const allEvents = await db.select().from(events).orderBy(desc(events.createdAt));
 
   return (

@@ -20,15 +20,19 @@ export default function ScannerComponent() {
     );
 
     const onScanSuccess = (decodedText: string) => {
-      // Assuming decodedText is a URL like: https://.../admin/checkin/[uuid]
+      const trimmed = decodedText.trim();
       scanner.clear();
-      setScanResult(decodedText);
+      setScanResult(trimmed);
       
-      if (decodedText.includes('/admin/checkin/')) {
-        const parts = decodedText.split('/admin/checkin/');
-        if (parts.length > 1) {
-          window.location.href = `/admin/checkin/${parts[1]}`;
-        }
+      const userRouteMarker = '/admin/checkin/user/';
+      const registrationRouteMarker = '/admin/checkin/';
+
+      if (trimmed.includes(userRouteMarker)) {
+        const id = trimmed.split(userRouteMarker).pop()?.split(/[?#]/)[0]?.trim();
+        window.location.href = `${userRouteMarker}${id}`;
+      } else if (trimmed.includes(registrationRouteMarker)) {
+        const id = trimmed.split(registrationRouteMarker).pop()?.split(/[?#]/)[0]?.trim();
+        window.location.href = `${registrationRouteMarker}${id}`;
       } else {
         alert('INVALID QR: Protocol mismatch. This is not a Kratos Entry Pass.');
         window.location.reload();

@@ -3,8 +3,8 @@ import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { db } from '@/db';
-import { users, registrations, events, teamMembers, systemSettings, galleryPhotos } from '@/db/schema';
-import { eq, inArray } from 'drizzle-orm';
+import { users, registrations, events, teamMembers, systemSettings, galleryPhotos, scheduleSlots } from '@/db/schema';
+import { asc, eq, inArray } from 'drizzle-orm';
 import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalButton from '@/components/ui/BrutalButton';
 import LogoutButton from '@/components/dashboard/LogoutButton';
@@ -12,6 +12,8 @@ import TicketCard from '@/components/dashboard/TicketCard';
 import GalleryUploadClient from '@/components/dashboard/GalleryUploadClient';
 import { getPlayerRank } from '@/lib/xp';
 import { Zap } from 'lucide-react';
+import BrutalQRCode from '@/components/ui/BrutalQRCode';
+import { formatScheduleSummary, sortScheduleEntries, type ScheduleEntry } from '@/lib/schedule';
 
 
 export default async function DashboardPage() {
@@ -35,6 +37,7 @@ export default async function DashboardPage() {
   // Fetch active registrations joined with event info
   const dbRegistrations = await db.select({
     id: registrations.id,
+    eventId: registrations.eventId,
     status: registrations.status,
     teamName: registrations.teamName,
     teamId: registrations.teamId,
@@ -54,6 +57,73 @@ export default async function DashboardPage() {
   const allTeamMembers = teamIds.length > 0 
     ? await db.select().from(teamMembers).where(inArray(teamMembers.teamId, teamIds))
     : [];
+
+  const eventIds = Array.from(new Set(dbRegistrations.map((registration) => registration.eventId)));
+  const structuredSlots =
+    eventIds.length > 0
+      ? await db
+          .select({
+            linkedEventId: scheduleSlots.linkedEventId,
+            day: scheduleSlots.day,
+            sortIndex: scheduleSlots.sortIndex,
+            timeSlot: scheduleSlots.timeSlot,
+            venue: scheduleSlots.venue,
+          })
+          .from(scheduleSlots)
+          .where(inArray(scheduleSlots.linkedEventId, eventIds))
+          .orderBy(asc(scheduleSlots.day), asc(scheduleSlots.sortIndex))
+      : [];
+
+  const slotsByEventId = new Map<
+    string,
+    Array<{ day: number; sortIndex: number; timeSlot: string; venue: string | null }>
+  >();
+
+  for (const slot of structuredSlots) {
+    if (!slot.linkedEventId) continue;
+    const existingSlots = slotsByEventId.get(slot.linkedEventId) ?? [];
+    existingSlots.push({
+      day: slot.day,
+      sortIndex: slot.sortIndex,
+      timeSlot: slot.timeSlot,
+      venue: slot.venue ?? null,
+    });
+    slotsByEventId.set(slot.linkedEventId, existingSlots);
+  }
+
+  const userSchedule = sortScheduleEntries(
+    dbRegistrations.flatMap((registration): ScheduleEntry[] => {
+      const eventSlots = slotsByEventId.get(registration.eventId) ?? [];
+
+      if (eventSlots.length === 0) {
+        return [
+          {
+            id: `${registration.id}-fallback`,
+            eventName: registration.eventName as string,
+            status: registration.status,
+            venue: registration.venue,
+            summary: registration.schedule || 'Schedule to be announced',
+            day: null as number | null,
+            sortIndex: null as number | null,
+            timeSlot: null as string | null,
+            isStructured: false,
+          },
+        ];
+      }
+
+      return eventSlots.map((slot) => ({
+        id: `${registration.id}-${slot.day}-${slot.sortIndex}`,
+        eventName: registration.eventName,
+        status: registration.status,
+        venue: slot.venue || registration.venue,
+        summary: formatScheduleSummary(slot.day, slot.timeSlot, registration.schedule || 'Schedule to be announced'),
+        day: slot.day,
+        sortIndex: slot.sortIndex,
+        timeSlot: slot.timeSlot,
+        isStructured: true,
+      }));
+    }),
+  );
   const dbSettings = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
   const isGalleryLocked = dbSettings.length > 0 ? dbSettings[0].isGalleryLocked ?? true : true;
 
@@ -63,6 +133,7 @@ export default async function DashboardPage() {
   }).from(galleryPhotos).where(eq(galleryPhotos.userId, dbUser.id));
 
   const rank = getPlayerRank(dbUser.xp || 0);
+  const fastEntryUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/admin/checkin/user/${dbUser.id}`;
 
 
   return (
@@ -86,46 +157,61 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Profile Summary */}
-        <BrutalCard className="lg:col-span-1 h-fit" shadowColor="gold">
-          <h2 className="text-2xl font-black uppercase mb-6 border-b-2 border-on-surface pb-2">Your Profile</h2>
-          
-          {/* XP Progress Bar */}
-          <div className="mb-8 p-4 bg-on-surface text-surface rounded-sm">
-             <div className="flex justify-between items-end mb-2">
-                <div className="flex items-center gap-2">
-                   <Zap className="w-4 h-4 text-primary-container fill-primary-container" />
-                   <span className="text-[10px] font-black uppercase">Tech Progress</span>
-                </div>
-                <span className="text-[10px] font-mono tracking-tighter">LVL {rank.level}</span>
-             </div>
-             <div className="h-4 bg-surface/20 brutal-border p-0.5 overflow-hidden">
-                <div 
-                  className="h-full bg-primary-container transition-all duration-1000" 
-                  style={{ width: `${rank.progressPercent}%` }}
-                />
-             </div>
-             <div className="flex justify-between mt-1">
-                <span className="text-[9px] font-bold opacity-60 uppercase">{rank.xpInLevel} XP</span>
-                <span className="text-[9px] font-bold opacity-60 uppercase">Next: {rank.xpToNextLevel} XP</span>
-             </div>
-          </div>
+        <div className="lg:col-span-1 space-y-8">
+          <BrutalCard className="h-fit" shadowColor="gold">
+            <h2 className="text-2xl font-black uppercase mb-6 border-b-2 border-on-surface pb-2">Your Profile</h2>
 
-          <div className="space-y-4 font-sans">
-            <div>
-              <p className="text-[10px] font-black uppercase opacity-60">Institute</p>
-              <p className="font-bold">{dbUser.college || 'N/A'}</p>
+            <div className="mb-8 p-4 bg-on-surface text-surface rounded-sm">
+               <div className="flex justify-between items-end mb-2">
+                  <div className="flex items-center gap-2">
+                     <Zap className="w-4 h-4 text-primary-container fill-primary-container" />
+                     <span className="text-[10px] font-black uppercase">Tech Progress</span>
+                  </div>
+                  <span className="text-[10px] font-mono tracking-tighter">LVL {rank.level}</span>
+               </div>
+               <div className="h-4 bg-surface/20 brutal-border p-0.5 overflow-hidden">
+                  <div
+                    className="h-full bg-primary-container transition-all duration-1000"
+                    style={{ width: `${rank.progressPercent}%` }}
+                  />
+               </div>
+               <div className="flex justify-between mt-1">
+                  <span className="text-[9px] font-bold opacity-60 uppercase">{rank.xpInLevel} XP</span>
+                  <span className="text-[9px] font-bold opacity-60 uppercase">Next: {rank.xpToNextLevel} XP</span>
+               </div>
             </div>
-            <div>
-              <p className="text-[10px] font-black uppercase opacity-60">Branch</p>
-              <p className="font-bold">{dbUser.branch || 'N/A'}</p>
+
+            <div className="space-y-4 font-sans">
+              <div>
+                <p className="text-[10px] font-black uppercase opacity-60">Institute</p>
+                <p className="font-bold">{dbUser.college || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase opacity-60">Branch</p>
+                <p className="font-bold">{dbUser.branch || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase opacity-60">Participant ID</p>
+                <p className="font-bold font-mono text-xs overflow-hidden text-ellipsis">{dbUser.id}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] font-black uppercase opacity-60">Participant ID</p>
-              <p className="font-bold font-mono text-xs overflow-hidden text-ellipsis">{dbUser.id}</p>
+          </BrutalCard>
+
+          <BrutalCard shadowColor="black" className="bg-on-surface text-surface">
+            <div className="flex items-center justify-between mb-4 border-b border-surface/20 pb-3">
+              <div>
+                <h2 className="text-2xl font-black uppercase italic tracking-tighter">Fast Entry QR</h2>
+                <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Contains your participant user ID</p>
+              </div>
             </div>
-          </div>
-        </BrutalCard>
+            <div className="flex justify-center mb-4">
+              <BrutalQRCode data={fastEntryUrl} size={180} />
+            </div>
+            <p className="text-[10px] font-black uppercase tracking-wide opacity-60 text-center">
+              Show this at entry gates or event desks for quick lookup.
+            </p>
+          </BrutalCard>
+        </div>
 
         {/* Registered Events */}
         <div className="lg:col-span-2 space-y-8">
@@ -160,39 +246,38 @@ export default async function DashboardPage() {
             </div>
           </BrutalCard>
 
-          {/* Mission Timeline - Chronological View */}
           {dbRegistrations.length > 0 && (
             <BrutalCard shadowColor="black" className="bg-on-surface text-surface">
               <div className="flex justify-between items-center mb-8 border-b border-surface/20 pb-4">
-                <h2 className="text-2xl font-black uppercase italic tracking-tighter">Mission Timeline</h2>
-                <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Synchronized Schedule</p>
+                <h2 className="text-2xl font-black uppercase italic tracking-tighter">My Schedule</h2>
+                <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Chronological Timeline</p>
               </div>
               <div className="space-y-4">
-                {dbRegistrations
-                  .filter(r => r.status === 'APPROVED')
-                  .sort((a, b) => (a.schedule || '').localeCompare(b.schedule || ''))
-                  .map((reg) => (
-                    <div key={reg.id} className="flex gap-6 items-center p-4 border-2 border-surface/20 hover:border-primary-container transition-colors group">
+                {userSchedule.map((entry) => (
+                    <div key={entry.id} className="flex gap-6 items-center p-4 border-2 border-surface/20 hover:border-primary-container transition-colors group">
                       <div className="w-24 shrink-0 text-center border-r-2 border-surface/20 pr-4">
-                        <p className="text-[10px] font-black uppercase opacity-60 mb-1">Schedule</p>
-                        <p className="font-mono text-xs font-bold">{reg.schedule || 'TBA'}</p>
+                        <p className="text-[10px] font-black uppercase opacity-60 mb-1">
+                          {entry.day ? `Day ${entry.day}` : 'Schedule'}
+                        </p>
+                        <p className="font-mono text-xs font-bold">{entry.timeSlot || entry.summary}</p>
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-black uppercase text-lg leading-none mb-1 group-hover:text-primary-container transition-colors">{reg.eventName}</h4>
-                        <p className="text-[10px] font-black uppercase tracking-widest opacity-60">{reg.venue || 'Main Campus'}</p>
+                        <h4 className="font-black uppercase text-lg leading-none mb-1 group-hover:text-primary-container transition-colors">{entry.eventName}</h4>
+                        <p className="text-[10px] font-black uppercase tracking-widest opacity-60">{entry.summary}</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mt-1">{entry.venue || 'Venue TBA'}</p>
                       </div>
                       <div className="hidden md:block">
                          <span className={`px-2 py-0.5 border text-[10px] font-black uppercase ${
-                           reg.status === 'APPROVED' ? 'bg-green-500/20 text-green-400 border-green-500/40' : 'bg-orange-500/20 text-orange-400 border-orange-500/40'
+                           entry.status === 'APPROVED' ? 'bg-green-500/20 text-green-400 border-green-500/40' : 'bg-orange-500/20 text-orange-400 border-orange-500/40'
                          }`}>
-                           {reg.status}
+                           {entry.status}
                          </span>
                       </div>
                     </div>
                   ))}
-                {dbRegistrations.filter(r => r.status === 'APPROVED').length === 0 && (
+                {userSchedule.length === 0 && (
                   <p className="text-center py-8 font-display font-bold uppercase opacity-40 text-xs tracking-widest">
-                    AWAITING VERIFICATION TO SYNC TIMELINE
+                    REGISTER FOR EVENTS TO BUILD YOUR TIMELINE
                   </p>
                 )}
               </div>

@@ -7,8 +7,11 @@ import BrutalCard from '@/components/ui/BrutalCard';
 import Link from 'next/link';
 import { updateRegistrationStatus } from '@/lib/actions';
 import { teamMembers } from '@/db/schema';
+import { requireAdminPageAccess } from '@/lib/authz';
 
 export default async function VerifyRegistrationPage({ params }: { params: Promise<{ id: string }> }) {
+  await requireAdminPageAccess();
+
   const { id } = await params;
   
   const [data] = await db.select({

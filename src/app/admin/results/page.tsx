@@ -6,8 +6,11 @@ import ResultsSettingsForm from '@/components/admin/ResultsSettingsForm';
 import WinnerEntryForm from '@/components/admin/WinnerEntryForm';
 import Link from 'next/link';
 import BrutalButton from '@/components/ui/BrutalButton';
+import { requireAdminPageAccess } from '@/lib/authz';
 
 export default async function AdminResultsPage() {
+  await requireAdminPageAccess();
+
   const settings = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
   const currentSettings = settings.length > 0 ? settings[0] : { resultsRevealTime: null, resultsVideoUrl: null };
 

@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import React from "react";
+import { isStaffRole } from "@/lib/authz";
 
 export default async function AdminLayout({
   children,
@@ -10,10 +11,10 @@ export default async function AdminLayout({
   const session = await auth();
   
   if (!session?.user) {
-    redirect("/auth/login");
+    redirect("/auth/adminlogin");
   }
 
-  if (session.user.role !== "ADMIN") {
+  if (!isStaffRole(session.user.role)) {
     redirect("/dashboard");
   }
 

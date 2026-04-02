@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalInput from '@/components/ui/BrutalInput';
 import BrutalButton from '@/components/ui/BrutalButton';
 import { registerAdmin } from '@/lib/actions';
-import { useRouter } from 'next/navigation';
 
 export default function AdminRegisterPage() {
   const [error, setError] = useState<string | null>(null);
@@ -16,10 +16,11 @@ export default function AdminRegisterPage() {
   async function handleSubmit(formData: FormData) {
     setLoading(true);
     setError(null);
+
     const result = await registerAdmin(formData);
     setLoading(false);
-    
-    if (result.error) {
+
+    if ('error' in result) {
       setError(`[ERROR] ${result.error}`);
     } else {
       router.push('/auth/adminlogin?registered=true');
@@ -31,58 +32,76 @@ export default function AdminRegisterPage() {
       <div className="w-full max-w-md">
         <header className="mb-8 text-center">
           <div className="inline-block bg-primary-container px-3 py-1 mb-4">
-            <span className="text-on-primary-container font-display font-black text-xs tracking-widest uppercase">New Commander Init</span>
+            <span className="text-on-primary-container font-display font-black text-xs tracking-widest uppercase">New Staff Init</span>
           </div>
           <h1 className="text-4xl font-black text-surface tracking-tighter uppercase italic">
-            Command Center<br/>Registry
+            Command Center
+            <br />
+            Registry
           </h1>
         </header>
 
         <BrutalCard shadowColor="black" className="bg-surface-container-low">
           <form action={handleSubmit} className="space-y-6">
-            {error && (
+            {error ? (
               <div className="p-4 bg-red-100 border-2 border-red-800 text-red-800 text-xs font-bold uppercase italic animate-pulse">
                 {error}
               </div>
-            )}
-            
-            <BrutalInput 
-              label="Commander Designator (Name)" 
-              name="name" 
-              type="text" 
-              placeholder="E.G. CHIEF OPERATIONS"
-              required 
+            ) : null}
+
+            <BrutalInput
+              label="Staff Designator (Name)"
+              name="name"
+              type="text"
+              placeholder="E.G. CHECK-IN DESK"
+              required
             />
 
-            <BrutalInput 
-              label="Admin Module Identifier (Email)" 
-              name="email" 
-              type="email" 
-              placeholder="newadmin@kratos.fest"
-              required 
-            />
-            
-            <BrutalInput 
-              label="Security Override Key (Password)" 
-              name="password" 
-              type="password" 
-              placeholder="••••••••"
-              required 
+            <BrutalInput
+              label="Staff Identifier (Email)"
+              name="email"
+              type="email"
+              placeholder="staff@kratos.fest"
+              required
             />
 
-            <BrutalButton 
-              type="submit" 
-              className="w-full mt-4" 
-              size="lg"
-              disabled={loading}
-            >
+            <BrutalInput
+              label="Security Override Key (Password)"
+              name="password"
+              type="password"
+              placeholder="Enter password"
+              required
+            />
+
+            <div className="space-y-2">
+              <label className="block text-sm font-display font-bold uppercase tracking-widest text-on-surface">
+                Staff Role
+              </label>
+              <select
+                name="role"
+                defaultValue="VOLUNTEER"
+                className="w-full px-4 py-3 bg-white brutal-border outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+              >
+                <option value="VOLUNTEER">Volunteer</option>
+                <option value="ADMIN">Super Admin (requires signed-in admin)</option>
+              </select>
+            </div>
+
+            <BrutalInput
+              label="Setup Key"
+              name="setupKey"
+              type="password"
+              placeholder="Required unless a super admin is already signed in"
+            />
+
+            <BrutalButton type="submit" className="w-full mt-4" size="lg" disabled={loading}>
               {loading ? 'INITIALIZING...' : 'ESTABLISH CLEARANCE'}
             </BrutalButton>
           </form>
 
           <div className="mt-8 pt-6 border-t-2 border-on-surface/10 text-center">
-             <Link href="/auth/adminlogin" className="text-[10px] font-black uppercase text-primary hover:underline block">
-              &larr; Abort & Return to Admin Login
+            <Link href="/auth/adminlogin" className="text-[10px] font-black uppercase text-primary hover:underline block">
+              &larr; Abort & Return to Staff Login
             </Link>
           </div>
         </BrutalCard>

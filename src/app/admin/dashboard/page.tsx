@@ -8,6 +8,9 @@ import GalleryAdminToggle from '@/components/admin/GalleryAdminToggle';
 import LogoutButton from '@/components/dashboard/LogoutButton';
 import { db } from '@/db';
 import { registrations, users, events, systemSettings, teamMembers } from '@/db/schema';
+import { requireAdminPageAccess } from '@/lib/authz';
+import NotificationBlastForm from '@/components/admin/NotificationBlastForm';
+import { getNotificationCapabilities, isRegistrationKillSwitchEnabled, getRegistrationKillSwitchMessage } from '@/lib/env';
 import { eq, desc, count, sum } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
@@ -55,6 +58,12 @@ export default async function AdminDashboard() {
   const dbSettings = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
   const isGalleryLocked = dbSettings.length > 0 ? dbSettings[0].isGalleryLocked ?? true : true;
 
+  const notificationCapabilities = getNotificationCapabilities();
+  const killSwitchEnabled = isRegistrationKillSwitchEnabled();
+  const killSwitchMessage = killSwitchEnabled ? getRegistrationKillSwitchMessage() : '';
+
+  const allEvents = await db.select({ id: events.id, name: events.name }).from(events);
+
   const recentRegistrations = await db.select({
     id: registrations.id,
     name: users.name,
@@ -76,9 +85,18 @@ export default async function AdminDashboard() {
           <h1 className="text-5xl font-black uppercase tracking-tighter mb-2 italic">Admin Panel</h1>
           <p className="font-display font-bold uppercase text-primary tracking-widest text-sm">Manage Kratos 2026</p>
         </div>
-        <div className="flex gap-4">
-          <Link href="/api/admin/export" target="_blank">
-            <BrutalButton variant="outline" size="sm">Export Master Excel</BrutalButton>
+        <div className="flex gap-4 items-center">
+          {killSwitchEnabled && (
+            <span className="text-[10px] font-black uppercase tracking-widest text-red-600 border-2 border-red-600 px-2 py-1 flex items-center gap-1 bg-red-50">
+              <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></span>
+              KILL-SWITCH ENGAGED
+            </span>
+          )}
+          <Link href="/api/admin/export?dataset=participants" target="_blank">
+            <BrutalButton variant="outline" size="sm" className="whitespace-nowrap px-3 text-xs">Export Participants</BrutalButton>
+          </Link>
+          <Link href="/api/admin/export?dataset=users" target="_blank">
+            <BrutalButton variant="outline" size="sm" className="whitespace-nowrap px-3 text-xs">Export Users CSV</BrutalButton>
           </Link>
           <LogoutButton />
         </div>
@@ -198,16 +216,18 @@ export default async function AdminDashboard() {
                   Manage Events
                 </BrutalButton>
               </Link>
-              <Link href="/admin/scanner" className="w-full">
+              <Link href="/admin/desk" className="w-full">
                 <BrutalButton className="w-full justify-start text-white border-black bg-black hover:bg-zinc-800">
-                  <span className="material-symbols-outlined mr-3 text-primary">qr_code_scanner</span>
-                  Entry Scanner Terminal
+                  <span className="material-symbols-outlined mr-3 text-primary">person_add</span>
+                  Volunteer Entry Desk
                 </BrutalButton>
               </Link>
             </div>
           </BrutalCard>
 
           <BroadcastForm />
+
+          <NotificationBlastForm events={allEvents} capabilities={notificationCapabilities} />
 
           <GalleryAdminToggle isLocked={isGalleryLocked} />
 

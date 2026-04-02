@@ -1,8 +1,8 @@
 <div align="center">
 
-# ⚡ KRATOS 2026
+# KRATOS 2026
 
-**Annual Technical Festival Platform — Matoshri Pratishthan Group of Institutions, Nanded**
+**Annual Technical Festival Platform - Matoshri Pratishthan Group of Institutions, Nanded**
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.2.0-black?logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react)](https://react.dev/)
@@ -10,21 +10,24 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38BDF8?logo=tailwindcss)](https://tailwindcss.com/)
 [![Drizzle ORM](https://img.shields.io/badge/Drizzle_ORM-0.45-C5F74F?logo=drizzle)](https://orm.drizzle.team/)
 
-> **Live dates:** 20–21 April 2026 · Registration closes 18 April 2026
+> **Live dates:** 20-21 April 2026 - Registration closes 18 April 2026
 
 </div>
 
 ---
 
-## 🏗️ Quick Start Guides
+## Quick Start Guides
+
 For a fast, simplified setup and usage guide, see our **ReadDoc Series**:
-1. [**`readdoc1-get-started.md`**](./docs/readdoc1-get-started.md) — Local setup, environment variables, and running the dev server.
-2. [**`readdoc2-new-features.md`**](./docs/readdoc2-new-features.md) — Overview of the latest UI polish, branding, and new sections.
-3. [**`readdoc3-admin-manual.md`**](./docs/readdoc3-admin-manual.md) — How to manage events, verify payments, and upload landing page images.
+
+1. [**`readdoc1-get-started.md`**](./docs/readdoc1-get-started.md) - Local setup, environment variables, and running the dev server.
+2. [**`readdoc2-new-features.md`**](./docs/readdoc2-new-features.md) - Overview of the latest UI polish, branding, and new sections.
+3. [**`readdoc3-admin-manual.md`**](./docs/readdoc3-admin-manual.md) - How to manage events, verify payments, and upload landing page images.
+4. [**`readdoc4-future-scope.md`**](./docs/readdoc4-future-scope.md) - Post-launch improvements and pragmatic future enhancements.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 <div align="center">
 
@@ -41,26 +44,26 @@ For a fast, simplified setup and usage guide, see our **ReadDoc Series**:
 
 ---
 
-## ✅ Highlights & Features
+## Highlights & Features
 
 > [!TIP]
 > The platform provides a comprehensive administrative and participant experience tailored for large-scale collegiate events.
 
-- 🎨 **Premium Branding**: Full institutional synchronization with **Matoshri Pratishthan**, featuring highly polished animations and modern aesthetics.
-- 📸 **Image CMS via Cloudinary**: Seamless uploads for Hero images, About section images, and payment proofs.
-- 🔐 **Authentication & Auth**: Robust Google OAuth + Email/Password implementation. Profile gate mandates completion before event registration.
-- 📋 **Sophisticated Registrations**: Support for individual and scalable team size registrations. Free events auto-approved; paid events utilize a proof upload pipeline.
-- 🛠️ **Command-Center Admin Panel**: Full mastery over Events, Organizers, Schedules, Dynamic Check-ins, System Settings, Results, and Users.
-- 💾 **Data Portability**: Actionable CSV exports for master registrations and financial proofs.
-- 🎟️ **Instant Ticketing**: Downloadable entry passes fortified with QR-based digital check-ins.
-- ⚡ **Real-Time Synergy**: Live spectator counters and scrolling mission-comms announcements powered dynamically.
+- **Premium Branding**: Full institutional synchronization with **Matoshri Pratishthan**, featuring polished animations and modern aesthetics.
+- **Image CMS via Cloudinary**: Seamless uploads for Hero images, About section images, and payment proofs.
+- **Authentication**: Robust Google OAuth plus email/password login. Profile completion is required before event registration.
+- **Registrations**: Support for individual and team registrations. Free events auto-approve; paid events use a proof upload pipeline.
+- **Admin Panel**: Full control over events, organizers, schedules, dynamic check-ins, system settings, results, and users.
+- **Data Portability**: CSV exports for registrations and payment proofs.
+- **Instant Ticketing**: Downloadable entry passes with QR-based digital check-ins.
+- **Live Updates**: Real-time viewer counters and scrolling announcements powered from the database.
 
 ---
 
-## 🔐 Environment Variables
+## Environment Variables
 
 > [!WARNING]
-> Duplicate `.env.example` to `.env.local` and provision all fields prior to startup. Do not commit credentials.
+> Duplicate `.env.example` to `.env.local` and fill in all values before startup. Do not commit credentials.
 
 ```env
 DATABASE_URL=
@@ -76,13 +79,13 @@ SEED_ADMIN_PASSWORD=
 
 ---
 
-## 🚀 Local Setup
+## Local Setup
 
 ```bash
 # 1. Install dependencies
 npm install
 
-# 2. Push database schema (Initial setup)
+# 2. Push database schema (initial setup)
 npx drizzle-kit push
 
 # 3. (Optional) Seed base event data
@@ -97,30 +100,31 @@ npm run dev
 
 ---
 
-## 📦 Deployment Checklist
+## Deployment Checklist
 
 > [!IMPORTANT]
-> Ensure all checklist criteria are met to ensure zero-downtime and secure deployment.
+> Ensure all checklist criteria are met for a safe production deployment.
 
-- [ ] Set **ALL** environment variables on hosting provider (e.g. Vercel, Railway).
+- [ ] Set **all** environment variables on the hosting provider (for example Vercel or Railway)
 - [ ] Push the database schema: `npx drizzle-kit push`
 - [ ] Bootstrap the root admin account: `npx tsx src/db/seed-admin.ts`
-- [ ] Validate Cloudinary `preset`, `cloud name`, and `NEXT_PUBLIC_SITE_URL`.
-- [ ] Ensure build succeeds locally via `npm run lint && npm run build`.
+- [ ] Validate the Cloudinary `preset`, `cloud name`, and `NEXT_PUBLIC_SITE_URL`
+- [ ] Ensure the build succeeds locally via `npm run lint && npm run build`
 
 ---
 
-## 📂 Documentation Index
+## Documentation Index
 
 | Resource | Purpose |
 |:---|:---|
-| [`DOCUMENTATION.md`](./DOCUMENTATION.md) | In-depth Architecture, Data Model, Admin Operations, Runtime Rules |
+| [`DOCUMENTATION.md`](./DOCUMENTATION.md) | In-depth architecture, data model, admin operations, and runtime rules |
 | [`FEATURES.md`](./FEATURES.md) | Granular inventory for participants, admins, and system entities |
-| [`real_data.md`](./real_data.md) | Single Source of Truth for all real-world festival parameters |
+| [`docs/readdoc4-future-scope.md`](./docs/readdoc4-future-scope.md) | Post-launch roadmap focused on UX, operations, and stability |
+| [`real_data.md`](./real_data.md) | Single source of truth for all real-world festival parameters |
 | [`PROJECT_TODO.md`](./PROJECT_TODO.md) | Final manual checks prior to launch |
 
 <br/>
 
 <div align="center">
-Built with ❤️ for <b>Matoshri Pratishthan Group of Institutions</b> by <a href="https://github.com/Rahil-dope">Rahil Hussain</a> &amp; <a href="https://github.com/PRANAVBIRHADE">Pranav Birhade</a>
+Built with love for <b>Matoshri Pratishthan Group of Institutions</b> by <a href="https://github.com/Rahil-dope">Rahil Hussain</a> &amp; <a href="https://github.com/PRANAVBIRHADE">Pranav Birhade</a>
 </div>

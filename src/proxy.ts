@@ -1,4 +1,5 @@
 import { auth } from "@/auth"
+import { canVolunteerAccessPath } from "@/lib/authz";
 
 export default auth((req) => {
   const { nextUrl } = req;
@@ -16,11 +17,8 @@ export default auth((req) => {
     // Admin has full access
     if (role === 'ADMIN') return;
 
-    // Volunteers only have access to scanner and checkin terminals
-    const isVolunteerAllowedRoute = nextUrl.pathname.startsWith("/admin/scanner") || nextUrl.pathname.startsWith("/admin/checkin");
-    
-    if (role === 'VOLUNTEER' && !isVolunteerAllowedRoute) {
-      return Response.redirect(new URL("/dashboard", nextUrl));
+    if (role === 'VOLUNTEER' && !canVolunteerAccessPath(nextUrl.pathname)) {
+      return Response.redirect(new URL("/admin/registrations", nextUrl));
     }
 
     if (role === 'PARTICIPANT') {

@@ -7,6 +7,7 @@ import { events, registrations, users, systemSettings } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { notFound, redirect } from 'next/navigation';
 import { auth } from '@/auth';
+import { isRegistrationKillSwitchEnabled, getRegistrationKillSwitchMessage } from '@/lib/env';
 
 export default async function RegistrationPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -34,7 +35,15 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
   const registrationOpen = settings?.registrationOpen ?? true;
   const deadline = settings?.deadline ?? null;
   const now = new Date();
-  const isRegistrationClosed = !registrationOpen || (deadline ? now > deadline : false);
+  
+  const isKilled = isRegistrationKillSwitchEnabled();
+  const killMessage = getRegistrationKillSwitchMessage();
+  let isRegistrationClosed = !registrationOpen || (deadline ? now > deadline : false);
+  
+  // Environment Kill Switch overrides DB settings
+  if (isKilled) {
+     isRegistrationClosed = true;
+  }
 
   const upiId = settings?.upiId || '9834147160@kotak811';
   const feePerPerson =
@@ -71,10 +80,16 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
           {isRegistrationClosed ? (
             <div className="bg-surface-container-low brutal-border p-8">
               <h2 className="text-3xl font-black uppercase tracking-tighter italic mb-4">Registration Closed</h2>
-              <p className="font-sans opacity-70 uppercase text-xs tracking-widest">
-                Please contact the Admin Command Center for further instructions.
-              </p>
-              {deadline && (
+              {isKilled ? (
+                 <p className="font-sans font-bold uppercase text-red-600 bg-red-100 p-4 border border-red-200">
+                    {killMessage || "PLATFORM REGISTRATIONS ARE CURRENTLY HALTED."}
+                 </p>
+              ) : (
+                <p className="font-sans opacity-70 uppercase text-xs tracking-widest">
+                  Please contact the Admin Command Center for further instructions.
+                </p>
+              )}
+              {deadline && !isKilled && (
                 <p className="mt-4 font-mono opacity-60 text-xs uppercase">
                   Deadline was: {deadline.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
                 </p>

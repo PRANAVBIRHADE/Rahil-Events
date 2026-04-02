@@ -1,22 +1,29 @@
-import { pgTable, text, timestamp, integer, boolean, pgEnum, uuid, json } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, integer, boolean, pgEnum, uuid, json, index } from 'drizzle-orm/pg-core';
 
 export const userRoleEnum = pgEnum('user_role', ['PARTICIPANT', 'ADMIN', 'VOLUNTEER']);
 export const registrationStatusEnum = pgEnum('registration_status', ['PENDING', 'APPROVED', 'REJECTED']);
 
-export const users = pgTable('users', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  name: text('name').notNull(),
-  email: text('email').notNull().unique(),
-  password: text('password'),
-  college: text('college'),
-  branch: text('branch'),
-  year: integer('year'),
-  phone: text('phone'),
-  role: userRoleEnum('role').default('PARTICIPANT'),
-  xp: integer('xp').default(0),
-  level: integer('level').default(1),
-  createdAt: timestamp('created_at').defaultNow(),
-});
+export const users = pgTable(
+  'users',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    name: text('name').notNull(),
+    email: text('email').notNull().unique(),
+    password: text('password'),
+    college: text('college'),
+    branch: text('branch'),
+    year: integer('year'),
+    phone: text('phone'),
+    role: userRoleEnum('role').default('PARTICIPANT'),
+    xp: integer('xp').default(0),
+    level: integer('level').default(1),
+    createdAt: timestamp('created_at').defaultNow(),
+  },
+  (table) => ({
+    usersPhoneIdx: index('users_phone_idx').on(table.phone),
+    usersRoleIdx: index('users_role_idx').on(table.role),
+  }),
+);
 
 export const events = pgTable('events', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -55,42 +62,64 @@ export const teams = pgTable('teams', {
   createdAt: timestamp('created_at').defaultNow(),
 });
 
-export const teamMembers = pgTable('team_members', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  teamId: uuid('team_id').references(() => teams.id).notNull(),
-  name: text('name').notNull(),
-  college: text('college'),
-  branch: text('branch'),
-  year: integer('year'),
-  phone: text('phone'),
-  checkedIn: boolean('checked_in').default(false).notNull(),
-  checkedInAt: timestamp('checked_in_at'),
-  createdAt: timestamp('created_at').defaultNow(),
-});
+export const teamMembers = pgTable(
+  'team_members',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    teamId: uuid('team_id').references(() => teams.id).notNull(),
+    name: text('name').notNull(),
+    college: text('college'),
+    branch: text('branch'),
+    year: integer('year'),
+    phone: text('phone'),
+    checkedIn: boolean('checked_in').default(false).notNull(),
+    checkedInAt: timestamp('checked_in_at'),
+    createdAt: timestamp('created_at').defaultNow(),
+  },
+  (table) => ({
+    teamMembersTeamIdx: index('team_members_team_idx').on(table.teamId),
+    teamMembersPhoneIdx: index('team_members_phone_idx').on(table.phone),
+  }),
+);
 
-export const registrations = pgTable('registrations', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').references(() => users.id).notNull(),
-  eventId: uuid('event_id').references(() => events.id).notNull(),
-  teamId: uuid('team_id').references(() => teams.id),
-  teamName: text('team_name'),
-  members: json('members'),
-  paymentScreenshot: text('payment_screenshot'),
-  transactionId: text('transaction_id'),
-  paymentNotes: text('payment_notes'),
-  status: registrationStatusEnum('status').default('PENDING'),
-  totalFee: integer('total_fee'),
-  checkedIn: boolean('checked_in').default(false).notNull(),
-  checkedInAt: timestamp('checked_in_at'),
-  createdAt: timestamp('created_at').defaultNow(),
-});
+export const registrations = pgTable(
+  'registrations',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id').references(() => users.id).notNull(),
+    eventId: uuid('event_id').references(() => events.id).notNull(),
+    teamId: uuid('team_id').references(() => teams.id),
+    teamName: text('team_name'),
+    members: json('members'),
+    paymentScreenshot: text('payment_screenshot'),
+    transactionId: text('transaction_id'),
+    paymentNotes: text('payment_notes'),
+    status: registrationStatusEnum('status').default('PENDING'),
+    totalFee: integer('total_fee'),
+    checkedIn: boolean('checked_in').default(false).notNull(),
+    checkedInAt: timestamp('checked_in_at'),
+    createdAt: timestamp('created_at').defaultNow(),
+  },
+  (table) => ({
+    registrationsUserIdx: index('registrations_user_idx').on(table.userId),
+    registrationsEventIdx: index('registrations_event_idx').on(table.eventId),
+    registrationsStatusIdx: index('registrations_status_idx').on(table.status),
+    registrationsTeamIdx: index('registrations_team_idx').on(table.teamId),
+  }),
+);
 
-export const announcements = pgTable('announcements', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  content: text('content').notNull(),
-  isActive: boolean('is_active').default(true),
-  updatedAt: timestamp('updated_at').defaultNow(),
-});
+export const announcements = pgTable(
+  'announcements',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    content: text('content').notNull(),
+    isActive: boolean('is_active').default(true),
+    updatedAt: timestamp('updated_at').defaultNow(),
+  },
+  (table) => ({
+    announcementsActiveIdx: index('announcements_active_idx').on(table.isActive),
+  }),
+);
 
 export const galleryPhotos = pgTable('gallery_photos', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -135,13 +164,20 @@ export const teamMessages = pgTable('team_messages', {
   createdAt: timestamp('created_at').defaultNow(),
 });
 
-export const scheduleSlots = pgTable('schedule_slots', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  day: integer('day').notNull(), // 1 or 2
-  sortIndex: integer('sort_index').notNull(),
-  timeSlot: text('time_slot').notNull(),
-  venue: text('venue'),
-  linkedEventId: uuid('linked_event_id').references(() => events.id),
-  isBreak: boolean('is_break').default(false).notNull(),
-  createdAt: timestamp('created_at').defaultNow(),
-});
+export const scheduleSlots = pgTable(
+  'schedule_slots',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    day: integer('day').notNull(), // 1 or 2
+    sortIndex: integer('sort_index').notNull(),
+    timeSlot: text('time_slot').notNull(),
+    venue: text('venue'),
+    linkedEventId: uuid('linked_event_id').references(() => events.id),
+    isBreak: boolean('is_break').default(false).notNull(),
+    createdAt: timestamp('created_at').defaultNow(),
+  },
+  (table) => ({
+    scheduleSlotsDaySortIdx: index('schedule_slots_day_sort_idx').on(table.day, table.sortIndex),
+    scheduleSlotsEventIdx: index('schedule_slots_event_idx').on(table.linkedEventId),
+  }),
+);
