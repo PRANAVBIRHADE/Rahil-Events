@@ -186,11 +186,11 @@ export default function RegistrationClientForm({
                     A/C: SHAIKH RAHIL HUSAIN SHAUKAT HUSSAIN
                   </p>
                 </div>
-                <div>
-                  <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60">Fee (Per Person)</p>
-                  <p className="text-3xl font-black text-primary" style={{ textShadow: '2px 2px 0px #F9F9F9' }}>{`INR ${eventData.feePerPerson}.00`}</p>
-                  <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60 mt-2">Total Fee</p>
-                  <p className="text-4xl font-black text-primary" style={{ textShadow: '2px 2px 0px #F9F9F9' }}>{`INR ${totalFee}.00`}</p>
+                <div className="flex-1 space-y-4">
+                  <div>
+                    <p className="text-[10px] font-display font-bold uppercase tracking-widest opacity-60 mt-2">Total Fee</p>
+                    <p className="text-4xl font-black text-primary" style={{ textShadow: '2px 2px 0px #F9F9F9' }}>{`INR ${totalFee}.00`}</p>
+                  </div>
                 </div>
                 <div className="w-full">
                   <BrutalInput name="transactionId" label="Transaction / UTR ID" placeholder="Enter 12-digit UTR No." required />

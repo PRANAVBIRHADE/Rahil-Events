@@ -134,10 +134,6 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
                 <span className="font-bold">{event.teamSize || 1} Members</span>
               </div>
               <div className="flex items-center justify-between border-b border-surface/20 pb-4">
-                <span className="font-display text-sm uppercase opacity-60">Registrations Received</span>
-                <span className="font-bold">{activeCount}</span>
-              </div>
-              <div className="flex items-center justify-between border-b border-surface/20 pb-4">
                 <span className="font-display text-sm uppercase opacity-60">Registration Fee</span>
                 <span className="font-black text-primary-container">
                   {feePerPerson > 0 ? `INR ${feePerPerson}` : 'FREE'}
