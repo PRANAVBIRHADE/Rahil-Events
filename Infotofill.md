@@ -3,7 +3,7 @@
 Please update the details below. Once you provide the correct information, I will implement it across the site.
 
 ## 1. General Platform Details
-- **Official Contact Email:** (Currently: info@mpgin.edu.in)
+- **Event Contact Email:** [kratos2k26.mpgi@gmail.com]
 - **UPI ID for Payments:** (Currently: 9834147160@kotak811)
 - **Registration Fee per Person (General):** (Currently: ₹75)
 - **Registration Deadline:** (Currently: 18 April 2026, 12:30 PM)
@@ -12,23 +12,14 @@ Please update the details below. Once you provide the correct information, I wil
 ---
 
 ## 2. Organizers & Coordinators
-### Faculty Coordinator (Head of Institute)
-- **Name:** (Currently: DR L WAGHMARE)
-- **Title:** (Currently: HEAD OF THE INSTITUTE)
-- **Email:** (Currently: lmwaghmare@yahoo.com)
-- **Phone:** (Currently: +91 9822663185)
+### Faculty Coordinator
+- **Name:** (Currently: MR.ABDULLAH M.K)
+- **Phone:** (Currently: +91 9076433185)
 
-### Head Organizer
-- **Name:** (Currently: MR LAKHAN RATHOD)
-- **Title:** (Currently: OUTREACH COORDINATOR)
-- **Email:** (Currently: lakhan180689@gmail.com)
-- **Phone:** (Currently: +91 9763433187)
+### Faculty Coordinator
+- **Name:** (Currently: MR.SHAIKH AJIJ)
+- **Phone:** (Currently: +91 9112391234)
 
-### Nodal Coordinator
-- **Name:** (Currently: MR AZHAR AHMED)
-- **Title:** (Currently: NODAL COORDINATOR)
-- **Email:** (Currently: azhar.ahmed.eep@gmail.com)
-- **Phone:** (Currently: +91 9272579279)
 
 ### Developers (Social Links)
 - **Rahil Hussain (Instagram):** (Currently: [Link](https://www.instagram.com/ifeelrahiii?igsh=dzNqMWZlcWloMzh4))

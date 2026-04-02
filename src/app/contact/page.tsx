@@ -10,7 +10,7 @@ export default function ContactPage() {
   return (
     <main className="min-h-screen bg-[#FEFCE8] text-on-surface font-sans selection:bg-primary-container">
       <div className="pt-16 pb-24 px-6 max-w-[1440px] mx-auto">
-        
+
         {/* ── HEADER ── */}
         <div className="mb-16">
           <span className="text-[12px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-4 block">
@@ -33,8 +33,8 @@ export default function ContactPage() {
             </span>
             <h2 className="text-3xl font-black uppercase mb-6 tracking-tight">EMAIL</h2>
             <div className="space-y-2">
-              <a href="mailto:info@mpgin.edu.in" className="text-xl font-bold hover:text-[#D4AF37] transition-colors block">
-                info@mpgin.edu.in
+              <a href="mailto:kratos2k26.mpgi@gmail.com" className="text-xl font-bold hover:text-[#D4AF37] transition-colors block">
+                kratos2k26.mpgi@gmail.com
               </a>
               <a href="https://mpgi.ac.in/school-of-engineering/" target="_blank" rel="noreferrer" className="text-base font-bold opacity-60 hover:opacity-100 hover:text-[#D4AF37] transition-all block">
                 School of Engineering Page
@@ -49,10 +49,11 @@ export default function ContactPage() {
             </span>
             <h2 className="text-3xl font-black uppercase mb-6 tracking-tight">PHONE</h2>
             <div className="space-y-4">
-              <a href="tel:+912462269900" className="text-xl font-bold hover:text-[#D4AF37] transition-colors block">
-                +91 2462 269900
+              <a href="tel:+919834147160" className="text-xl font-bold hover:text-[#D4AF37] transition-colors block">
+                +91 9834147160
               </a>
               <p className="text-sm font-bold opacity-60 leading-relaxed uppercase">
+                Matoshri Pratishthan Group of Institutions, <br />
                 Jijau Nagar, Off Nanded-Latur Highway, Khupsarwadi, Post Vishnupuri, <br />
                 Nanded, Maharashtra 431606
               </p>
@@ -62,42 +63,36 @@ export default function ContactPage() {
 
         {/* ── BOTTOM SECTION: ORGANIZERS & MAP ── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
+
           {/* Organizers Contacts */}
           <div className="lg:col-span-5 brutal-border bg-white p-10 flex flex-col h-full">
             <h3 className="text-2xl font-black uppercase mb-10 tracking-tight border-b-2 border-on-surface pb-4">
               ORGANIZER CONTACTS
             </h3>
-            
+
             <div className="space-y-8 flex-1">
               <div>
                 <p className="text-[10px] font-black uppercase tracking-widest text-[#D4AF37] mb-1">FACULTY COORDINATOR</p>
-                <p className="text-lg font-black uppercase">Dr L Waghmare</p>
-                <p className="text-xs font-mono opacity-70">lmwaghmare@yahoo.com | +91 9822663185</p>
+                <p className="text-lg font-black uppercase">MR. ABDULLAH M.K</p>
+                <p className="text-xs font-mono opacity-70">+91 9076433185</p>
               </div>
 
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-[#D4AF37] mb-1">HEAD ORGANIZER</p>
-                <p className="text-lg font-black uppercase">Mr Lakhan Rathod</p>
-                <p className="text-xs font-mono opacity-70">lakhan180689@gmail.com | +91 9763433187</p>
-              </div>
-
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-[#D4AF37] mb-1">NODAL COORDINATOR</p>
-                <p className="text-lg font-black uppercase">Mr Azhar Ahmed</p>
-                <p className="text-xs font-mono opacity-70">azhar.ahmed.eep@gmail.com | +91 9272579279</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-[#D4AF37] mb-1">FACULTY COORDINATOR</p>
+                <p className="text-lg font-black uppercase">MR. SHAIKH AJIJ</p>
+                <p className="text-xs font-mono opacity-70">+91 9112391234</p>
               </div>
 
               <div className="pt-4 border-t border-on-surface/10">
-                <p className="text-[10px] font-black uppercase tracking-widest text-[#D4AF37] mb-1">FRONTEND DEVELOPER</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-[#D4AF37] mb-1">FULL STACK DEVELOPER</p>
                 <p className="text-lg font-black uppercase leading-none">Rahil Hussain</p>
-                <p className="text-xs font-mono opacity-70 mt-1 lowercase">https://github.com/Rahil-dope</p>
+                <p className="text-xs font-mono opacity-70 mt-1 lowercase">https://www.instagram.com/ifeelrahiii?igsh=dzNqMWZlcWloMzh4</p>
               </div>
 
               <div className="pt-4 border-t border-on-surface/10">
-                <p className="text-[10px] font-black uppercase tracking-widest text-[#D4AF37] mb-1">BACKEND DEVELOPER</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-[#D4AF37] mb-1">FULL STACK DEVELOPER</p>
                 <p className="text-lg font-black uppercase leading-none">Pranav Birade</p>
-                <p className="text-xs font-mono opacity-70 mt-1 lowercase">https://github.com/PRANAVBIRHADE</p>
+                <p className="text-xs font-mono opacity-70 mt-1 lowercase">https://www.instagram.com/code_track_?igsh=c2NxYnJhcTJranNi</p>
               </div>
             </div>
           </div>
