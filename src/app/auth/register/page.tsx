@@ -37,9 +37,6 @@ export default function RegisterPage() {
         <p className="text-sm font-sans mb-4">
           Already have an ID? <Link href="/auth/login" className="font-bold uppercase border-b-2 border-primary-container">Login</Link>
         </p>
-        <Link href="/auth/adminregister" className="text-xs font-bold uppercase opacity-50 hover:opacity-100 hover:text-primary transition-colors">
-          Command Profile Registration &rarr;
-        </Link>
       </div>
     </BrutalCard>
   );
