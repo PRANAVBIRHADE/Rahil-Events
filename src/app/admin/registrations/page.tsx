@@ -1,6 +1,6 @@
 import React from 'react';
 import { db } from '@/db';
-import { registrations, users, events, teams, teamMembers } from '@/db/schema';
+import { registrations, users, events, teamMembers } from '@/db/schema';
 import { desc, eq } from 'drizzle-orm';
 import Link from 'next/link';
 import TrafficRegistryClient from '@/components/admin/TrafficRegistryClient';

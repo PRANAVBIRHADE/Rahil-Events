@@ -13,13 +13,15 @@ type User = {
   branch: string | null;
   year: number | null;
   phone: string | null;
-  role: 'ADMIN' | 'PARTICIPANT' | 'VOLUNTEER';
-  xp: number;
-  level: number;
-  createdAt: Date;
-  updatedAt: Date;
+  role: 'ADMIN' | 'PARTICIPANT' | 'VOLUNTEER' | null;
+  xp: number | null;
+  level: number | null;
+  createdAt: Date | null;
+  updatedAt?: Date | null;
   registrationCount: number;
 };
+
+export type { User };
 
 type Filter = 'all' | 'no-reg' | 'with-reg' | 'admin';
 
@@ -39,12 +41,10 @@ export default function UsersClientWrapper({
   const filtered = useMemo(() => {
     let result = users;
 
-    // Apply tab filter
     if (filter === 'no-reg') result = result.filter((u) => u.registrationCount === 0);
     else if (filter === 'with-reg') result = result.filter((u) => u.registrationCount > 0);
     else if (filter === 'admin') result = result.filter((u) => u.role === 'ADMIN');
 
-    // Apply search
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter(
@@ -69,9 +69,7 @@ export default function UsersClientWrapper({
 
   return (
     <BrutalCard className="p-0 overflow-hidden">
-      {/* Filter & Search Bar */}
       <div className="flex flex-col sm:flex-row gap-3 p-4 border-b-2 border-on-surface bg-surface-container-low">
-        {/* Filter Tabs */}
         <div className="flex gap-2 flex-wrap">
           {FILTERS.map((f) => (
             <button
@@ -87,14 +85,14 @@ export default function UsersClientWrapper({
             </button>
           ))}
         </div>
-        {/* Search */}
+
         <div className="relative flex-1 sm:max-w-xs ml-auto">
           <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-base opacity-50">
             search
           </span>
           <input
             type="text"
-            placeholder="Search name, email, phone, college…"
+            placeholder="Search name, email, phone, college..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-9 pr-3 py-2 border-2 border-on-surface bg-transparent text-xs font-bold uppercase tracking-wide outline-none focus:border-primary"
@@ -102,12 +100,10 @@ export default function UsersClientWrapper({
         </div>
       </div>
 
-      {/* Result count */}
       <div className="px-5 py-2 bg-surface-container-low border-b border-on-surface/10 text-[10px] font-black uppercase tracking-widest opacity-50">
         Showing {filtered.length} of {users.length} accounts
       </div>
 
-      {/* Table – Desktop */}
       <div className="hidden sm:block overflow-x-auto">
         <table className="w-full text-left font-sans">
           <thead className="bg-surface-container-low border-b-2 border-on-surface text-[10px] font-black uppercase tracking-widest">
@@ -130,7 +126,6 @@ export default function UsersClientWrapper({
             )}
             {filtered.map((user) => (
               <tr key={user.id} className="hover:bg-primary-container/5 transition-colors">
-                {/* Name + Email */}
                 <td className="p-4 w-1/5">
                   <form action={updateUser} id={`upd-${user.id}`}>
                     <input type="hidden" name="id" value={user.id} />
@@ -147,7 +142,6 @@ export default function UsersClientWrapper({
                   <span className="font-mono text-[11px] opacity-50 truncate block max-w-[160px]">{user.email}</span>
                 </td>
 
-                {/* Phone + College */}
                 <td className="p-4 w-1/5">
                   <form action={updateUser} id={`upd-college-${user.id}`}>
                     <input type="hidden" name="id" value={user.id} />
@@ -176,7 +170,6 @@ export default function UsersClientWrapper({
                   </form>
                 </td>
 
-                {/* Registration Count */}
                 <td className="p-4">
                   <span
                     className={`inline-block px-2 py-1 border-2 text-xs font-black uppercase ${
@@ -189,7 +182,6 @@ export default function UsersClientWrapper({
                   </span>
                 </td>
 
-                {/* Role + XP */}
                 <td className="p-4">
                   <span
                     className={`inline-block px-2 py-0.5 border-2 text-[10px] font-black uppercase mb-1 ${
@@ -201,11 +193,10 @@ export default function UsersClientWrapper({
                     {user.role}
                   </span>
                   <p className="text-[10px] opacity-50 font-bold uppercase mt-0.5">
-                    ⚡ {user.xp ?? 0} XP · Lv {user.level ?? 1}
+                    XP {user.xp ?? 0} | Lv {user.level ?? 1}
                   </p>
                 </td>
 
-                {/* Joined Date */}
                 <td className="p-4 text-xs font-mono opacity-60 whitespace-nowrap">
                   {user.createdAt
                     ? new Date(user.createdAt).toLocaleDateString('en-IN', {
@@ -213,10 +204,9 @@ export default function UsersClientWrapper({
                         month: 'short',
                         year: 'numeric',
                       })
-                    : '—'}
+                    : '-'}
                 </td>
 
-                {/* Actions */}
                 <td className="p-4">
                   <div className="flex gap-2">
                     <BrutalButton
@@ -252,7 +242,6 @@ export default function UsersClientWrapper({
         </table>
       </div>
 
-      {/* Mobile Cards */}
       <div className="sm:hidden divide-y-2 divide-on-surface/10">
         {filtered.length === 0 && (
           <div className="p-8 text-center text-sm font-bold uppercase opacity-40">No accounts found</div>
@@ -288,7 +277,7 @@ export default function UsersClientWrapper({
                 <div className="grid grid-cols-2 gap-2 text-xs font-bold uppercase">
                   <div>
                     <p className="opacity-40 text-[10px]">Phone</p>
-                    <p>{user.phone || '—'}</p>
+                    <p>{user.phone || '-'}</p>
                   </div>
                   <div>
                     <p className="opacity-40 text-[10px]">Role</p>
@@ -304,15 +293,15 @@ export default function UsersClientWrapper({
                   </div>
                   <div>
                     <p className="opacity-40 text-[10px]">College</p>
-                    <p>{user.college || '—'}</p>
+                    <p>{user.college || '-'}</p>
                   </div>
                   <div>
                     <p className="opacity-40 text-[10px]">Branch</p>
-                    <p>{user.branch || '—'}</p>
+                    <p>{user.branch || '-'}</p>
                   </div>
                   <div>
                     <p className="opacity-40 text-[10px]">XP / Level</p>
-                    <p>⚡ {user.xp ?? 0} XP · Lv {user.level ?? 1}</p>
+                    <p>XP {user.xp ?? 0} | Lv {user.level ?? 1}</p>
                   </div>
                   <div>
                     <p className="opacity-40 text-[10px]">Joined</p>
@@ -323,7 +312,7 @@ export default function UsersClientWrapper({
                             month: 'short',
                             year: 'numeric',
                           })
-                        : '—'}
+                        : '-'}
                     </p>
                   </div>
                 </div>

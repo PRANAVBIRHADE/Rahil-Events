@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { db } from '@/db';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { events, registrations, teamMembers, users, teams } from '@/db/schema';
 import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalButton from '@/components/ui/BrutalButton';
@@ -201,7 +201,7 @@ export default async function CheckInDetailPage({ params }: { params: Promise<{ 
                         <span className="material-symbols-outlined text-4xl">warning</span>
                         <h4 className="text-2xl font-black uppercase tracking-tighter">Finance Lock Active</h4>
                      </div>
-                     <p className="text-sm font-bold uppercase opacity-80">This operative's packet has not been verified. Entry is strictly prohibited until payment is approved.</p>
+                     <p className="text-sm font-bold uppercase opacity-80">This operative&apos;s packet has not been verified. Entry is strictly prohibited until payment is approved.</p>
                    </div>
                  ) : (
                    <div className="border-4 border-yellow-500 p-6 bg-yellow-500/10 mb-8">

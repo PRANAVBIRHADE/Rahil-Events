@@ -35,7 +35,7 @@ export default function ScannerComponent() {
       }
     };
 
-    const onScanFailure = (error: any) => {
+    const onScanFailure = () => {
       // ignore
     };
 
@@ -64,7 +64,7 @@ export default function ScannerComponent() {
         <h3 className="text-sm font-black uppercase mb-2">Instructions:</h3>
         <ul className="text-xs font-bold uppercase opacity-70 space-y-2">
            <li>1. Grant camera permissions when prompted.</li>
-           <li>2. Align the participant's QR code within the frame.</li>
+           <li>2. Align the participant&apos;s QR code within the frame.</li>
            <li>3. Scanner will automatically redirect to verification.</li>
         </ul>
       </div>

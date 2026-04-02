@@ -26,35 +26,41 @@ For a fast, simplified setup and usage guide, see our **ReadDoc Series**:
 
 ## 🛠️ Tech Stack
 
+<div align="center">
+
 | Layer | Technology |
-|---|---|
-| Framework | Next.js 16.2.0 (App Router, Turbopack) |
-| UI | React 19.2 + Tailwind CSS v4 + Framer Motion |
-| Language | TypeScript 5 |
-| Database | Neon Postgres via Drizzle ORM |
-| Auth | Auth.js v5 beta (Credentials + Google OAuth) |
-| Media | Cloudinary (CMS assets + participant uploads) |
+|:---:|:---|
+| **Framework** | Next.js 16.2.0 (App Router, Turbopack) |
+| **UI** | React 19.2 + Tailwind CSS v4 + Framer Motion |
+| **Language** | TypeScript 5 |
+| **Database** | Neon Postgres via Drizzle ORM |
+| **Auth** | Auth.js v5 beta (Credentials + Google OAuth) |
+| **Media** | Cloudinary (CMS assets + participant uploads) |
+
+</div>
 
 ---
 
-## ✅ What's Working
+## ✅ Highlights & Features
 
-- **Public pages** — landing (dynamic), events, schedule, gallery, about, contact (with maps), privacy, terms, sponsorships.
-- **Image CMS** — Directly upload Hero and About section images from the admin panel (saved in DB).
-- **Premium Branding** — Full institutional synchronization with **Matoshri Pratishthan**, featuring staggered animations.
-- **Auth** — Google sign-in and email/password credentials.
-- **Profile gate** — Participants must complete profile before registering.
-- **Registrations** — Solo and team flows; free events auto-approve, paid events require proof upload.
-- **Admin panel** — Events, organizers, schedule, registrations, **system settings**, results, check-in, users.
-- **CSV exports** — Master registrations and payment proofs.
-- **Tickets** — Downloadable entry passes with QR-based check-in links.
-- **Real-time** — Live spectator counter and scrolling mission-comms announcements.
+> [!TIP]
+> The platform provides a comprehensive administrative and participant experience tailored for large-scale collegiate events.
+
+- 🎨 **Premium Branding**: Full institutional synchronization with **Matoshri Pratishthan**, featuring highly polished animations and modern aesthetics.
+- 📸 **Image CMS via Cloudinary**: Seamless uploads for Hero images, About section images, and payment proofs.
+- 🔐 **Authentication & Auth**: Robust Google OAuth + Email/Password implementation. Profile gate mandates completion before event registration.
+- 📋 **Sophisticated Registrations**: Support for individual and scalable team size registrations. Free events auto-approved; paid events utilize a proof upload pipeline.
+- 🛠️ **Command-Center Admin Panel**: Full mastery over Events, Organizers, Schedules, Dynamic Check-ins, System Settings, Results, and Users.
+- 💾 **Data Portability**: Actionable CSV exports for master registrations and financial proofs.
+- 🎟️ **Instant Ticketing**: Downloadable entry passes fortified with QR-based digital check-ins.
+- ⚡ **Real-Time Synergy**: Live spectator counters and scrolling mission-comms announcements powered dynamically.
 
 ---
 
 ## 🔐 Environment Variables
 
-Copy `.env.example` to `.env.local` and fill in every value:
+> [!WARNING]
+> Duplicate `.env.example` to `.env.local` and provision all fields prior to startup. Do not commit credentials.
 
 ```env
 DATABASE_URL=
@@ -93,28 +99,28 @@ npm run dev
 
 ## 📦 Deployment Checklist
 
-1. Set **all** environment variables on your hosting platform.
-2. Push the database schema → `npx drizzle-kit push` (on production DB).
-3. Run `npx tsx src/db/seed-admin.ts` to bootstrap the first admin account.
-4. Confirm Cloudinary preset, cloud name, and `NEXT_PUBLIC_SITE_URL`.
-5. Validate the build → `npm run lint && npm run build`.
+> [!IMPORTANT]
+> Ensure all checklist criteria are met to ensure zero-downtime and secure deployment.
+
+- [ ] Set **ALL** environment variables on hosting provider (e.g. Vercel, Railway).
+- [ ] Push the database schema: `npx drizzle-kit push`
+- [ ] Bootstrap the root admin account: `npx tsx src/db/seed-admin.ts`
+- [ ] Validate Cloudinary `preset`, `cloud name`, and `NEXT_PUBLIC_SITE_URL`.
+- [ ] Ensure build succeeds locally via `npm run lint && npm run build`.
 
 ---
 
 ## 📂 Documentation Index
 
-| File | Purpose |
-|---|---|
-| [`DOCUMENTATION.md`](./DOCUMENTATION.md) | Architecture, data model, admin ops, runtime rules |
-| [`FEATURES.md`](./FEATURES.md) | Complete feature inventory for participants, admins, and system |
-| [`real_data.md`](./real_data.md) | Single source of truth for all real-world festival data |
-| [`PROJECT_TODO.md`](./PROJECT_TODO.md) | Remaining manual tasks before production launch |
-| [**`readdoc1`**](./docs/readdoc1-get-started.md) | **Simplified Step 1: Getting Started** |
-| [**`readdoc2`**](./docs/readdoc2-new-features.md) | **Simplified Step 2: New Features** |
-| [**`readdoc3`**](./docs/readdoc3-admin-manual.md) | **Simplified Step 3: Admin Manual** |
+| Resource | Purpose |
+|:---|:---|
+| [`DOCUMENTATION.md`](./DOCUMENTATION.md) | In-depth Architecture, Data Model, Admin Operations, Runtime Rules |
+| [`FEATURES.md`](./FEATURES.md) | Granular inventory for participants, admins, and system entities |
+| [`real_data.md`](./real_data.md) | Single Source of Truth for all real-world festival parameters |
+| [`PROJECT_TODO.md`](./PROJECT_TODO.md) | Final manual checks prior to launch |
 
----
+<br/>
 
 <div align="center">
-Built with ❤️ for **Matoshri Pratishthan Group of Institutions** by <a href="https://github.com/Rahil-dope">Rahil Hussain</a> &amp; <a href="https://github.com/PRANAVBIRHADE">Pranav Birhade</a>
+Built with ❤️ for <b>Matoshri Pratishthan Group of Institutions</b> by <a href="https://github.com/Rahil-dope">Rahil Hussain</a> &amp; <a href="https://github.com/PRANAVBIRHADE">Pranav Birhade</a>
 </div>

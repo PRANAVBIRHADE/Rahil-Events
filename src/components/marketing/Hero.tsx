@@ -123,11 +123,10 @@ const Hero = ({ heroImage }: HeroProps) => {
           className="w-full md:w-[40%] relative flex justify-center md:justify-end mt-8 md:mt-0"
         >
           <div className="brutal-border hard-shadow-gold bg-on-surface w-full md:w-[420px] h-56 md:h-96 overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={heroImage || "/event-card.png"}
               alt="MPGI Campus"
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+              className="w-full h-full object-cover md:object-contain hover:scale-105 transition-transform duration-700 bg-white"
             />
           </div>
           {/* "02 DAYS" badge */}

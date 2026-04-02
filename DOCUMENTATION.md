@@ -1,11 +1,12 @@
-# KRATOS 2026 — Technical Documentation
+# ⚡ KRATOS 2026 — Technical Documentation
 
+> [!NOTE]
 > **For developers and future maintainers.**
-> This document covers the architecture, data model, runtime rules, admin operations, and deployment procedures for the KRATOS 2026 festival platform.
+> This document covers the core systemic architecture, advanced data modeling, execution boundaries, administrative workflows, and definitive deployment criteria for the KRATOS 2026 festival platform.
 
 ---
 
-## Table of Contents
+## 📑 Table of Contents
 
 1. [Architecture Overview](#architecture-overview)
 2. [Data Model](#data-model)
@@ -20,185 +21,149 @@
 
 ---
 
-## Architecture Overview
+## 🏗️ Architecture Overview
 
-The platform is built on the **Next.js 16 App Router** with server components and server actions as the primary data-fetching and mutation layer.
+The platform boasts a modern, robust foundation leveraging the **Next.js 16 App Router**, fully utilizing Server Components and Actions as the primary abstraction for data orchestration and state mutation.
 
+```mermaid
+graph TD
+    Client[Client UI / React 19] --> Middleware[Edge Router Proxy]
+    Middleware --> AppRouter[Next.js App Router]
+    
+    AppRouter --> ServerActions[Server Actions]
+    AppRouter --> APIRoutes[API Endpoints]
+    
+    ServerActions --> DB[(Neon Postgres + Drizzle)]
+    APIRoutes --> DB
+    
+    ServerActions --> Cloudinary[Cloudinary CDN]
+    AppRouter --> AuthJS[Auth.js Provider]
 ```
-src/
-├── app/             ← All routes (public, admin, auth, API)
-├── components/      ← UI components (layout, marketing, dashboard, admin, ui)
-├── db/              ← Drizzle ORM schema, seed scripts, and DB client
-├── lib/             ← Server actions, utility functions, XP logic
-├── types/           ← Augmented NextAuth session & JWT types
-└── proxy.ts         ← Edge-level middleware for route protection
-```
 
-### Key Route Groups
+### 🗂️ Key Route Groups
 
-| Route prefix | Purpose |
-|---|---|
-| `/` | Public landing and marketing pages |
-| `/events/*` | Public event listing and detail pages |
-| `/auth/*` | Authentication pages (login, register, admin login) |
-| `/dashboard` | Authenticated participant dashboard |
-| `/admin/*` | Admin-only management panel |
-| `/api/*` | API routes (auth, presence, exports, proofs) |
+| Hierarchy Prefix | Primary Utility |
+|:---|:---|
+| `/` | Public-facing landing and conversion funnels |
+| `/events/*` | Comprehensive event catalog and sub-registrations |
+| `/auth/*` | Unified authentication schemas (login, user/admin reg) |
+| `/dashboard` | Protected hub for verified participants |
+| `/admin/*` | Gated control vectors for core administrators |
+| `/api/*` | Extensibility nodes (auth, presence webhooks, data export) |
 
 ---
 
-## Data Model
+## 💾 Data Model
 
-All tables live in **Neon Postgres** and are managed through **Drizzle ORM** (`src/db/`).
+Relational integrity is governed via **Neon Postgres** via strictly typed schemas compiled by **Drizzle ORM** (`src/db/`).
 
-| Table | Description |
-|---|---|
-| `users` | Participants and admins |
-| `events` | Festival events with fee, format, and capacity |
-| `registrations` | Root record per registration (status, payment) |
-| `teams` | Team metadata linked to a registration |
-| `team_members` | Individual participants within a team |
-| `schedule_slots` | 2-day × 5-slot schedule grid |
-| `organizers` | Public-facing organizer directory |
-| `gallery_photos` | Participant-uploaded photos (Cloudinary URLs) |
-| `announcements` | Single active scrolling announcement |
-| `system_settings` | Deadline, gallery lock, results timing, **and Landing Page Image assets** |
+| Source Table | Entity Description |
+|:---|:---|
+| `users` | Authenticated actors (Participants and Admins) |
+| `events` | Core event paradigms (Fee structures, temporal logistics) |
+| `registrations` | Primary linkage for entries mapping payments/status |
+| `teams` | Compound abstraction grouping sub-actors under one manifest |
+| `schedule_slots` | Master 2-day × 5-slot systemic grid |
+| `gallery_photos` | Crowdsourced or CMS-uploaded transient media buffers |
+| `system_settings` | Global override flags (Lockouts, Toggles, dynamic Hero Assets) |
 
-> Schema changes are applied with `npx drizzle-kit push` (development) or migrations in production.
+> [!TIP]
+> Execute synchronous schema injections with `npx drizzle-kit push` prior to production boots.
 
 ---
 
-## Auth & Middleware
+## 🛡️ Auth & Middleware
 
-- **Auth.js v5 beta** powers authentication with two providers:
-  - **Google OAuth** — one-click sign-in
-  - **Credentials** — email + bcrypt password
-- Session and JWT types are extended in `src/types/next-auth.d.ts` to carry `role` and `id`.
-- **`src/proxy.ts`** is an edge middleware that:
-  - Redirects unauthenticated users away from `/dashboard/*`
-  - Blocks non-admins from `/admin/*`
-  - Enforces profile completion before registration
-
----
-
-## Media Handling
-
-- All file uploads (payment proofs, gallery photos) are sent to **Cloudinary** via `next-cloudinary`.
-- `next.config.ts` whitelists `res.cloudinary.com` in the `next/image` remote patterns.
-- Upload preset and cloud name must be set in environment variables before any upload will work.
+- **Auth.js v5 beta** provides state-of-the-art dual-vector auth integration:
+  - **Google OAuth** — Expedited social ingress
+  - **Credentials** — Encrypted email/password fallback vectors
+- Contextual Session Types gracefully merge role/id extensions inside `src/types/next-auth.d.ts`.
+- **`src/proxy.ts` Edge Guardian**:
+  - Automatically isolates unverified traffic
+  - Actively repels non-admin entities from `.admin/*` scope
+  - Strictly enforces the Profile-Completion pipeline.
 
 ---
 
-## Registration Rules
+## 📸 Media Handling
 
-| Rule | Detail |
-|---|---|
-| **Profile gate** | User must complete their profile before they can register for any event |
-| **Free events** | Registration status is set to `approved` automatically; no proof upload |
-| **Paid events** | Requires a transaction ID and a screenshot uploaded to Cloudinary |
-| **Team size** | Validated server-side; mismatches are rejected before the record is created |
-| **One registration per event** | A user cannot re-register for an event they are already registered for |
+- Media operations (Proofs, Galleries) safely tunnel to **Cloudinary CDN** utilizing `next-cloudinary`.
+- Aggressive Next.js optimization scopes restrict domains directly in `next.config.ts`.
+
+> [!IMPORTANT]
+> The environment constants `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` and `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` are strictly required to unblock UI upload functionality.
 
 ---
 
-## Schedule System
+## ⚖️ Registration Rules
 
-The current UI is built for exactly **2 days × 5 slots per day**. The confirmed KRATOS 2026 time slots are:
-
-| Slot | Time Range |
-|---|---|
-| 1 | 10:30 AM – 11:00 AM |
-| 2 | 11:00 AM – 01:00 PM |
-| 3 | 01:00 PM – 01:30 PM (Lunch) |
-| 4 | 01:30 PM – 04:00 PM |
-| 5 | 04:00 PM – 05:30 PM |
-
-> If you need a different slot structure, the `schedule_slots` schema and the admin schedule UI will both need to be updated.
+| Execution Policy | Description |
+|:---|:---|
+| **Profile Gate** | Mandatory user enrichment prior to action. |
+| **Free Engagements** | Frictionless ingress. State auto-morphs to `approved`. |
+| **Paid Engagements** | Enforced verification. Transaction ID and image payload inherently required. |
+| **Team Dimensions** | Server-enforced limits; mismatch triggers outright payload rejection. |
+| **Deduplication** | Strict collision checks prevent re-registration anomalies. |
 
 ---
 
-## Admin Operations
+## 📅 Schedule System
 
-### Dashboard
+Structured precisely for a **2 Day × 5 Slot Configuration**:
 
-Quick overview metrics:
-- Total participants, approved teams, pending payments, verified payments, revenue estimate
-- Shortcut links to: exports · schedule · settings · organizers · payment proofs · users · results · events
-
-### Registrations & Payment Verification
-
-- Admin reviews uploaded payment proof images
-- Actions: **Approve** (sets status to `approved`, sends no email) or **Reject** (with a reason note)
-- CSV export available for all registrations and for payment proofs separately
-
-### Check-In
-
-- Search by registration ID prefix, member name, or member phone
-- Only `approved` registrations can be checked in
-- Checking in sets a timestamp and marks the record as attended
-
-### Results
-
-- Configured with a `resultsRevealTime` from system settings
-- Results page is locked until that time
-- Admin sets the YouTube embed URL and per-event winners (top 3) from the results panel
-
-### Settings & Image CMS
-
-- Registration open/closed toggle
-- Registration deadline (stored as UTC, formatted in local time for the `datetime-local` input)
-- Gallery lock toggle
-- Results reveal timestamp
-- Active announcement text
-- **Landing Page Image Assets**: Upload Hero and About section images directly to Cloudinary via the dashboard. These are stored in `system_settings` and served automatically on the landing page.
-
-### Contact & Organizers
-
-- **Organizers**: Manage faculty and student coordinator cards.
-- **Contact Page**: A hybrid system displaying official college info, the organizer directory, and an embedded Google Map pointing to the Nanded campus.
+| Grid Slot | Allocated Phase Range |
+|:---:|:---|
+| **1** | 10:30 AM – 11:00 AM |
+| **2** | 11:00 AM – 01:00 PM |
+| **3** | 01:00 PM – 01:30 PM (Intermission/Lunch) |
+| **4** | 01:30 PM – 04:00 PM |
+| **5** | 04:00 PM – 05:30 PM |
 
 ---
 
-## Seed & Bootstrap
+## ⚙️ Admin Operations
 
-Two seed scripts are provided in `src/db/`:
+> [!NOTE]
+> The `/admin/dashboard` operates as a central point of absolute authority.
 
-| Script | Purpose |
-|---|---|
-| `seed.ts` | Resets all festival tables and seeds base event data |
-| `seed-admin.ts` | Creates a single admin account using `SEED_ADMIN_EMAIL` + `SEED_ADMIN_PASSWORD` |
+### Verifications & Actions
+- **Payment Verification**: Dedicated visual UI to review attached Cloudinary assets and action `approve` or `reject` states.
+- **Dynamic Check-Ins**: Instantly execute participant arrivals via QR scanning logic or textual prefix searches. Marks records as attended with precision timestamps.
+- **Global Configs**: Directly overwrite system-wide parameters (Registration Deadlines, Gallery Lockouts, Analytics variables).
+- **Embedded CMS**: Zero-code intervention. Upload new hero splash and about headers directly to the global database states to mirror onto the landing pages instantaneously. 
 
-Both scripts require `SEED_ADMIN_PASSWORD` to be set. Never commit credentials.
+---
+
+## 🌱 Seed & Bootstrap
+
+Located in `src/db/`:
 
 ```bash
+# Deletes old records and populates new semantic architecture (DANGER IN PROD)
 npx tsx src/db/seed.ts
+
+# Directly provisions an admin root user, requiring local shell authority
 npx tsx src/db/seed-admin.ts
 ```
 
-> ⚠️ `seed.ts` **deletes all existing data** before re-seeding. Do not run in production unless you intend to reset.
-
 ---
 
-## Validation & Build
+## 🛡️ Validation & Build
 
-Run these before every deployment:
-
+Always validate integrity locally to catch silent runtime bugs:
 ```bash
-npm run lint          # ESLint via eslint-config-next
-npx tsc --noEmit      # TypeScript type check without emitting files
-npm run build         # Full production build (Turbopack)
+npm run lint          # Next.js ESLint execution
+npx tsc --noEmit      # Hard typescript structural evaluations
+npm run build         # Triggers Turbopack pre-flight optimizations
 ```
 
-All three must pass with exit code 0 before going live.
-
 ---
 
-## Deployment
+## 🚀 Final Deployment Pipeline
 
-1. Set all required environment variables on the host (see `.env.example`).
-2. Push the schema: `npx drizzle-kit push` on the production database.
-3. Bootstrap the admin: `npx tsx src/db/seed-admin.ts`.
-4. Confirm `NEXT_PUBLIC_SITE_URL` matches the production domain (used for ticket QR links).
-5. Confirm Cloudinary preset and cloud name are correct.
-6. Run `npm run lint && npm run build` and verify exit code 0.
-7. Deploy. Verify a complete registration flow (free + paid) in production.
+1. **Verify Variables**: Validate all `.env.local` mappings mirror your Host configs.
+2. **Push Architecture**: Deploy PostgreSQL tables (`npx drizzle-kit push`).
+3. **Provision Root**: Hydrate root admin (`npx tsx src/db/seed-admin.ts`).
+4. **Final Domain Verification**: Ensure `NEXT_PUBLIC_SITE_URL` maps truthfully down to exact HTTP(S) configurations.
+5. **Clear Local Checks**: Green across `npm run lint` && `npm run build`.
+6. **Go Live**. Execute your final provider deploy!

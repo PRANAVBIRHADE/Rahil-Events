@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import BrutalButton from '@/components/ui/BrutalButton';
 
 const Navbar = () => {
@@ -14,8 +15,8 @@ const Navbar = () => {
     <nav className="w-full bg-surface border-b-2 border-on-surface shadow-[4px_4px_0px_0px_var(--primary-container)] relative z-50">
       <div className="flex justify-between items-center w-full px-4 md:px-6 py-3 md:py-4 max-w-[1440px] mx-auto">
         <Link href="/" onClick={closeMenu} className="flex items-center gap-2 group z-50">
-          <div className="w-10 h-10 border-2 border-on-surface bg-surface flex items-center justify-center overflow-hidden transition-transform group-hover:rotate-6">
-            <img src="/branding/kratos-logo.png" alt="KRATOS Logo" className="w-full h-full object-contain" />
+          <div className="w-10 h-10 flex items-center justify-center overflow-hidden transition-transform group-hover:rotate-6">
+            <Image src="/branding/kratos-logo.png" alt="KRATOS Logo" width={40} height={40} className="w-full h-full object-contain" />
           </div>
           <span className="text-2xl md:text-3xl font-black tracking-tighter text-on-surface uppercase font-display italic">
             KRATOS 2026

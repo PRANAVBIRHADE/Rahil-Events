@@ -5,16 +5,14 @@ import { users, registrations } from '@/db/schema';
 import { desc, count } from 'drizzle-orm';
 import Link from 'next/link';
 import { updateUser, deleteUser } from '@/lib/actions';
-import UsersClientWrapper from '@/components/admin/UsersClientWrapper';
+import UsersClientWrapper, { type User } from '@/components/admin/UsersClientWrapper';
 
 export default async function UserManagementPage() {
-  // Fetch all users with their registration count (includes users with 0 registrations)
   const allUsersRaw = await db
     .select()
     .from(users)
     .orderBy(desc(users.createdAt));
 
-  // Get registration counts per user
   const regCounts = await db
     .select({ userId: registrations.userId, count: count() })
     .from(registrations)
@@ -22,7 +20,7 @@ export default async function UserManagementPage() {
 
   const regCountMap = new Map(regCounts.map((r) => [r.userId, r.count]));
 
-  const allUsers = allUsersRaw.map((u) => ({
+  const allUsers: User[] = allUsersRaw.map((u) => ({
     ...u,
     registrationCount: regCountMap.get(u.id) ?? 0,
   }));
@@ -34,7 +32,6 @@ export default async function UserManagementPage() {
 
   return (
     <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-12">
-      {/* Header */}
       <div className="mb-10">
         <Link
           href="/admin/dashboard"
@@ -52,13 +49,12 @@ export default async function UserManagementPage() {
               All User Accounts
             </h1>
             <p className="text-sm font-bold uppercase opacity-60 mt-1 tracking-widest">
-              Every account created — with or without event registrations
+              Every account created, with or without event registrations
             </p>
           </div>
         </div>
       </div>
 
-      {/* Stats Row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
         {[
           { label: 'Total Accounts', value: totalUsers, color: 'bg-blue-50 border-blue-800 text-blue-900' },
@@ -73,8 +69,7 @@ export default async function UserManagementPage() {
         ))}
       </div>
 
-      {/* Client-side searchable table */}
-      <UsersClientWrapper users={allUsers as any} updateUser={updateUser} deleteUser={deleteUser} />
+      <UsersClientWrapper users={allUsers} updateUser={updateUser} deleteUser={deleteUser} />
     </div>
   );
 }

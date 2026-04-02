@@ -37,9 +37,6 @@ export default function LoginPage() {
         <p className="text-sm font-sans mb-4">
           No account? <Link href="/auth/register" className="font-bold uppercase border-b-2 border-primary-container">Sign Up here</Link>
         </p>
-        <Link href="/auth/adminlogin" className="text-xs font-bold uppercase opacity-50 hover:opacity-100 hover:text-primary transition-colors">
-          Admin Portal Login &rarr;
-        </Link>
       </div>
     </BrutalCard>
   );

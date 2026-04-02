@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import html2canvas from 'html2canvas';
 import BrutalButton from '@/components/ui/BrutalButton';
 import BrutalQRCode from '@/components/ui/BrutalQRCode';
