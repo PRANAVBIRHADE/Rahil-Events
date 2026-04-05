@@ -87,13 +87,15 @@ const OrganizerCard = React.memo(({
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500
             bg-gradient-to-t from-[#FFD100]/20 via-transparent to-transparent" />
 
-          {/* Department badge */}
-          {organizer.department && (
-            <div className="absolute top-3 left-3 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest
-              bg-on-surface text-surface brutal-border">
-              {organizer.department}
-            </div>
-          )}
+          {/* Department badges */}
+          <div className="absolute top-3 left-3 flex flex-wrap gap-1 max-w-[80%]">
+            {organizer.department && organizer.department.split(',').map((dept) => (
+              <div key={dept} className="px-2 py-0.5 text-[9px] font-black uppercase tracking-widest
+                bg-on-surface text-surface brutal-border shadow-[2px_2px_0px_0px_var(--primary-container)]">
+                {dept}
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Info section */}
@@ -221,12 +223,14 @@ const OrganizerModal = ({
 
         {/* Info */}
         <div className="p-8 md:p-10 -mt-12 relative z-10">
-          {organizer.department && (
-            <span className="inline-block px-3 py-1 text-[10px] font-black uppercase tracking-widest
-              bg-on-surface text-surface brutal-border mb-4">
-              {organizer.department}
-            </span>
-          )}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {organizer.department && organizer.department.split(',').map((dept) => (
+              <span key={dept} className="inline-block px-3 py-1 text-[10px] font-black uppercase tracking-widest
+                bg-on-surface text-surface brutal-border">
+                {dept}
+              </span>
+            ))}
+          </div>
 
           <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter italic leading-none mb-3">
             {organizer.organizerName}
@@ -301,7 +305,10 @@ export default function OrganizersPageClient({ organizers }: OrganizersPageClien
     return organizers.filter((org) => {
       const matchesFilter =
         activeFilter === 'All' ||
-        (org.department && org.department.toLowerCase() === activeFilter.toLowerCase());
+        (org.department && (
+          org.department.split(',').includes(activeFilter) || 
+          org.department.split(',').includes('Core')
+        ));
       const matchesSearch =
         searchQuery === '' ||
         org.organizerName.toLowerCase().includes(searchQuery.toLowerCase()) ||

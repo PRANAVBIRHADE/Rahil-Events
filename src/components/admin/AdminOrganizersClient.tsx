@@ -62,6 +62,27 @@ export default function AdminOrganizersClient({ organizers }: { organizers: Orga
   const [createImageUrl, setCreateImageUrl] = useState('');
   const [editImageUrl, setEditImageUrl] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [selectedCreateDepts, setSelectedCreateDepts] = useState<string[]>([]);
+  const [selectedEditDepts, setSelectedEditDepts] = useState<string[]>([]);
+
+  const toggleDept = (dept: string, isEdit: boolean) => {
+    const current = isEdit ? selectedEditDepts : selectedCreateDepts;
+    const setter = isEdit ? setSelectedEditDepts : setSelectedCreateDepts;
+
+    if (dept === 'Core') {
+      // Selecting Core deselects everything else
+      setter(current.includes('Core') ? [] : ['Core']);
+    } else {
+      // Selecting anything else deselects Core
+      let next = current.filter((d) => d !== 'Core');
+      if (next.includes(dept)) {
+        next = next.filter((d) => d !== dept);
+      } else {
+        next = [...next, dept];
+      }
+      setter(next);
+    }
+  };
 
   const editingOrganizer = organizers.find((o) => o.id === editingId);
 
@@ -104,16 +125,24 @@ export default function AdminOrganizersClient({ organizers }: { organizers: Orga
                 <FormField label="Role" name="role" placeholder="e.g. Tech Lead" />
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest opacity-60">Department</label>
-                  <select
-                    name="department"
-                    className="w-full p-2.5 brutal-border bg-surface text-sm font-mono font-bold uppercase outline-none focus:border-primary"
-                  >
-                    <option value="">Select Department</option>
+                  <label className="text-[10px] font-black uppercase tracking-widest opacity-60">Departments (Multi-select)</label>
+                  <div className="flex flex-wrap gap-2">
                     {DEPARTMENTS.map((d) => (
-                      <option key={d} value={d}>{d}</option>
+                      <button
+                        key={d}
+                        type="button"
+                        onClick={() => toggleDept(d, false)}
+                        className={`px-3 py-1.5 text-[10px] font-black uppercase border-2 transition-all ${
+                          selectedCreateDepts.includes(d)
+                            ? 'bg-on-surface text-surface border-on-surface'
+                            : 'bg-surface text-on-surface border-on-surface/20 hover:border-on-surface'
+                        }`}
+                      >
+                        {d}
+                      </button>
                     ))}
-                  </select>
+                  </div>
+                  <input type="hidden" name="department" value={selectedCreateDepts.join(',')} />
                 </div>
 
                 <div className="space-y-1.5">
@@ -234,11 +263,17 @@ export default function AdminOrganizersClient({ organizers }: { organizers: Orga
                         <td className="p-3 font-bold uppercase text-sm max-w-[150px] truncate">{org.organizerName}</td>
                         <td className="p-3 text-xs font-bold text-primary uppercase">{org.role || '—'}</td>
                         <td className="p-3">
-                          {org.department ? (
-                            <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 brutal-border bg-primary-container/20">
-                              {org.department}
-                            </span>
-                          ) : '—'}
+                          <div className="flex flex-wrap gap-1 max-w-[150px]">
+                            {org.department ? (
+                              org.department.split(',').map((d) => (
+                                <span key={d} className="text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 brutal-border bg-primary-container/20">
+                                  {d}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="opacity-30">—</span>
+                            )}
+                          </div>
                         </td>
                         <td className="p-3 font-mono text-xs opacity-70 max-w-[120px] truncate">{org.contact || '—'}</td>
                         <td className="p-3">
@@ -254,6 +289,7 @@ export default function AdminOrganizersClient({ organizers }: { organizers: Orga
                               onClick={() => {
                                 setEditingId(org.id);
                                 setEditImageUrl(org.imageUrl || '');
+                                setSelectedEditDepts(org.department ? org.department.split(',') : []);
                               }}
                               className="p-2 brutal-border bg-surface hover:bg-primary-container/20 transition-colors"
                               title="Edit"
@@ -316,17 +352,24 @@ export default function AdminOrganizersClient({ organizers }: { organizers: Orga
               <FormField label="Role" name="role" value={editingOrganizer.role || ''} placeholder="Role" />
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest opacity-60">Department</label>
-                <select
-                  name="department"
-                  defaultValue={editingOrganizer.department || ''}
-                  className="w-full p-2.5 brutal-border bg-surface text-sm font-mono font-bold uppercase outline-none focus:border-primary"
-                >
-                  <option value="">Select Department</option>
+                <label className="text-[10px] font-black uppercase tracking-widest opacity-60">Departments (Multi-select)</label>
+                <div className="flex flex-wrap gap-2">
                   {DEPARTMENTS.map((d) => (
-                    <option key={d} value={d}>{d}</option>
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() => toggleDept(d, true)}
+                      className={`px-3 py-1.5 text-[10px] font-black uppercase border-2 transition-all ${
+                        selectedEditDepts.includes(d)
+                          ? 'bg-on-surface text-surface border-on-surface'
+                          : 'bg-surface text-on-surface border-on-surface/20 hover:border-on-surface'
+                      }`}
+                    >
+                      {d}
+                    </button>
                   ))}
-                </select>
+                </div>
+                <input type="hidden" name="department" value={selectedEditDepts.join(',')} />
               </div>
 
               <div className="space-y-1.5">
