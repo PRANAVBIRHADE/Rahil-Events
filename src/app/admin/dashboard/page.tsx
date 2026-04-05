@@ -8,7 +8,6 @@ import GalleryAdminToggle from '@/components/admin/GalleryAdminToggle';
 import LogoutButton from '@/components/dashboard/LogoutButton';
 import { db } from '@/db';
 import { registrations, users, events, systemSettings, teamMembers } from '@/db/schema';
-import { requireAdminPageAccess } from '@/lib/authz';
 import NotificationBlastForm from '@/components/admin/NotificationBlastForm';
 import { getNotificationCapabilities, isRegistrationKillSwitchEnabled, getRegistrationKillSwitchMessage } from '@/lib/env';
 import { eq, desc, count, sum } from 'drizzle-orm';

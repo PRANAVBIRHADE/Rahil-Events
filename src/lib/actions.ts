@@ -1268,6 +1268,13 @@ export async function createOrganizer(formData: FormData) {
   const organizerName = (formData.get('organizerName') as string) || '';
   const role = (formData.get('role') as string) || null;
   const contact = (formData.get('contact') as string) || null;
+  const imageUrl = (formData.get('imageUrl') as string) || null;
+  const description = (formData.get('description') as string) || null;
+  const department = (formData.get('department') as string) || null;
+  const linkedin = (formData.get('linkedin') as string) || null;
+  const instagram = (formData.get('instagram') as string) || null;
+  const sortOrderRaw = (formData.get('sortOrder') as string) || '0';
+  const sortOrder = parseInt(sortOrderRaw) || 0;
 
   if (!organizerName.trim()) {
     return;
@@ -1278,8 +1285,53 @@ export async function createOrganizer(formData: FormData) {
       organizerName: organizerName.trim(),
       role: role ? role.trim() : null,
       contact: contact ? contact.trim() : null,
+      imageUrl: imageUrl ? imageUrl.trim() : null,
+      description: description ? description.trim() : null,
+      department: department ? department.trim() : null,
+      linkedin: linkedin ? linkedin.trim() : null,
+      instagram: instagram ? instagram.trim() : null,
+      sortOrder,
     });
     revalidatePath('/admin/organizers');
+    revalidatePath('/organizers');
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function updateOrganizer(formData: FormData) {
+  await assertAdminAction();
+
+  const id = formData.get('id') as string;
+  const organizerName = (formData.get('organizerName') as string) || '';
+  const role = (formData.get('role') as string) || null;
+  const contact = (formData.get('contact') as string) || null;
+  const imageUrl = (formData.get('imageUrl') as string) || null;
+  const description = (formData.get('description') as string) || null;
+  const department = (formData.get('department') as string) || null;
+  const linkedin = (formData.get('linkedin') as string) || null;
+  const instagram = (formData.get('instagram') as string) || null;
+  const sortOrderRaw = (formData.get('sortOrder') as string) || '0';
+  const sortOrder = parseInt(sortOrderRaw) || 0;
+
+  if (!id || !organizerName.trim()) {
+    return;
+  }
+
+  try {
+    await db.update(organizers).set({
+      organizerName: organizerName.trim(),
+      role: role ? role.trim() : null,
+      contact: contact ? contact.trim() : null,
+      imageUrl: imageUrl ? imageUrl.trim() : null,
+      description: description ? description.trim() : null,
+      department: department ? department.trim() : null,
+      linkedin: linkedin ? linkedin.trim() : null,
+      instagram: instagram ? instagram.trim() : null,
+      sortOrder,
+    }).where(eq(organizers.id, id));
+    revalidatePath('/admin/organizers');
+    revalidatePath('/organizers');
   } catch (error) {
     console.error(error);
   }
@@ -1292,11 +1344,11 @@ export async function deleteOrganizer(formData: FormData) {
   try {
     await db.delete(organizers).where(eq(organizers.id, id));
     revalidatePath('/admin/organizers');
+    revalidatePath('/organizers');
   } catch (error) {
     console.error(error);
   }
 }
-
 export async function updateEventWinners(eventId: string, winners: unknown) {
   try {
     await assertAdminAction();

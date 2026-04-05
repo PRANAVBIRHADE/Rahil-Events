@@ -28,6 +28,7 @@ const Navbar = () => {
           <Link href="/#events" className="text-on-surface/60 hover:text-on-surface border-b-4 border-transparent hover:border-primary-container pb-1 transition-all duration-150 py-4">Events</Link>
           <Link href="/#schedule" className="text-on-surface/60 hover:text-on-surface border-b-4 border-transparent hover:border-primary-container pb-1 transition-all duration-150 py-4">Schedule</Link>
           <Link href="/squads" className="text-primary hover:text-on-surface border-b-4 border-transparent hover:border-primary pb-1 transition-all duration-150 py-4 font-black italic">Join Team</Link>
+          <Link href="/organizers" className="text-on-surface/60 hover:text-on-surface border-b-4 border-transparent hover:border-primary-container pb-1 transition-all duration-150 py-4">Organizers</Link>
           <Link href="/#about" className="text-on-surface/60 hover:text-on-surface border-b-4 border-transparent hover:border-primary-container pb-1 transition-all duration-150 py-4">About</Link>
           <Link href="/contact" className="text-on-surface/60 hover:text-on-surface border-b-4 border-transparent hover:border-primary-container pb-1 transition-all duration-150 py-4">Contact</Link>
           <Link href="/#gallery" className="text-on-surface/60 hover:text-on-surface border-b-4 border-transparent hover:border-primary-container pb-1 transition-all duration-150 py-4">Gallery</Link>
@@ -60,6 +61,7 @@ const Navbar = () => {
             <Link href="/#events" onClick={closeMenu} className="hover:text-primary transition-colors border-b-4 border-on-surface/10 pb-4 mt-8">Events</Link>
             <Link href="/#schedule" onClick={closeMenu} className="hover:text-primary transition-colors border-b-4 border-on-surface/10 pb-4">Schedule</Link>
             <Link href="/squads" onClick={closeMenu} className="hover:text-primary transition-colors border-b-4 border-on-surface/10 pb-4">Join Team</Link>
+            <Link href="/organizers" onClick={closeMenu} className="hover:text-primary transition-colors border-b-4 border-on-surface/10 pb-4">Organizers</Link>
             <Link href="/#about" onClick={closeMenu} className="hover:text-primary transition-colors border-b-4 border-on-surface/10 pb-4">About</Link>
             <Link href="/contact" onClick={closeMenu} className="hover:text-primary transition-colors border-b-4 border-on-surface/10 pb-4">Contact</Link>
             <Link href="/#gallery" onClick={closeMenu} className="hover:text-primary transition-colors border-b-4 border-on-surface/10 pb-4">Gallery</Link>

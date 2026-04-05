@@ -50,6 +50,12 @@ export const organizers = pgTable('organizers', {
   organizerName: text('organizer_name').notNull(),
   role: text('role'),
   contact: text('contact'),
+  imageUrl: text('image_url'),
+  description: text('description'),
+  department: text('department'),
+  linkedin: text('linkedin'),
+  instagram: text('instagram'),
+  sortOrder: integer('sort_order').default(0),
   createdAt: timestamp('created_at').defaultNow(),
 });
 

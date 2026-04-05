@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import { db } from '@/db';
 import { events, registrations, users } from '@/db/schema';
