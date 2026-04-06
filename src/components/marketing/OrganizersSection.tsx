@@ -3,6 +3,24 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
+const InstagramIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
+
 const OrganizersSection = () => {
   return (
     <section id="organizers" className="py-24 bg-[#FEFCE8] relative overflow-hidden">
@@ -48,7 +66,7 @@ const OrganizersSection = () => {
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
 
-          {/* Card 1: Faculty Coordinator */}
+          {/* Card 1: Core Leadership */}
           <motion.div
             variants={{
               hidden: { opacity: 0, y: 30 },
@@ -56,21 +74,31 @@ const OrganizersSection = () => {
             }}
             className="p-8 brutal-border bg-white hard-shadow-gold flex flex-col h-full min-h-[350px]"
           >
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-6 block">
-              FACULTY COORDINATOR
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-8 block">
+              CORE LEADERSHIP
             </span>
-            <div className="mb-auto">
-              <h3 className="text-2xl font-black uppercase mb-1 tracking-tight">DR L WAGHMARE</h3>
-              <p className="text-xs font-bold opacity-60 uppercase mb-6 italic">HEAD OF THE INSTITUTE</p>
+            <div className="space-y-10">
+              <div>
+                <h3 className="text-2xl font-black uppercase mb-1 tracking-tight">DR L WAGHMARE</h3>
+                <p className="text-xs font-bold opacity-60 uppercase mb-4 italic">HEAD OF THE INSTITUTE</p>
+                <div className="space-y-1 font-mono text-[10px] font-bold opacity-70 leading-relaxed uppercase">
+                  <p>lmwaghmare@yahoo.com</p>
+                  <p>+91 9822663185</p>
+                </div>
+              </div>
 
-              <div className="space-y-1 pt-6 border-t border-on-surface/10 font-mono text-[11px] font-bold opacity-70 leading-relaxed uppercase">
-                <p>lmwaghmare@yahoo.com</p>
-                <p>+91 9822663185</p>
+              <div className="pt-8 border-t border-on-surface/10">
+                <h3 className="text-2xl font-black uppercase mb-1 tracking-tight">LAKHAN RATHOD</h3>
+                <p className="text-xs font-bold opacity-60 uppercase mb-4 italic">OUTREACH COORDINATOR</p>
+                <div className="space-y-1 font-mono text-[10px] font-bold opacity-70 leading-relaxed uppercase">
+                  <p>lakhan180689@gmail.com</p>
+                  <p>+91 9763433187</p>
+                </div>
               </div>
             </div>
           </motion.div>
 
-          {/* Card 2: Head Organizer */}
+          {/* Card 2: Faculty Coordinators */}
           <motion.div
             variants={{
               hidden: { opacity: 0, y: 30 },
@@ -78,21 +106,27 @@ const OrganizersSection = () => {
             }}
             className="p-8 brutal-border bg-white hard-shadow-gold flex flex-col h-full min-h-[350px]"
           >
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-6 block">
-              HEAD ORGANIZER
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-8 block">
+              COORDINATION TEAM
             </span>
-            <div className="mb-auto">
-              <h3 className="text-2xl font-black uppercase mb-1 tracking-tight">MR LAKHAN RATHOD</h3>
-              <p className="text-xs font-bold opacity-60 uppercase mb-6 italic">OUTREACH COORDINATOR</p>
+            <div className="space-y-8">
 
-              <div className="space-y-1 pt-6 border-t border-on-surface/10 font-mono text-[11px] font-bold opacity-70 leading-relaxed uppercase">
-                <p>lakhan180689@gmail.com</p>
-                <p>+91 9763433187</p>
+
+              <div className="pt-6 border-t border-on-surface/10">
+                <h4 className="text-lg font-black uppercase leading-none">MR. ABDULLAH M.K</h4>
+                <p className="text-[10px] font-bold opacity-50 uppercase tracking-tighter mb-2">FACULTY COORDINATOR</p>
+                <p className="text-[10px] font-mono opacity-80">+91 9076433185</p>
+              </div>
+
+              <div className="pt-6 border-t border-on-surface/10">
+                <h4 className="text-lg font-black uppercase leading-none">MR. SHAIKH AJIJ</h4>
+                <p className="text-[10px] font-bold opacity-50 uppercase tracking-tighter mb-2">FACULTY COORDINATOR</p>
+                <p className="text-[10px] font-mono opacity-80">+91 9112391234</p>
               </div>
             </div>
           </motion.div>
 
-          {/* Card 3: Team Members */}
+          {/* Card 3: Technical Wing */}
           <motion.div
             variants={{
               hidden: { opacity: 0, y: 30 },
@@ -100,27 +134,46 @@ const OrganizersSection = () => {
             }}
             className="p-8 brutal-border bg-white hard-shadow flex flex-col h-full min-h-[350px]"
           >
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-6 block">
-              TEAM MEMBERS
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-8 block">
+              TECHNICAL WING
             </span>
 
             <div className="space-y-8">
               <div>
-                <h4 className="text-lg font-black uppercase leading-none">MR AZHAR AHMED</h4>
-                <p className="text-[10px] font-bold opacity-50 uppercase tracking-tighter">NODAL COORDINATOR</p>
-                <p className="text-[10px] font-mono opacity-80 mt-1">azhar.ahmed.eep@gmail.com | +91 9272579279</p>
-              </div>
-
-              <div className="pt-4 border-t border-on-surface/10">
                 <h3 className="text-lg font-black uppercase leading-none">RAHIL HUSSAIN</h3>
-                <p className="text-[10px] font-bold opacity-50 uppercase tracking-tighter">FRONTEND DEVELOPER</p>
-                <p className="text-[10px] font-mono opacity-80 mt-1 lowercase">https://www.instagram.com/ifeelrahiii?igsh=dzNqMWZlcWloMzh4</p>
+                <p className="text-[10px] font-bold opacity-50 uppercase tracking-widest mt-1">FULL STACK DEVELOPER</p>
+                <a
+                  href="https://www.instagram.com/ifeelrahiii?igsh=dzNqMWZlcWloMzh4"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-1.5 text-[10px] font-mono opacity-70 mt-3 hover:opacity-100 hover:text-[#D4AF37] transition-all lowercase"
+                >
+                  <InstagramIcon />
+                  <span>@ifeelrahiii</span>
+                </a>
               </div>
 
-              <div className="pt-4 border-t border-on-surface/10">
+              <div className="pt-6 border-t border-on-surface/10">
                 <h3 className="text-lg font-black uppercase leading-none">PRANAV BIRADE</h3>
-                <p className="text-[10px] font-bold opacity-50 uppercase tracking-tighter">BACKEND DEVELOPER</p>
-                <p className="text-[10px] font-mono opacity-80 mt-1 lowercase">https://www.instagram.com/code_track_?igsh=c2NxYnJhcTJranNi</p>
+                <p className="text-[10px] font-bold opacity-50 uppercase tracking-widest mt-1">FULL STACK DEVELOPER</p>
+                <a
+                  href="https://www.instagram.com/code_track_?igsh=c2NxYnJhcTJranNi"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-1.5 text-[10px] font-mono opacity-70 mt-3 hover:opacity-100 hover:text-[#D4AF37] transition-all lowercase"
+                >
+                  <InstagramIcon />
+                  <span>@code_track_</span>
+                </a>
+              </div>
+            </div>
+
+            <div className="mt-auto pt-10">
+              <div className="bg-on-surface text-surface p-4 brutal-border">
+                <p className="text-[10px] font-mono uppercase tracking-tighter leading-tight">
+                  {">"} System Architected with Next.js 16 <br />
+                  {">"} Protocol Version: 1.0.26_STABLE
+                </p>
               </div>
             </div>
           </motion.div>
