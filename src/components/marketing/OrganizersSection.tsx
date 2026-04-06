@@ -87,14 +87,7 @@ const OrganizersSection = () => {
                 </div>
               </div>
 
-              <div className="pt-8 border-t border-on-surface/10">
-                <h3 className="text-2xl font-black uppercase mb-1 tracking-tight">LAKHAN RATHOD</h3>
-                <p className="text-xs font-bold opacity-60 uppercase mb-4 italic">OUTREACH COORDINATOR</p>
-                <div className="space-y-1 font-mono text-[10px] font-bold opacity-70 leading-relaxed uppercase">
-                  <p>lakhan180689@gmail.com</p>
-                  <p>+91 9763433187</p>
-                </div>
-              </div>
+
             </div>
           </motion.div>
 
@@ -113,7 +106,7 @@ const OrganizersSection = () => {
 
 
               <div className="pt-6 border-t border-on-surface/10">
-                <h4 className="text-lg font-black uppercase leading-none">MR. ABDULLAH M.K</h4>
+                <h4 className="text-lg font-black uppercase leading-none">DR. ABDULLAH M.K</h4>
                 <p className="text-[10px] font-bold opacity-50 uppercase tracking-tighter mb-2">FACULTY COORDINATOR</p>
                 <p className="text-[10px] font-mono opacity-80">+91 9076433185</p>
               </div>

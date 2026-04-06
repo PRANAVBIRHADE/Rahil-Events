@@ -60,14 +60,14 @@ async function seed() {
     isGalleryLocked: true,
     upiId: '9834147160@kotak811',
     feePerPerson: 75,
-    deadline: new Date('2026-04-18T12:30:00Z'),
+    deadline: new Date('2026-04-26T18:00:00Z'),
     resultsRevealTime: new Date('2026-04-22T13:00:00Z'),
     resultsVideoUrl: null,
   });
 
   console.log('Publishing default announcement...');
   await db.insert(schema.announcements).values({
-    content: 'Registrations Open - KRATOS 2026 on 20-21 April | Register before 18 April',
+    content: 'Registrations Open - KRATOS 2026 on 27-28 April | Register before evening of 26 April',
     isActive: true,
   });
 

@@ -77,7 +77,7 @@ const Hero = ({ heroImage }: HeroProps) => {
           >
             <div className="p-4 border-r-2 border-on-surface hover:bg-secondary-container transition-colors duration-300">
               <p className="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface/50 mb-1">Dates</p>
-              <p className="font-display font-black uppercase text-sm md:text-base leading-tight">20 – 21 April 2026</p>
+              <p className="font-display font-black uppercase text-sm md:text-base leading-tight">27 – 28 April 2026</p>
             </div>
             <div className="p-4 border-r-2 border-on-surface hover:bg-secondary-container transition-colors duration-300">
               <p className="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface/50 mb-1">Venue</p>

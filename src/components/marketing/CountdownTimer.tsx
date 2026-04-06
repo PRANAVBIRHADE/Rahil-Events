@@ -11,7 +11,7 @@ const TimerUnit = ({ value, label }: { value: number; label: string }) => (
   </div>
 );
 
-const CountdownTimer = ({ targetDate = '2026-04-20T05:00:00Z', enableRefreshOnZero = false }: { targetDate?: string, enableRefreshOnZero?: boolean }) => {
+const CountdownTimer = ({ targetDate = '2026-04-27T05:00:00Z', enableRefreshOnZero = false }: { targetDate?: string, enableRefreshOnZero?: boolean }) => {
   const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; seconds: number } | null>(null);
 
   useEffect(() => {
