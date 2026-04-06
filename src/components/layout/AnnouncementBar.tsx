@@ -12,7 +12,7 @@ const AnnouncementBar = async () => {
 
   const message = activeAnnouncements.length > 0
     ? activeAnnouncements[0].content
-    : '🚀 REGISTRATIONS OPEN — KRATOS 2026 ON 27-28 APRIL | REGISTER BEFORE EVENING OF 26 APRIL | MATOSHRI PRATISHTHAN GROUP OF INSTITUTIONS';
+    : '🚀 Registrations Open — KRATOS 2026 on 27–28 April | Register before evening of 26 April';
 
   return (
     <div className="bg-on-surface text-primary-container py-1 overflow-hidden border-b-2 border-primary-container relative z-40">
