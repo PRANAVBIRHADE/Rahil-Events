@@ -9,7 +9,7 @@ import LogoutButton from '@/components/dashboard/LogoutButton';
 import { db } from '@/db';
 import { registrations, users, events, systemSettings, teamMembers } from '@/db/schema';
 import NotificationBlastForm from '@/components/admin/NotificationBlastForm';
-import { getNotificationCapabilities, isRegistrationKillSwitchEnabled, getRegistrationKillSwitchMessage } from '@/lib/env';
+import { getNotificationCapabilities, isRegistrationKillSwitchEnabled } from '@/lib/env';
 import { eq, desc, count, sum } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
@@ -59,7 +59,6 @@ export default async function AdminDashboard() {
 
   const notificationCapabilities = getNotificationCapabilities();
   const killSwitchEnabled = isRegistrationKillSwitchEnabled();
-  const killSwitchMessage = killSwitchEnabled ? getRegistrationKillSwitchMessage() : '';
 
   const allEvents = await db.select({ id: events.id, name: events.name }).from(events);
 

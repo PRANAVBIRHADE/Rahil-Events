@@ -3,7 +3,7 @@ import BrutalCard from '@/components/ui/BrutalCard';
 import RegistrationClientForm from '@/components/marketing/RegistrationClientForm';
 
 import { db } from '@/db';
-import { events, registrations, users, systemSettings } from '@/db/schema';
+import { events, users, systemSettings } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { notFound, redirect } from 'next/navigation';
 import { auth } from '@/auth';
@@ -28,8 +28,6 @@ export default async function RegistrationPage({ params }: { params: Promise<{ s
     notFound();
   }
 
-  const dbRegistrations = await db.select({ id: registrations.id }).from(registrations).where(eq(registrations.eventId, event.id));
-  const activeCount = dbRegistrations.length;
 
   const [settings] = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
   const registrationOpen = settings?.registrationOpen ?? true;
