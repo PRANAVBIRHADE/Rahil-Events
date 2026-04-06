@@ -6,8 +6,8 @@ Please update the details below. Once you provide the correct information, I wil
 - **Event Contact Email:** [kratos2k26.mpgi@gmail.com]
 - **UPI ID for Payments:** (Currently: 9834147160@kotak811)
 - **Registration Fee per Person (General):** (Currently: ₹75)
-- **Registration Deadline:** (Currently: 18 April 2026, 12:30 PM)
-- **Event Dates:** (Currently: 20-21 April 2026)
+- **Registration Deadline:** (Currently: Evening of 26 April 2026)
+- **Event Dates:** (Currently: 27-28 April 2026)
 
 ---
 
@@ -47,5 +47,5 @@ Please update the details below. Once you provide the correct information, I wil
 ---
 
 ## 4. Announcements
-- **Current Text:** "Registrations Open - KRATOS 2026 on 20-21 April | Register before 18 April"
+- **Current Text:** "Registrations Open - KRATOS 2026 on 27-28 April | Register before evening of 26 April"
 - **New Text:** (Leave blank if same)
