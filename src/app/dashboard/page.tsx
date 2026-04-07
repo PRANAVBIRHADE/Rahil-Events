@@ -12,7 +12,6 @@ import TicketCard from '@/components/dashboard/TicketCard';
 import GalleryUploadClient from '@/components/dashboard/GalleryUploadClient';
 import { getPlayerRank } from '@/lib/xp';
 import { Zap } from 'lucide-react';
-import BrutalQRCode from '@/components/ui/BrutalQRCode';
 import { formatScheduleSummary, sortScheduleEntries, type ScheduleEntry } from '@/lib/schedule';
 
 
@@ -133,7 +132,6 @@ export default async function DashboardPage() {
   }).from(galleryPhotos).where(eq(galleryPhotos.userId, dbUser.id));
 
   const rank = getPlayerRank(dbUser.xp || 0);
-  const fastEntryUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/admin/checkin/user/${dbUser.id}`;
 
 
   return (
@@ -197,20 +195,6 @@ export default async function DashboardPage() {
             </div>
           </BrutalCard>
 
-          <BrutalCard shadowColor="black" className="bg-on-surface text-surface">
-            <div className="flex items-center justify-between mb-4 border-b border-surface/20 pb-3">
-              <div>
-                <h2 className="text-2xl font-black uppercase italic tracking-tighter">Fast Entry QR</h2>
-                <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Contains your participant user ID</p>
-              </div>
-            </div>
-            <div className="flex justify-center mb-4">
-              <BrutalQRCode data={fastEntryUrl} size={180} />
-            </div>
-            <p className="text-[10px] font-black uppercase tracking-wide opacity-60 text-center">
-              Show this at entry gates or event desks for quick lookup.
-            </p>
-          </BrutalCard>
         </div>
 
         {/* Registered Events */}

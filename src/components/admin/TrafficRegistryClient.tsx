@@ -18,7 +18,6 @@ type Registration = {
   transactionId: string | null;
   teamId: string | null;
   teamName: string | null;
-  checkedIn: boolean;
 };
 
 type TeamMember = {
@@ -27,7 +26,6 @@ type TeamMember = {
   name: string;
   college: string | null;
   phone: string | null;
-  checkedIn: boolean;
 };
 
 type Props = {
@@ -219,7 +217,6 @@ export default function TrafficRegistryClient({ registrations, teamMembers, canM
                          <tr>
                             <th className="p-3">Participant</th>
                             <th className="p-3">Team Name</th>
-                            <th className="p-3">Check-In</th>
                             <th className="p-3 text-right">{canManageRegistrations ? 'Review' : 'Action'}</th>
                          </tr>
                       </thead>
@@ -228,20 +225,11 @@ export default function TrafficRegistryClient({ registrations, teamMembers, canM
                            <tr key={r.id} className="hover:bg-primary-container/5">
                               <td className="p-3 font-bold uppercase">{r.participantName}</td>
                               <td className="p-3 italic font-bold text-[10px]">{r.teamName || '-'}</td>
-                              <td className="p-3">
-                                 {r.checkedIn ? (
-                                    <span className="text-blue-600 font-black uppercase text-[9px]">Verified</span>
-                                 ) : (
-                                    <span className="opacity-30 uppercase text-[9px]">Awaiting</span>
-                                 )}
-                              </td>
-                              <td className="p-3 text-right">
                                  {canManageRegistrations ? (
                                    <Link href={`/admin/verify/${r.id}`} className="underline font-black uppercase text-[9px]">Open</Link>
                                  ) : (
-                                   <Link href={`/admin/checkin/${r.id}`} className="underline font-black uppercase text-[9px]">Check-in Link</Link>
+                                   <span className="text-[9px] font-black uppercase opacity-40 italic">LOCKED</span>
                                  )}
-                              </td>
                            </tr>
                          ))}
                       </tbody>
@@ -276,12 +264,6 @@ export default function TrafficRegistryClient({ registrations, teamMembers, canM
                          <p className="font-black uppercase text-lg">{data.leader.participantName}</p>
                          <p className="text-[10px] font-mono opacity-60">{data.leader.participantEmail}</p>
                       </div>
-                      <div className="mt-4 flex justify-between items-center">
-                         <span className={`text-[9px] font-black uppercase px-1 border-2 ${data.leader.checkedIn ? 'bg-blue-100 text-blue-800 border-blue-800' : 'bg-surface border-on-surface opacity-30'}`}>
-                            {data.leader.checkedIn ? 'Verified' : 'Waiting'}
-                         </span>
-                         <Link href={`/admin/checkin/${data.leader.id}`} className="text-[9px] font-black uppercase underline">Scanner Link</Link>
-                      </div>
                    </div>
 
                    {/* Member Cards */}
@@ -291,12 +273,6 @@ export default function TrafficRegistryClient({ registrations, teamMembers, canM
                            <span className="text-[8px] font-black uppercase bg-surface-container-highest text-on-surface px-1 mb-2 inline-block">Team Member</span>
                            <p className="font-black uppercase text-lg">{m.name}</p>
                            <p className="text-[10px] font-mono opacity-60">{m.phone || 'NO PHONE'}</p>
-                        </div>
-                        <div className="mt-4 flex justify-between items-center">
-                           <span className={`text-[9px] font-black uppercase px-1 border-2 ${m.checkedIn ? 'bg-blue-100 text-blue-800 border-blue-800' : 'bg-surface border-on-surface opacity-30'}`}>
-                              {m.checkedIn ? 'Verified' : 'Waiting'}
-                           </span>
-                           <Link href={`/admin/checkin/${m.id}`} className="text-[9px] font-black uppercase underline">Scanner Link</Link>
                         </div>
                      </div>
                    ))}

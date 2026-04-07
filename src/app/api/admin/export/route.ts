@@ -67,7 +67,6 @@ export async function GET(request: Request) {
       eventName: events.name,
       teamName: registrations.teamName,
       paymentStatus: registrations.status,
-      checkInStatus: registrations.checkedIn,
       userId: registrations.userId,
     })
     .from(registrations)
@@ -86,7 +85,7 @@ export async function GET(request: Request) {
       return new NextResponse('No registrations found.', { status: 404 });
     }
 
-    const headers = ['Name', 'College', 'Event', 'Team', 'Phone', 'Payment status', 'Check-in status', 'User ID'];
+    const headers = ['Name', 'College', 'Event', 'Team', 'Phone', 'Payment status', 'User ID'];
     
     const csvContent = [
       headers.join(','),
@@ -98,7 +97,6 @@ export async function GET(request: Request) {
           `"${(row.teamName || '').replace(/"/g, '""')}"`,
           `"${(row.memberPhone || '').replace(/"/g, '""')}"`,
           `"${(row.paymentStatus || '').replace(/"/g, '""')}"`,
-          `"${row.checkInStatus ? 'CHECKED_IN' : 'NOT_CHECKED_IN'}"`,
           `"${(row.userId || '').replace(/"/g, '""')}"`,
         ].join(',');
       })

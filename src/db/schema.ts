@@ -60,7 +60,6 @@ export const organizers = pgTable('organizers', {
 });
 
 // Teams are persisted separately from registrations, so we can store members individually
-// and support admin check-in search by name/phone.
 export const teams = pgTable('teams', {
   id: uuid('id').primaryKey().defaultRandom(),
   eventId: uuid('event_id').references(() => events.id).notNull(),
@@ -78,8 +77,6 @@ export const teamMembers = pgTable(
     branch: text('branch'),
     year: integer('year'),
     phone: text('phone'),
-    checkedIn: boolean('checked_in').default(false).notNull(),
-    checkedInAt: timestamp('checked_in_at'),
     createdAt: timestamp('created_at').defaultNow(),
   },
   (table) => ({
@@ -102,8 +99,6 @@ export const registrations = pgTable(
     paymentNotes: text('payment_notes'),
     status: registrationStatusEnum('status').default('PENDING'),
     totalFee: integer('total_fee'),
-    checkedIn: boolean('checked_in').default(false).notNull(),
-    checkedInAt: timestamp('checked_in_at'),
     createdAt: timestamp('created_at').defaultNow(),
   },
   (table) => ({

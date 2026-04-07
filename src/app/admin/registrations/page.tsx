@@ -24,7 +24,6 @@ export default async function AdminRegistrationsPage() {
     transactionId: registrations.transactionId,
     teamId: registrations.teamId,
     teamName: registrations.teamName,
-    checkedIn: registrations.checkedIn,
   })
   .from(registrations)
   .innerJoin(users, eq(registrations.userId, users.id))
@@ -46,8 +45,8 @@ export default async function AdminRegistrationsPage() {
       </div>
 
       <TrafficRegistryClient
-        registrations={allRegistrations}
-        teamMembers={allTeamMembers}
+        registrations={allRegistrations as any}
+        teamMembers={allTeamMembers as any}
         canManageRegistrations={session.user.role === 'ADMIN'}
       />
     </div>

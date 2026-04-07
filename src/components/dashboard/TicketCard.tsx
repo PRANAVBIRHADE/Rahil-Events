@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import html2canvas from 'html2canvas';
 import BrutalButton from '@/components/ui/BrutalButton';
-import BrutalQRCode from '@/components/ui/BrutalQRCode';
 import Link from 'next/link';
 import TeamChat from '@/components/dashboard/TeamChat';
 
@@ -33,7 +32,6 @@ export default function TicketCard({ reg, userName, college, currentUserId, team
   const [isDownloading, setIsDownloading] = useState<string | null>(null);
   
   // Create a list of all participants (Leader + Members)
-  // The leader's ID is the registration ID for check-in purposes
   const participants = [
     { id: reg.id, name: userName, isLeader: true, college: college },
     ...teamMembers.map(m => ({ id: m.id, name: m.name, isLeader: false, college: m.college || college }))
@@ -62,14 +60,6 @@ export default function TicketCard({ reg, userName, college, currentUserId, team
         setIsDownloading(null);
       }
     }
-  };
-
-  const getVerifyUrl = (id: string) => {
-    const baseUrl =
-      typeof window !== 'undefined'
-        ? window.location.origin
-        : process.env.NEXT_PUBLIC_SITE_URL || 'https://kratos2026.vercel.app';
-    return `${baseUrl}/admin/checkin/${id}`;
   };
 
   const isTeam = reg.format === 'TEAM' || reg.format === 'SOLO_TEAM' || reg.format === 'SOLO_PAIR';
@@ -175,8 +165,8 @@ export default function TicketCard({ reg, userName, college, currentUserId, team
               </div>
             </div>
             
-            {/* Right QR Section */}
-            <div className="w-[250px] border-l-4 border-[#000000] p-6 flex flex-col items-center justify-center bg-[#FFFFFF] relative">
+            {/* Right Branding Section */}
+            <div className="w-[180px] border-l-4 border-[#000000] p-6 flex flex-col items-center justify-center bg-[#FFFFFF] relative">
               <div className="absolute top-2 left-2 right-2 flex justify-between">
                  <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
                  <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
@@ -185,8 +175,8 @@ export default function TicketCard({ reg, userName, college, currentUserId, team
                  <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
                  <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
               </div>
-              <p className="text-[10px] font-black uppercase tracking-widest mb-4">SHOW AT ENTRANCE</p>
-              <BrutalQRCode data={getVerifyUrl(p.id)} size={150} />
+              <img src="/UPDATED COLLEGE LOGO.png" alt="College Logo" className="w-[120px] h-auto opacity-10 grayscale mb-2" />
+              <p className="text-[10px] font-black uppercase tracking-widest text-center mt-2">OFFICIAL PASS</p>
             </div>
           </div>
         ))}
