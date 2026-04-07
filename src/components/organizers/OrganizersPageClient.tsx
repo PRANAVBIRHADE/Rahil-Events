@@ -767,6 +767,43 @@ export default function OrganizersPageClient({ organizers }: OrganizersPageClien
 
 
 
+          {/* Coordinator Recruitment CTA */}
+
+          <motion.div
+
+            initial={{ opacity: 0, x: -20 }}
+
+            animate={{ opacity: 1, x: 0 }}
+
+            transition={{ delay: 0.4 }}
+
+            className="mt-8 flex flex-wrap items-center gap-4 group"
+
+          >
+
+            <div className="flex items-center gap-3 bg-primary-container text-on-primary-container px-4 py-2 brutal-border shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] transition-all duration-300 group-hover:shadow-[6px_6px_0px_0px_var(--primary-container)] group-hover:bg-surface group-hover:text-on-surface">
+
+              <div className="w-2 h-2 rounded-full bg-on-primary-container animate-pulse group-hover:bg-primary-container" />
+
+              <p className="text-xs md:text-sm font-black uppercase tracking-widest">
+
+                Recruitment Open
+
+              </p>
+
+            </div>
+
+            <p className="text-sm md:text-lg font-bold uppercase tracking-tight italic text-primary-container">
+
+              Interested in becoming a coordinator? Contact <a href="tel:9834147160" className="underline decoration-2 underline-offset-4 font-black text-surface hover:text-primary-container transition-colors">9834147160</a>
+
+            </p>
+
+          </motion.div>
+
+
+
+
           {/* Stats bar (glassmorphism) */}
 
           <motion.div
