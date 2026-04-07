@@ -16,23 +16,23 @@ const sql = neon(databaseUrl);
 const db = drizzle(sql, { schema });
 
 async function updateFee() {
-  console.log('--- UPDATING REGISTRATION FEE FROM 75 TO 69 ---');
+  console.log('--- UPDATING REGISTRATION FEE TO 49 ---');
 
   // 1. Update System Settings (Global Fee)
   console.log('Updating global fee in system settings...');
   await db.update(schema.systemSettings)
     .set({
-      feePerPerson: 69,
+      feePerPerson: 49,
     })
     .where(eq(schema.systemSettings.id, 1));
 
-  // 2. Update all events where fee is 75
-  console.log('Updating event-specific fees where current fee is 75...');
+  // 2. Update all events where fee is > 0
+  console.log('Updating event-specific fees where current fee is greater than 0...');
   const result = await db.update(schema.events)
     .set({
-      fee: 69,
+      fee: 49,
     })
-    .where(eq(schema.events.fee, 75));
+    .where(ne(schema.events.fee, 0));
   
   console.log('Fee updated successfully in the database.');
   process.exit(0);

@@ -166,10 +166,11 @@ If timings change beyond this structure, the code will need updates.
 
 | Number of members | Fee |
 | --- | --- |
-| 1 member | ₹69 |
-| 2 members | ₹140 |
-| 3 members | ₹200 |
-| 4 members | ₹240 |
+| 1 member | ₹49 |
+| 2 members | ₹98 |
+| 3 members | ₹147 |
+| 4 members | ₹196 |
+| 5 members | ₹245 |
 
 ---
 
@@ -464,7 +465,7 @@ Do not store passwords here.
 | UPI ID | 9834147160@kotak811 | Maps to admin settings |
 | UPI account holder name | SHAIKH RAHIL HUSAIN SHAUKAT HUSSAIN | For participant confidence |
 | Payment app / bank name |  | Optional |
-| Default fee per person (INR) | 69 | Maps to global `feePerPerson` |
+| Default fee per person (INR) | 49 | Maps to global `feePerPerson` |
 | Are any events free? | YES | If yes, list exceptions below |
 | Free event list | Reel Competition | If applicable |
 | Refund policy | No refunds | Public wording |
