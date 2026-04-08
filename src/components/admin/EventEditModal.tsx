@@ -23,6 +23,7 @@ interface Event {
   teamSizeMin: number | null;
   expectedParticipants: number | null;
   prizeDetails: string | null;
+  sortOrder: number | null;
 }
 
 interface EventEditModalProps {
@@ -61,7 +62,7 @@ export default function EventEditModal({ event, isOpen, onClose }: EventEditModa
       } else {
         onClose();
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred.');
     } finally {
       setLoading(false);
@@ -238,6 +239,13 @@ export default function EventEditModal({ event, isOpen, onClose }: EventEditModa
                       name="schedule" 
                       defaultValue={event.schedule || ''} 
                       placeholder="e.g. Day 1, 10:00 AM"
+                    />
+
+                    <BrutalInput 
+                      label="Priority / Sort Order (Higher = First)" 
+                      name="sortOrder" 
+                      type="number" 
+                      defaultValue={event.sortOrder || 0} 
                     />
                   </div>
                 </div>

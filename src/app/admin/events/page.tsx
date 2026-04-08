@@ -9,7 +9,7 @@ import EventManagementClient from '@/components/admin/EventManagementClient';
 export default async function EventManagementPage() {
   await requireAdminPageAccess();
 
-  const allEvents = await db.select().from(events).orderBy(desc(events.createdAt));
+  const allEvents = await db.select().from(events).orderBy(desc(events.sortOrder), desc(events.createdAt));
 
   return (
     <div className="max-w-[1440px] mx-auto px-6 py-12">

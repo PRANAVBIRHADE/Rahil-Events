@@ -42,6 +42,7 @@ export const events = pgTable('events', {
   expectedParticipants: integer('expected_participants'),
   prizeDetails: text('prize_details'),
   winners: json('winners'),
+  sortOrder: integer('sort_order').default(0),
   createdAt: timestamp('created_at').defaultNow(),
 });
 

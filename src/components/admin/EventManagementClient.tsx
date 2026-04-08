@@ -23,6 +23,7 @@ interface Event {
   teamSizeMin: number | null;
   expectedParticipants: number | null;
   prizeDetails: string | null;
+  sortOrder: number | null;
 }
 
 interface EventManagementClientProps {
@@ -48,6 +49,7 @@ export default function EventManagementClient({ initialEvents }: EventManagement
                 <th className="p-6">Registry Entry</th>
                 <th className="p-6">Structural Specs</th>
                 <th className="p-6">Logistics</th>
+                <th className="p-6">Priority</th>
                 <th className="p-6 text-right">Administrative Actions</th>
               </tr>
             </thead>
@@ -100,6 +102,12 @@ export default function EventManagementClient({ initialEvents }: EventManagement
                          </span>
                        </div>
                     </div>
+                  </td>
+                  
+                  <td className="p-6 text-center">
+                    <span className="bg-black text-white px-2 py-1 text-xs font-mono brutal-border">
+                      P: {event.sortOrder || 0}
+                    </span>
                   </td>
 
                   <td className="p-6">

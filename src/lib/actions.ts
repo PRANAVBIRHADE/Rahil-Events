@@ -377,6 +377,7 @@ export async function updateEvent(formData: FormData) {
         teamSize,
         teamSizeMin,
         expectedParticipants,
+        sortOrder: parseInt(formData.get('sortOrder') as string) || 0,
         schedule: formData.get('schedule') as string || null,
       })
       .where(eq(events.id, id));

@@ -45,8 +45,8 @@ export default async function AdminRegistrationsPage() {
       </div>
 
       <TrafficRegistryClient
-        registrations={allRegistrations as any}
-        teamMembers={allTeamMembers as any}
+        registrations={allRegistrations}
+        teamMembers={allTeamMembers}
         canManageRegistrations={session.user.role === 'ADMIN'}
       />
     </div>

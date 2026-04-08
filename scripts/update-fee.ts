@@ -28,7 +28,7 @@ async function updateFee() {
 
   // 2. Update all events where fee is > 0
   console.log('Updating event-specific fees where current fee is greater than 0...');
-  const result = await db.update(schema.events)
+  await db.update(schema.events)
     .set({
       fee: 49,
     })

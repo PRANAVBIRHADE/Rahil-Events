@@ -5,7 +5,7 @@ import { desc } from 'drizzle-orm';
 import EventsClientFilter from './EventsClientFilter';
 
 const EventsGrid = async () => {
-  const dbEvents = await db.select().from(eventsTable).orderBy(desc(eventsTable.createdAt));
+  const dbEvents = await db.select().from(eventsTable).orderBy(desc(eventsTable.sortOrder), desc(eventsTable.createdAt));
 
   return (
     <section id="events" className="py-12 md:py-24 px-4 md:px-6 max-w-[1440px] mx-auto overflow-hidden">
