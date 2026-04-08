@@ -322,31 +322,73 @@ export async function deleteEvent(formData: FormData) {
 }
 
 export async function updateEvent(formData: FormData) {
-  await assertAdminAction();
+  try {
+    await assertAdminAction();
+  } catch (error) {
+    return { error: getErrorMessage(error, 'Unauthorized. Admin access required.') };
+  }
 
   const id = formData.get('id') as string;
+  const name = formData.get('name') as string;
+  const tagline = formData.get('tagline') as string;
+  const description = formData.get('description') as string;
+  const category = (formData.get('category') as string) || null;
+  const venue = formData.get('venue') as string;
+  const format = (formData.get('format') as string) || 'SOLO';
+  const isCommon = formData.get('isCommon') === 'on';
+  const prizeDetails = (formData.get('prizeDetails') as string) || null;
+  
   const fee = parseInt(formData.get('fee') as string);
   const teamSize = parseInt(formData.get('teamSize') as string);
   const teamSizeMinRaw = (formData.get('teamSizeMin') as string) || null;
-  const teamSizeMin = teamSizeMinRaw ? parseInt(teamSizeMinRaw) : undefined;
+  const teamSizeMin = teamSizeMinRaw ? parseInt(teamSizeMinRaw) : 1;
 
-  if (Number.isNaN(fee) || Number.isNaN(teamSize) || (teamSizeMin !== undefined && Number.isNaN(teamSizeMin))) {
-    return { error: 'Fee and team sizes must be valid numbers.' };
+  const expectedParticipantsRaw = (formData.get('expectedParticipants') as string) || null;
+  const expectedParticipants = expectedParticipantsRaw ? parseInt(expectedParticipantsRaw) : null;
+
+  if (!id) return { error: 'Event ID is required.' };
+  if (!name?.trim()) return { error: 'Event name is required.' };
+
+  if (Number.isNaN(fee) || fee < 0) {
+    return { error: 'Fee must be a valid number (0 or greater).' };
   }
 
-  if (teamSizeMin !== undefined && teamSizeMin > teamSize) {
+  if (Number.isNaN(teamSize) || teamSize < 1) {
+    return { error: 'Max team size must be at least 1.' };
+  }
+
+  if (teamSizeMin > teamSize) {
     return { error: 'Min team size cannot be greater than max team size.' };
   }
 
   try {
     await db
       .update(events)
-      .set({ fee, teamSize, ...(teamSizeMin !== undefined ? { teamSizeMin } : {}) })
+      .set({
+        name,
+        tagline,
+        description,
+        category,
+        venue,
+        format,
+        isCommon,
+        prizeDetails,
+        fee,
+        teamSize,
+        teamSizeMin,
+        expectedParticipants,
+        schedule: formData.get('schedule') as string || null,
+      })
       .where(eq(events.id, id));
+
     revalidatePath('/');
     revalidatePath('/admin/events');
     revalidatePath('/admin/dashboard');
-  } catch (e) { console.error(e); }
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: 'Failed to update event packet.' };
+  }
 }
 
 export async function deleteUser(formData: FormData) {
