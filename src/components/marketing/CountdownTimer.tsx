@@ -13,8 +13,10 @@ const TimerUnit = ({ value, label }: { value: number; label: string }) => (
 
 const CountdownTimer = ({ targetDate = '2026-04-27T05:00:00Z', enableRefreshOnZero = false }: { targetDate?: string, enableRefreshOnZero?: boolean }) => {
   const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; seconds: number } | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const target = new Date(targetDate).getTime();
 
     const timer = setInterval(() => {
@@ -41,7 +43,7 @@ const CountdownTimer = ({ targetDate = '2026-04-27T05:00:00Z', enableRefreshOnZe
     return () => clearInterval(timer);
   }, [targetDate, enableRefreshOnZero]);
 
-  if (!timeLeft) return null;
+  if (!mounted || !timeLeft) return null;
 
   return (
     <div className="flex flex-wrap justify-center gap-3 md:gap-4 py-4 md:py-8">

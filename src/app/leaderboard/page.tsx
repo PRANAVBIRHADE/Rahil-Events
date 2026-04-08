@@ -62,7 +62,7 @@ export default async function LeaderboardPage() {
           <div className="max-w-[1440px] mx-auto">
              <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-6">
                 <div>
-                   <h1 className="text-6xl md:text-8xl font-black font-display uppercase italic tracking-tighter text-on-surface mb-2 leading-[0.8] mt-4">Leaderboard<br/>&amp; Results</h1>
+                   <h1 className="text-6xl md:text-8xl font-black font-display uppercase italic tracking-tighter text-on-surface mb-2 leading-[0.8] mt-4">Leaderboard<br/>& Results</h1>
                    <div className="h-2 w-32 bg-primary brutal-border mt-4 mb-4"></div>
                    <p className="font-sans font-bold text-primary uppercase text-xs tracking-[0.3em]">Module Trials Concluded. Operational Superiority Determined.</p>
                 </div>
