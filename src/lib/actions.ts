@@ -566,16 +566,18 @@ export async function createRegistration(formData: FormData) {
       throw new Error('Failed to create team record');
     }
 
-    await db.insert(teamMembers).values(
-      additionalMembers.map((m) => ({
-        teamId: insertedTeam.id,
-        name: m.name,
-        college: m.college,
-        branch: m.branch,
-        year: m.year ?? null,
-        phone: m.phone,
-      })),
-    );
+    if (additionalMembers.length > 0) {
+      await db.insert(teamMembers).values(
+        additionalMembers.map((m) => ({
+          teamId: insertedTeam.id,
+          name: m.name,
+          college: m.college,
+          branch: m.branch,
+          year: m.year ?? null,
+          phone: m.phone,
+        })),
+      );
+    }
 
     // Persist legacy JSON `members` for backward compatibility with existing admin UI.
     const legacyAdditionalMembers =
