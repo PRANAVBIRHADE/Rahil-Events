@@ -37,12 +37,12 @@ export default async function RegistrationPage(props: { searchParams: Promise<{ 
   const upiId = settings?.upiId || '9834147160@kotak811';
 
   return (
-    <div className="max-w-[1000px] mx-auto px-4 md:px-6 py-12">
-      <header className="mb-12 text-center">
-        <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-[0.9] text-on-surface italic mb-4">
+    <div className="max-w-[1000px] mx-auto px-4 md:px-6 py-8 md:py-12">
+      <header className="mb-8 md:mb-12 text-center">
+        <h1 className="text-4xl md:text-7xl font-black tracking-tighter uppercase leading-[0.9] text-on-surface italic mb-4">
           Register Fast
         </h1>
-        <p className="text-lg font-sans font-medium opacity-80">
+        <p className="text-base md:text-lg font-sans font-medium opacity-80 max-w-lg mx-auto">
           Complete the form below to confirm your spot in KRATOS 2026. Fast. Simple. Direct.
         </p>
       </header>

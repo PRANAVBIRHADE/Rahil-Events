@@ -282,16 +282,16 @@ export default function UnifiedRegistrationForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-12 bg-surface/50 backdrop-blur-md p-6 md:p-12 brutal-border hard-shadow">
+    <form onSubmit={handleSubmit} className="space-y-8 md:space-y-12 bg-surface/50 backdrop-blur-md p-4 md:p-12 brutal-border hard-shadow">
       {error ? <div className="bg-red-100 text-red-900 p-6 font-black border-4 border-red-500 uppercase italic animate-pulse">{error}</div> : null}
 
-      <div className="space-y-6">
-        <label className="font-display font-black text-3xl md:text-5xl uppercase italic tracking-tighter leading-none block">
+      <div className="space-y-4 md:space-y-6">
+        <label className="font-display font-black text-2xl md:text-5xl uppercase italic tracking-tighter leading-none block">
           01. Select Event
         </label>
         <div className="relative group">
           <select
-            className="w-full bg-surface brutal-input p-6 font-black uppercase text-xl md:text-2xl appearance-none cursor-pointer transition-all hover:bg-primary-container/10 focus:ring-4 focus:ring-primary-container/30"
+            className="w-full bg-surface brutal-input p-4 md:p-6 font-black uppercase text-lg md:text-2xl appearance-none cursor-pointer transition-all hover:bg-primary-container/10 focus:ring-4 focus:ring-primary-container/30"
             value={selectedEventId}
             onChange={(currentEvent) => handleEventChange(currentEvent.target.value)}
             required
@@ -310,8 +310,8 @@ export default function UnifiedRegistrationForm({
       {selectedEvent ? (
         <>
           {participationOptions.allowTeam ? (
-            <div className="space-y-6 bg-primary-container/10 p-6 md:p-8 brutal-border border-dashed">
-              <label className="font-display font-black text-2xl uppercase italic block">02. Participation Mode</label>
+            <div className="space-y-6 bg-primary-container/10 p-4 md:p-8 brutal-border border-dashed">
+              <label className="font-display font-black text-xl md:text-2xl uppercase italic block">02. Participation Mode</label>
               {participationOptions.requireTeam ? (
                 <div className="font-black uppercase text-sm tracking-widest bg-primary-container px-4 py-2 inline-block">
                   Team registration is required for this event
@@ -357,7 +357,7 @@ export default function UnifiedRegistrationForm({
 
           <div className="space-y-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b-8 border-on-surface pb-4">
-              <h3 className="font-display font-black text-4xl md:text-6xl uppercase italic tracking-tighter leading-none">
+              <h3 className="font-display font-black text-3xl md:text-6xl uppercase italic tracking-tighter leading-none">
                 03. {effectiveTeamMode ? 'Team Members' : 'Participant Details'}
               </h3>
               <span className="font-black uppercase text-sm bg-on-surface text-surface px-4 py-1">
@@ -369,7 +369,7 @@ export default function UnifiedRegistrationForm({
               {members.map((member, index) => (
                 <div 
                   key={`${selectedEventId || 'event'}-${index}`} 
-                  className={`p-8 brutal-border relative group transition-all duration-300 ${
+                  className={`p-5 md:p-8 brutal-border relative group transition-all duration-300 ${
                     index === 0 ? 'bg-primary-container/5 border-l-8 border-l-primary-container' : 'bg-surface'
                   }`}
                 >
@@ -377,10 +377,10 @@ export default function UnifiedRegistrationForm({
                     <button
                       type="button"
                       onClick={() => removeMember(index)}
-                      className="absolute -top-4 -right-4 bg-red-500 text-white w-10 h-10 brutal-border hard-shadow flex items-center justify-center hover:bg-black transition-colors z-20"
+                      className="absolute -top-3 -right-3 md:-top-4 md:-right-4 bg-red-500 text-white w-8 h-8 md:w-10 md:h-10 brutal-border hard-shadow flex items-center justify-center hover:bg-black transition-colors z-20"
                       title="Remove Member"
                     >
-                      <span className="font-black text-xl">×</span>
+                      <span className="font-black text-lg md:text-xl">×</span>
                     </button>
                   ) : null}
                   
@@ -506,19 +506,19 @@ export default function UnifiedRegistrationForm({
             </div>
 
             {effectiveTeamMode && members.length < maxParticipants ? (
-              <BrutalButton type="button" variant="outline" onClick={addMember} className="w-full py-6 text-xl font-black uppercase tracking-widest italic group">
+              <BrutalButton type="button" variant="outline" onClick={addMember} className="w-full py-4 md:py-6 text-lg md:text-xl font-black uppercase tracking-widest italic group">
                 <span className="group-hover:mr-4 transition-all tracking-tighter mr-2">+</span> Add Team Member
               </BrutalButton>
             ) : null}
           </div>
 
           {requiresPayment ? (
-            <div className="bg-on-surface text-surface p-6 md:p-10 brutal-border hard-shadow-gold italic space-y-8 relative overflow-hidden">
+            <div className="bg-on-surface text-surface p-5 md:p-10 brutal-border hard-shadow-gold italic space-y-8 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary-container/10 -rotate-45 translate-x-16 -translate-y-16" />
               
               <div className="flex flex-col md:flex-row justify-between items-start gap-8 relative z-10">
                 <div className="space-y-6 flex-1">
-                  <h3 className="font-black text-3xl md:text-4xl uppercase text-primary-container leading-none">
+                  <h3 className="font-black text-2xl md:text-4xl uppercase text-primary-container leading-none">
                     Payment Required
                   </h3>
                   
@@ -530,7 +530,7 @@ export default function UnifiedRegistrationForm({
                       Total Members: <strong className="text-xl">{members.length}</strong>
                     </p>
                     <div className="h-0.5 bg-surface/20 w-32" />
-                    <p className="font-display font-black text-2xl md:text-4xl uppercase text-primary-container mt-4">
+                    <p className="font-display font-black text-xl md:text-4xl uppercase text-primary-container mt-4">
                       Total: INR {selectedEvent.fee * members.length}
                     </p>
                   </div>
@@ -541,15 +541,15 @@ export default function UnifiedRegistrationForm({
                   </div>
                 </div>
 
-                <div className="w-full md:w-auto flex flex-col items-center gap-4 bg-white p-6 brutal-border">
+                <div className="w-full md:w-auto flex flex-col items-center justify-center gap-4 bg-white p-4 md:p-6 brutal-border mx-auto md:mx-0">
                   <img
                     src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
                       `upi://pay?pa=${upiId}&pn=KRATOS%202026&am=${selectedEvent.fee * members.length}&cu=INR&tn=Registration%20for%20${selectedEvent.name}`,
                     )}`}
                     alt="Payment QR Code"
-                    className="w-48 h-48 pixelated"
+                    className="w-40 h-40 md:w-48 md:h-48 pixelated"
                   />
-                  <p className="text-[10px] text-black font-black uppercase tracking-widest bg-primary-container px-2 py-1">
+                  <p className="text-[9px] md:text-[10px] text-black font-black uppercase tracking-widest bg-primary-container px-2 py-1 text-center">
                     Scan to Pay INR {selectedEvent.fee * members.length}
                   </p>
                 </div>
@@ -609,7 +609,7 @@ export default function UnifiedRegistrationForm({
             type="submit"
             size="xl"
             disabled={loading || (requiresPayment && !uploadPreset)}
-            className="w-full py-6 mt-8"
+            className="w-full py-5 md:py-6 mt-8 text-xl md:text-2xl"
           >
             {loading ? 'Submitting...' : 'Submit Registration'}
           </BrutalButton>
