@@ -358,7 +358,7 @@ export default function UnifiedRegistrationForm({
           <div className="space-y-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b-8 border-on-surface pb-4">
               <h3 className="font-display font-black text-4xl md:text-6xl uppercase italic tracking-tighter leading-none">
-                03. {effectiveTeamMode ? 'Team Squad' : 'Personal Info'}
+                03. {effectiveTeamMode ? 'Team Members' : 'Participant Details'}
               </h3>
               <span className="font-black uppercase text-sm bg-on-surface text-surface px-4 py-1">
                 {members.length} of {maxParticipants} slots filled
@@ -389,7 +389,7 @@ export default function UnifiedRegistrationForm({
                       {index + 1}
                     </span>
                     <h4 className="font-display font-black text-2xl uppercase italic tracking-tight">
-                      {index === 0 ? 'Leader / Coordinator' : `Squad Member ${index + 1}`}
+                      {index === 0 ? 'Leader / Main Participant' : `Team Member ${index + 1}`}
                     </h4>
                   </div>
 
@@ -507,7 +507,7 @@ export default function UnifiedRegistrationForm({
 
             {effectiveTeamMode && members.length < maxParticipants ? (
               <BrutalButton type="button" variant="outline" onClick={addMember} className="w-full py-6 text-xl font-black uppercase tracking-widest italic group">
-                <span className="group-hover:mr-4 transition-all tracking-tighter mr-2">+</span> Add To Squad
+                <span className="group-hover:mr-4 transition-all tracking-tighter mr-2">+</span> Add Team Member
               </BrutalButton>
             ) : null}
           </div>
