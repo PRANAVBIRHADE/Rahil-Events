@@ -32,12 +32,10 @@ export default function AdminRegisterPage() {
       <div className="w-full max-w-md">
         <header className="mb-8 text-center">
           <div className="inline-block bg-primary-container px-3 py-1 mb-4">
-            <span className="text-on-primary-container font-display font-black text-xs tracking-widest uppercase">New Staff Init</span>
+            <span className="text-on-primary-container font-display font-black text-xs tracking-widest uppercase">Staff Setup</span>
           </div>
           <h1 className="text-4xl font-black text-surface tracking-tighter uppercase italic">
-            Command Center
-            <br />
-            Registry
+            Staff Registration
           </h1>
         </header>
 
@@ -50,15 +48,15 @@ export default function AdminRegisterPage() {
             ) : null}
 
             <BrutalInput
-              label="Staff Designator (Name)"
+              label="Name"
               name="name"
               type="text"
-              placeholder="E.G. CHECK-IN DESK"
+              placeholder="Enter staff name"
               required
             />
 
             <BrutalInput
-              label="Staff Identifier (Email)"
+              label="Staff Email"
               name="email"
               type="email"
               placeholder="staff@kratos.fest"
@@ -66,7 +64,7 @@ export default function AdminRegisterPage() {
             />
 
             <BrutalInput
-              label="Security Override Key (Password)"
+              label="Password"
               name="password"
               type="password"
               placeholder="Enter password"
@@ -95,13 +93,13 @@ export default function AdminRegisterPage() {
             />
 
             <BrutalButton type="submit" className="w-full mt-4" size="lg" disabled={loading}>
-              {loading ? 'INITIALIZING...' : 'ESTABLISH CLEARANCE'}
+              {loading ? 'Creating Account...' : 'Create Staff Account'}
             </BrutalButton>
           </form>
 
           <div className="mt-8 pt-6 border-t-2 border-on-surface/10 text-center">
             <Link href="/auth/adminlogin" className="text-[10px] font-black uppercase text-primary hover:underline block">
-              &larr; Abort & Return to Staff Login
+              &larr; Back to Staff Login
             </Link>
           </div>
         </BrutalCard>

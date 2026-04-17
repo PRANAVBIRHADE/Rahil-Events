@@ -1,50 +1,65 @@
-import { db } from '@/db';
-import { registrations, users, events } from '@/db/schema';
-import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
-import { requireStaffPageAccess } from '@/lib/authz';
+import { desc, eq } from 'drizzle-orm';
+import { auth } from '@/auth';
+import { db } from '@/db';
+import { events, registrations, users } from '@/db/schema';
+import { isStaffRole } from '@/lib/authz';
+
+function toCsvCell(value: string | null | undefined) {
+  return `"${(value ?? '').replace(/"/g, '""')}"`;
+}
 
 export async function GET() {
-  try {
-    await requireStaffPageAccess();
-    
-    const data = await db.select({
-      participantName: users.name,
-      moduleName: events.name,
-      status: registrations.status,
-      transactionId: registrations.transactionId,
-    })
-    .from(registrations)
-    .innerJoin(users, eq(registrations.userId, users.id))
-    .innerJoin(events, eq(registrations.eventId, events.id));
+  const session = await auth();
 
-    if (data.length === 0) {
-      return new NextResponse('No proofs found.', { status: 404 });
+  if (!session?.user) {
+    return new NextResponse('Unauthorized', { status: 401 });
+  }
+
+  if (!isStaffRole(session.user.role)) {
+    return new NextResponse('Forbidden', { status: 403 });
+  }
+
+  try {
+    const proofs = await db
+      .select({
+        eventName: events.name,
+        participantName: users.name,
+        paymentScreenshot: registrations.paymentScreenshot,
+        status: registrations.status,
+        transactionId: registrations.transactionId,
+      })
+      .from(registrations)
+      .innerJoin(users, eq(registrations.userId, users.id))
+      .innerJoin(events, eq(registrations.eventId, events.id))
+      .orderBy(desc(registrations.createdAt));
+
+    if (proofs.length === 0) {
+      return new NextResponse('No payment records found.', { status: 404 });
     }
 
-    const headers = ['Participant Name', 'Module Name', 'Status', 'Transaction Verification Link / ID'];
-    
-    const csvContent = [
-      headers.join(','),
-      ...data.map(row => {
-        return [
-          `"${(row.participantName || '').replace(/"/g, '""')}"`,
-          `"${(row.moduleName || '').replace(/"/g, '""')}"`,
-          row.status,
-          `"${(row.transactionId || '').replace(/"/g, '""')}"`,
-        ].join(',');
-      })
+    const csv = [
+      ['Participant Name', 'Event Name', 'Status', 'Transaction ID', 'Payment Screenshot URL'].join(','),
+      ...proofs.map((proof) =>
+        [
+          toCsvCell(proof.participantName),
+          toCsvCell(proof.eventName),
+          toCsvCell(proof.status),
+          toCsvCell(proof.transactionId),
+          toCsvCell(proof.paymentScreenshot),
+        ].join(','),
+      ),
     ].join('\n');
 
-    return new NextResponse(csvContent, {
+    return new NextResponse(csv, {
       status: 200,
       headers: {
-        'Content-Type': 'text/csv',
         'Content-Disposition': 'attachment; filename="kratos_payment_proofs.csv"',
+        'Content-Type': 'text/csv',
       },
     });
   } catch (error) {
-    console.error('Proofs Export Error:', error);
-    return new NextResponse('Export Failed', { status: 500 });
+    console.error('Proof export error:', error);
+    return new NextResponse('Export failed.', { status: 500 });
   }
 }

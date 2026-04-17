@@ -27,7 +27,7 @@ export default function AdminLoginPage() {
     });
 
     if (result?.error) {
-      setError('AUTHORIZATION FAILED: INVALID SECURITY CLEARANCE');
+      setError('Login failed. Please check the email and password.');
     } else {
       window.location.href = '/admin/registrations';
     }
@@ -40,12 +40,10 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md">
         <header className="mb-8 text-center">
           <div className="inline-block bg-primary px-3 py-1 mb-4">
-            <span className="text-on-primary font-display font-black text-xs tracking-widest uppercase">Staff Clearance Required</span>
+            <span className="text-on-primary font-display font-black text-xs tracking-widest uppercase">Staff Access</span>
           </div>
           <h1 className="text-4xl font-black text-surface tracking-tighter uppercase italic">
-            Command Center
-            <br />
-            Access
+            Staff Login
           </h1>
         </header>
 
@@ -58,7 +56,7 @@ export default function AdminLoginPage() {
             ) : null}
 
             <BrutalInput
-              label="Staff Identifier (Email)"
+              label="Staff Email"
               name="email"
               type="email"
               placeholder="staff@kratos.fest"
@@ -66,7 +64,7 @@ export default function AdminLoginPage() {
             />
 
             <BrutalInput
-              label="Security Override Key (Password)"
+              label="Password"
               name="password"
               type="password"
               placeholder="Enter password"
@@ -74,26 +72,26 @@ export default function AdminLoginPage() {
             />
 
             <BrutalButton type="submit" className="w-full mt-8" size="lg" disabled={loading}>
-              {loading ? 'AUTHENTICATING...' : 'INITIALIZE SESSION'}
+              {loading ? 'Signing In...' : 'Sign In'}
             </BrutalButton>
 
             <div className="mt-8 text-center">
               <Link href="/auth/adminregister" className="text-xs font-black uppercase tracking-widest opacity-50 hover:opacity-100 hover:text-primary underline">
-                ONBOARD STAFF PROFILE &rarr;
+                Register Staff Account &rarr;
               </Link>
             </div>
           </form>
 
           <div className="mt-8 pt-6 border-t-2 border-on-surface/10 text-center space-y-4">
             <p className="text-[10px] font-display font-bold uppercase opacity-60 tracking-widest text-on-surface">
-              Unauthorized access to this terminal is strictly prohibited.
+              This page is only for staff who review registrations.
             </p>
             <div className="flex flex-col gap-3 items-center">
               <Link href="/auth/adminregister" className="text-xs font-black uppercase text-on-surface border-b-2 border-on-surface hover:bg-on-surface hover:text-surface transition-colors px-2">
-                Initialize New Staff Profile
+                Create Staff Account
               </Link>
-              <Link href="/auth/login" className="text-[10px] font-black uppercase text-primary hover:underline">
-                Return to Standard Participant Login
+              <Link href="/register" className="text-[10px] font-black uppercase text-primary hover:underline">
+                Go to Registration Form
               </Link>
             </div>
           </div>

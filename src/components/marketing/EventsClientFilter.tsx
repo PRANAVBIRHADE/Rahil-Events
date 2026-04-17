@@ -24,11 +24,11 @@ const getFormatLabel = (format: string | null) => {
   }
 };
 
-function FilterContent({ allEvents }: { allEvents: EventCardRecord[] }) {
+function FilterContent({ allEvents, isRegistrationClosed }: { allEvents: EventCardRecord[], isRegistrationClosed: boolean }) {
   if (!allEvents || allEvents.length === 0) {
     return (
       <div className="font-display font-bold uppercase text-on-surface opacity-50 tracking-widest text-center py-20">
-        NO EVENTS AVAILABLE YET
+        NO EVENTS AVAILABLE
       </div>
     );
   }
@@ -67,12 +67,18 @@ function FilterContent({ allEvents }: { allEvents: EventCardRecord[] }) {
                 </span>
               </div>
             </div>
-            <Link
-              href={`/events/${event.slug}/register`}
-              className="font-display font-bold uppercase border-b-2 border-on-surface w-fit hover:border-primary transition-colors block mt-4 md:mt-8 text-sm md:text-base"
-            >
-              {`Register for Event [INR ${event.fee}]`}
-            </Link>
+            {isRegistrationClosed ? (
+              <span className="font-display font-bold uppercase border-b-2 border-red-500 w-fit text-red-500 block mt-4 md:mt-8 text-sm md:text-base opacity-70">
+                Registrations Closed
+              </span>
+            ) : (
+              <Link
+                href={`/register?event=${event.id}`}
+                className="font-display font-bold uppercase border-b-2 border-on-surface w-fit hover:border-primary transition-colors block mt-4 md:mt-8 text-sm md:text-base"
+              >
+                {event.fee > 0 ? `Register [INR ${event.fee}]` : 'Register'}
+              </Link>
+            )}
           </div>
         ))}
       </div>
@@ -80,10 +86,10 @@ function FilterContent({ allEvents }: { allEvents: EventCardRecord[] }) {
   );
 }
 
-export default function EventsClientFilter({ allEvents }: { allEvents: EventCardRecord[] }) {
+export default function EventsClientFilter({ allEvents, isRegistrationClosed }: { allEvents: EventCardRecord[], isRegistrationClosed: boolean }) {
   return (
     <Suspense fallback={<div className="font-display font-bold uppercase text-primary tracking-widest">LOADING EVENTS...</div>}>
-      <FilterContent allEvents={allEvents} />
+      <FilterContent allEvents={allEvents} isRegistrationClosed={isRegistrationClosed} />
     </Suspense>
   );
 }

@@ -4,6 +4,7 @@
 
 
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import Image from 'next/image';
 
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -151,20 +152,12 @@ const OrganizerCard = React.memo(({
 
         <div className="relative w-full aspect-square overflow-hidden bg-surface-container-low">
 
-          <img
-
+          <Image
             src={organizer.imageUrl || PLACEHOLDER_AVATAR}
-
             alt={organizer.organizerName}
-
-            loading="lazy"
-
-            className="w-full h-full object-cover transition-all duration-500 ease-out
-
-              filter grayscale group-hover:grayscale-0
-
-              group-hover:scale-110"
-
+            fill
+            sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
+            className="w-full h-full object-cover transition-all duration-500 ease-out filter grayscale group-hover:grayscale-0 group-hover:scale-110"
           />
 
 
@@ -425,14 +418,12 @@ const OrganizerModal = ({
 
         <div className="relative w-full aspect-[16/10] overflow-hidden bg-surface-container-low">
 
-          <img
-
+          <Image
             src={organizer.imageUrl || PLACEHOLDER_AVATAR}
-
             alt={organizer.organizerName}
-
+            fill
+            sizes="100vw"
             className="w-full h-full object-cover"
-
           />
 
 

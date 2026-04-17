@@ -877,6 +877,7 @@ export async function updateRegistrationStatus(formData: FormData) {
     revalidatePath('/admin/dashboard');
     revalidatePath('/admin/registrations');
     revalidatePath(`/admin/verify/${id}`);
+    revalidatePath('/status');
     return { success: true };
   } catch (error) {
     console.error(error);
@@ -898,6 +899,7 @@ export async function bulkUpdateRegistrationStatus(ids: string[], status: 'APPRO
 
     revalidatePath('/admin/registrations');
     revalidatePath('/admin/dashboard');
+    revalidatePath('/status');
     return { success: true };
   } catch (error) {
     console.error(error);

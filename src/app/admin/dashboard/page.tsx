@@ -3,14 +3,12 @@ import Link from 'next/link';
 import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalButton from '@/components/ui/BrutalButton';
 import CreateEventForm from '@/components/admin/CreateEventForm';
-import BroadcastForm from '@/components/admin/BroadcastForm';
-import GalleryAdminToggle from '@/components/admin/GalleryAdminToggle';
 import LogoutButton from '@/components/dashboard/LogoutButton';
 import { db } from '@/db';
-import { registrations, users, events, systemSettings, teamMembers } from '@/db/schema';
-import NotificationBlastForm from '@/components/admin/NotificationBlastForm';
-import { getNotificationCapabilities, isRegistrationKillSwitchEnabled } from '@/lib/env';
+import { registrations, users, events, teamMembers } from '@/db/schema';
+import { isRegistrationKillSwitchEnabled } from '@/lib/env';
 import { eq, desc, count, sum } from 'drizzle-orm';
+import { requireAdminPageAccess } from '@/lib/authz';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,13 +21,20 @@ const StatCard = ({ label, value, trend }: { label: string; value: string; trend
 );
 
 export default async function AdminDashboard() {
-  const [participantsCount] = await db
+  await requireAdminPageAccess();
+
+  const [approvedRegistrationsCount] = await db
+    .select({ value: count() })
+    .from(registrations)
+    .where(eq(registrations.status, 'APPROVED'));
+
+  const [additionalParticipantsCount] = await db
     .select({ value: count() })
     .from(teamMembers)
     .innerJoin(registrations, eq(teamMembers.teamId, registrations.teamId))
     .where(eq(registrations.status, 'APPROVED'));
 
-  const [teamsCount] = await db.select({ value: count() }).from(registrations).where(eq(registrations.status, 'APPROVED'));
+  const totalParticipants = approvedRegistrationsCount.value + additionalParticipantsCount.value;
 
   const [pendingPaymentsCount] = await db
     .select({ value: count() })
@@ -48,19 +53,13 @@ export default async function AdminDashboard() {
 
   const stats = [
     { label: 'Registered Accounts', value: totalAccounts.toString(), href: '/admin/users' },
-    { label: 'Total Participants', value: participantsCount.value.toString() },
-    { label: 'Total Teams', value: teamsCount.value.toString() },
-    { label: 'Pending Payments', value: pendingPaymentsCount.value.toString() },
+    { label: 'Approved Participants', value: totalParticipants.toString() },
+    { label: 'Approved Registrations', value: approvedRegistrationsCount.value.toString() },
+    { label: 'Pending Registrations', value: pendingPaymentsCount.value.toString() },
     { label: 'Revenue Estimate', value: `INR ${revTotal.value || 0}` },
   ];
 
-  const dbSettings = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
-  const isGalleryLocked = dbSettings.length > 0 ? dbSettings[0].isGalleryLocked ?? true : true;
-
-  const notificationCapabilities = getNotificationCapabilities();
   const killSwitchEnabled = isRegistrationKillSwitchEnabled();
-
-  const allEvents = await db.select({ id: events.id, name: events.name }).from(events);
 
   const recentRegistrations = await db.select({
     id: registrations.id,
@@ -81,13 +80,13 @@ export default async function AdminDashboard() {
       <div className="mb-12 flex justify-between items-end">
         <div>
           <h1 className="text-5xl font-black uppercase tracking-tighter mb-2 italic">Admin Panel</h1>
-          <p className="font-display font-bold uppercase text-primary tracking-widest text-sm">Manage Kratos 2026</p>
+          <p className="font-display font-bold uppercase text-primary tracking-widest text-sm">Manage registrations and event-day operations</p>
         </div>
         <div className="flex gap-4 items-center">
           {killSwitchEnabled && (
             <span className="text-[10px] font-black uppercase tracking-widest text-red-600 border-2 border-red-600 px-2 py-1 flex items-center gap-1 bg-red-50">
               <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></span>
-              KILL-SWITCH ENGAGED
+              REGISTRATION PAUSED
             </span>
           )}
           <Link href="/api/admin/export?dataset=participants" target="_blank">
@@ -118,7 +117,7 @@ export default async function AdminDashboard() {
             <div className="p-6 border-b-2 border-on-surface bg-surface-container-low flex justify-between items-center">
               <h2 className="text-2xl font-black uppercase italic">Recent Registrations</h2>
               <Link href="/admin/registrations" className="text-[10px] font-black uppercase border-b-2 border-on-surface hover:text-primary hover:border-primary transition-colors">
-                View Full Logs
+                View All Registrations
               </Link>
             </div>
             <div className="overflow-x-auto">
@@ -156,7 +155,7 @@ export default async function AdminDashboard() {
               </table>
             </div>
             <div className="p-4 text-center border-t-2 border-on-surface bg-surface-container-low">
-              <Link href="/admin/registrations" className="text-xs font-black uppercase hover:underline">View Full Logs &rarr;</Link>
+              <Link href="/admin/registrations" className="text-xs font-black uppercase hover:underline">View All Registrations &rarr;</Link>
             </div>
           </BrutalCard>
         </div>
@@ -190,44 +189,20 @@ export default async function AdminDashboard() {
                   Download All Proofs
                 </BrutalButton>
               </Link>
-              <Link href="/admin/users" className="w-full">
-                <BrutalButton className="w-full justify-start text-blue-800 border-blue-800 bg-blue-100" variant="secondary">
-                  <span className="material-symbols-outlined mr-3">manage_accounts</span>
-                  Manage Personnel
-                </BrutalButton>
-              </Link>
-              <Link href="/admin/results" className="w-full">
-                <BrutalButton className="w-full justify-start text-purple-800 border-purple-800 bg-purple-100" variant="secondary">
-                  <span className="material-symbols-outlined mr-3">emoji_events</span>
-                  Manage Winner Data
-                </BrutalButton>
-              </Link>
               <Link href="/admin/events" className="w-full">
                 <BrutalButton className="w-full justify-start text-red-800 border-red-800 bg-red-100" variant="secondary">
                   <span className="material-symbols-outlined mr-3">dangerous</span>
                   Manage Events
                 </BrutalButton>
               </Link>
-              <Link href="/admin/desk" className="w-full">
-                <BrutalButton className="w-full justify-start text-white border-black bg-black hover:bg-zinc-800">
-                  <span className="material-symbols-outlined mr-3 text-primary">person_add</span>
-                  Volunteer Entry Desk
-                </BrutalButton>
-              </Link>
             </div>
           </BrutalCard>
 
-          <BroadcastForm />
-
-          <NotificationBlastForm events={allEvents} capabilities={notificationCapabilities} />
-
-          <GalleryAdminToggle isLocked={isGalleryLocked} />
-
           <div className="p-6 border-2 border-on-surface bg-primary-container italic">
             <p className="text-sm font-bold uppercase leading-tight">
-              System Health: Optimized
+              System Health: Ready for Review
               <br />
-              Active Admins: 02
+              Registration Flow: Live
             </p>
           </div>
         </div>

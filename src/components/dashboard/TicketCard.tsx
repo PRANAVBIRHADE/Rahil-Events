@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import html2canvas from 'html2canvas';
-import BrutalButton from '@/components/ui/BrutalButton';
 import Link from 'next/link';
+import Image from 'next/image';
+import BrutalButton from '@/components/ui/BrutalButton';
 import TeamChat from '@/components/dashboard/TeamChat';
 
 type TicketCardProps = {
@@ -175,7 +176,13 @@ export default function TicketCard({ reg, userName, college, currentUserId, team
                  <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
                  <span className="w-2 h-2 bg-[#000000] rounded-full block"></span>
               </div>
-              <img src="/UPDATED COLLEGE LOGO.png" alt="College Logo" className="w-[120px] h-auto opacity-10 grayscale mb-2" />
+              <Image
+                src="/UPDATED COLLEGE LOGO.png"
+                alt="College Logo"
+                width={120}
+                height={120}
+                className="w-[120px] h-auto opacity-10 grayscale mb-2"
+              />
               <p className="text-[10px] font-black uppercase tracking-widest text-center mt-2">OFFICIAL PASS</p>
             </div>
           </div>

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Save, AlertCircle } from 'lucide-react';
+import { X, AlertCircle } from 'lucide-react';
 import BrutalButton from '@/components/ui/BrutalButton';
 import BrutalInput from '@/components/ui/BrutalInput';
 import { updateEvent } from '@/lib/actions';

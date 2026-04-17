@@ -7,6 +7,8 @@ import { db } from '@/db';
 import { events, systemSettings, scheduleSlots } from '@/db/schema';
 import { asc, eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
+import { isRegistrationKillSwitchEnabled } from '@/lib/env';
+import { resolvePerParticipantFee } from '@/lib/registration';
 
 export default async function EventDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -18,12 +20,11 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
     notFound();
   }
 
-  const feePerPersonResolved =
-    dbEvent.fee === 0
-      ? 0
-      : settings?.feePerPerson && settings.feePerPerson > 0
-        ? settings.feePerPerson
-        : dbEvent.fee;
+  const feePerPersonResolved = resolvePerParticipantFee(dbEvent.fee, settings?.feePerPerson);
+  const deadline = settings?.deadline ?? null;
+  const registrationOpen = settings?.registrationOpen ?? true;
+  const isRegistrationClosed =
+    isRegistrationKillSwitchEnabled() || !registrationOpen || (deadline ? new Date() > deadline : false);
 
   const scheduleForEvent = await db
     .select()
@@ -53,8 +54,8 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
     venue: dbEvent.venue || 'Venue TBA',
   };
 
-  const deadlineText = settings?.deadline
-    ? settings.deadline.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
+  const deadlineText = deadline
+    ? deadline.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
     : 'Deadline not configured';
 
   return (
@@ -125,9 +126,15 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
             </div>
 
             <div className="space-y-4 pt-4">
-              <Link href={`/events/${dbEvent.slug}/register`} className="block">
-                <BrutalButton className="w-full" size="lg">Register Now</BrutalButton>
-              </Link>
+              {isRegistrationClosed ? (
+                <div className="w-full border-2 border-red-500 bg-red-50 text-red-700 font-black uppercase text-center py-4">
+                  Registrations Closed
+                </div>
+              ) : (
+                <Link href={`/events/${dbEvent.slug}/register`} className="block">
+                  <BrutalButton className="w-full" size="lg">Register</BrutalButton>
+                </Link>
+              )}
               <Link href="/events" className="block">
                 <BrutalButton className="w-full" variant="outline">Back to Events</BrutalButton>
               </Link>

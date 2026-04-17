@@ -33,6 +33,25 @@ export function isNotificationWhatsappConfigured(): boolean {
   );
 }
 
+export function getDeploymentEnvStatus() {
+  return [
+    { key: 'DATABASE_URL', configured: Boolean(process.env.DATABASE_URL?.trim()) },
+    { key: 'AUTH_SECRET', configured: Boolean(process.env.AUTH_SECRET?.trim()) },
+    {
+      key: 'NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME',
+      configured: Boolean(process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME?.trim()),
+    },
+    {
+      key: 'NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET',
+      configured: Boolean(process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET?.trim()),
+    },
+    {
+      key: 'NEXT_PUBLIC_SITE_URL',
+      configured: Boolean(process.env.NEXT_PUBLIC_SITE_URL?.trim()),
+    },
+  ];
+}
+
 export function getNotificationCapabilities() {
   return {
     email: isNotificationEmailConfigured(),

@@ -1,8 +1,25 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, useSyncExternalStore } from 'react';
 
-const TimerUnit = ({ value, label }: { value: number; label: string }) => (
+function getTimeLeft(targetDate: string) {
+  const target = new Date(targetDate).getTime();
+  const now = Date.now();
+  const distance = target - now;
+
+  if (Number.isNaN(target) || distance <= 0) {
+    return null;
+  }
+
+  return {
+    days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+    minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+    seconds: Math.floor((distance % (1000 * 60)) / 1000),
+  };
+}
+
+const TimerUnit = ({ value, label }: { label: string; value: number }) => (
   <div className="flex flex-col items-center p-3 md:p-4 brutal-border bg-surface hard-shadow min-w-[70px] md:min-w-[100px]">
     <span className="text-3xl md:text-6xl font-black font-display leading-none">
       {value.toString().padStart(2, '0')}
@@ -11,39 +28,43 @@ const TimerUnit = ({ value, label }: { value: number; label: string }) => (
   </div>
 );
 
-const CountdownTimer = ({ targetDate = '2026-04-27T05:00:00Z', enableRefreshOnZero = false }: { targetDate?: string, enableRefreshOnZero?: boolean }) => {
-  const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; seconds: number } | null>(null);
-  const [mounted, setMounted] = useState(false);
+export default function CountdownTimer({
+  targetDate = '2026-04-27T05:00:00Z',
+  enableRefreshOnZero = false,
+}: {
+  enableRefreshOnZero?: boolean;
+  targetDate?: string;
+}) {
+  const mounted = useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false,
+  );
+  const [timeLeft, setTimeLeft] = useState(() => getTimeLeft(targetDate));
 
   useEffect(() => {
-    setMounted(true);
-    const target = new Date(targetDate).getTime();
+    if (!mounted) {
+      return undefined;
+    }
 
-    const timer = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = target - now;
+    const updateCountdown = () => {
+      const nextTimeLeft = getTimeLeft(targetDate);
+      setTimeLeft(nextTimeLeft);
 
-      if (distance < 0) {
-        clearInterval(timer);
-        setTimeLeft(null);
-        if (enableRefreshOnZero) {
-          window.location.reload();
-        }
-        return;
+      if (!nextTimeLeft && enableRefreshOnZero) {
+        window.location.reload();
       }
+    };
 
-      setTimeLeft({
-        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-        seconds: Math.floor((distance % (1000 * 60)) / 1000),
-      });
-    }, 1000);
+    updateCountdown();
+    const timer = window.setInterval(updateCountdown, 1000);
 
-    return () => clearInterval(timer);
-  }, [targetDate, enableRefreshOnZero]);
+    return () => window.clearInterval(timer);
+  }, [enableRefreshOnZero, mounted, targetDate]);
 
-  if (!mounted || !timeLeft) return null;
+  if (!mounted || !timeLeft) {
+    return null;
+  }
 
   return (
     <div className="flex flex-wrap justify-center gap-3 md:gap-4 py-4 md:py-8">
@@ -53,6 +74,4 @@ const CountdownTimer = ({ targetDate = '2026-04-27T05:00:00Z', enableRefreshOnZe
       <TimerUnit value={timeLeft.seconds} label="Secs" />
     </div>
   );
-};
-
-export default CountdownTimer;
+}

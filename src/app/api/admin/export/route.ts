@@ -1,116 +1,212 @@
-import { db } from '@/db';
-import { registrations, events, teamMembers, users } from '@/db/schema';
-import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
-import { requireStaffPageAccess } from '@/lib/authz';
+import { desc, eq, inArray } from 'drizzle-orm';
+import { auth } from '@/auth';
+import { db } from '@/db';
+import { events, registrations, teamMembers, users } from '@/db/schema';
+import { isStaffRole } from '@/lib/authz';
+
+function toCsvCell(value: string | number | null | undefined) {
+  const resolved = value == null ? '' : String(value);
+  return `"${resolved.replace(/"/g, '""')}"`;
+}
+
+function buildCsv(headers: string[], rows: Array<Array<string | number | null | undefined>>) {
+  return [headers.join(','), ...rows.map((row) => row.map(toCsvCell).join(','))].join('\n');
+}
 
 export async function GET(request: Request) {
-  try {
-    await requireStaffPageAccess();
+  const session = await auth();
 
+  if (!session?.user) {
+    return new NextResponse('Unauthorized', { status: 401 });
+  }
+
+  if (!isStaffRole(session.user.role)) {
+    return new NextResponse('Forbidden', { status: 403 });
+  }
+
+  try {
     const { searchParams } = new URL(request.url);
     const dataset = searchParams.get('dataset') || 'participants';
-    const eventId = searchParams.get('eventId');
 
     if (dataset === 'users') {
-      const allUsers = await db.select({
-        name: users.name,
-        email: users.email,
-        phone: users.phone,
-        college: users.college,
-        branch: users.branch,
-        year: users.year,
-        role: users.role,
-        xp: users.xp,
-        level: users.level,
-        joinedAt: users.createdAt,
-      }).from(users);
+      const allUsers = await db
+        .select({
+          branch: users.branch,
+          college: users.college,
+          email: users.email,
+          joinedAt: users.createdAt,
+          level: users.level,
+          name: users.name,
+          phone: users.phone,
+          role: users.role,
+          xp: users.xp,
+          year: users.year,
+        })
+        .from(users)
+        .orderBy(desc(users.createdAt));
 
       if (allUsers.length === 0) {
         return new NextResponse('No users found.', { status: 404 });
       }
 
-      const headers = ['Name', 'Email', 'Phone', 'College', 'Branch', 'Year', 'Role', 'XP', 'Level', 'Joined'];
-      
-      const csvContent = [
-        headers.join(','),
-        ...allUsers.map(row => {
-          return [
-            `"${(row.name || '').replace(/"/g, '""')}"`,
-            `"${(row.email || '').replace(/"/g, '""')}"`,
-            `"${(row.phone || '').replace(/"/g, '""')}"`,
-            `"${(row.college || '').replace(/"/g, '""')}"`,
-            `"${(row.branch || '').replace(/"/g, '""')}"`,
-            `"${(row.year?.toString() || '').replace(/"/g, '""')}"`,
-            `"${(row.role || '').replace(/"/g, '""')}"`,
-            `"${(row.xp?.toString() || '').replace(/"/g, '""')}"`,
-            `"${(row.level?.toString() || '').replace(/"/g, '""')}"`,
-            `"${row.joinedAt ? new Date(row.joinedAt).toISOString() : ''}"`,
-          ].join(',');
-        })
-      ].join('\n');
+      const csv = buildCsv(
+        ['Name', 'Email', 'Phone', 'College', 'Branch', 'Year', 'Role', 'XP', 'Level', 'Joined'],
+        allUsers.map((row) => [
+          row.name,
+          row.email,
+          row.phone,
+          row.college,
+          row.branch,
+          row.year,
+          row.role,
+          row.xp,
+          row.level,
+          row.joinedAt ? new Date(row.joinedAt).toISOString() : '',
+        ]),
+      );
 
-      return new NextResponse(csvContent, {
+      return new NextResponse(csv, {
         status: 200,
         headers: {
-          'Content-Type': 'text/csv',
           'Content-Disposition': 'attachment; filename="kratos_users_export.csv"',
+          'Content-Type': 'text/csv',
         },
       });
     }
 
-    // Default: participants dataset
-    const baseQuery = db.select({
-      memberName: teamMembers.name,
-      memberCollege: teamMembers.college,
-      memberPhone: teamMembers.phone,
-      eventName: events.name,
-      teamName: registrations.teamName,
-      paymentStatus: registrations.status,
-      userId: registrations.userId,
-    })
-    .from(registrations)
-    .innerJoin(events, eq(registrations.eventId, events.id))
-    .innerJoin(teamMembers, eq(registrations.teamId, teamMembers.teamId));
+    const registrationsData = await db
+      .select({
+        createdAt: registrations.createdAt,
+        eventName: events.name,
+        participantBranch: users.branch,
+        participantCollege: users.college,
+        participantEmail: users.email,
+        participantName: users.name,
+        participantPhone: users.phone,
+        participantYear: users.year,
+        registrationId: registrations.id,
+        status: registrations.status,
+        teamId: registrations.teamId,
+        teamName: registrations.teamName,
+        totalFee: registrations.totalFee,
+        transactionId: registrations.transactionId,
+      })
+      .from(registrations)
+      .innerJoin(users, eq(registrations.userId, users.id))
+      .innerJoin(events, eq(registrations.eventId, events.id))
+      .orderBy(desc(registrations.createdAt));
 
-    const finalQuery = eventId ? baseQuery.where(eq(registrations.eventId, eventId)) : baseQuery;
-    
-    // Also include solo entries where no teamMembers row might exist but we want the core user info.
-    // Wait, Kratos enforces team creation even for single players inside teamMembers table in the logic.
-    // So innerJoin on teamMembers is sufficient per the schema design.
-    
-    const data = await finalQuery;
-
-    if (data.length === 0) {
+    if (registrationsData.length === 0) {
       return new NextResponse('No registrations found.', { status: 404 });
     }
 
-    const headers = ['Name', 'College', 'Event', 'Team', 'Phone', 'Payment status', 'User ID'];
-    
-    const csvContent = [
-      headers.join(','),
-      ...data.map(row => {
-        return [
-          `"${(row.memberName || '').replace(/"/g, '""')}"`,
-          `"${(row.memberCollege || '').replace(/"/g, '""')}"`,
-          `"${(row.eventName || '').replace(/"/g, '""')}"`,
-          `"${(row.teamName || '').replace(/"/g, '""')}"`,
-          `"${(row.memberPhone || '').replace(/"/g, '""')}"`,
-          `"${(row.paymentStatus || '').replace(/"/g, '""')}"`,
-          `"${(row.userId || '').replace(/"/g, '""')}"`,
-        ].join(',');
-      })
-    ].join('\n');
+    const teamIds = registrationsData
+      .map((registration) => registration.teamId)
+      .filter((teamId): teamId is string => Boolean(teamId));
 
-    return new NextResponse(csvContent, {
+    const additionalMembers =
+      teamIds.length > 0
+        ? await db
+            .select({
+              branch: teamMembers.branch,
+              college: teamMembers.college,
+              name: teamMembers.name,
+              phone: teamMembers.phone,
+              teamId: teamMembers.teamId,
+              year: teamMembers.year,
+            })
+            .from(teamMembers)
+            .where(inArray(teamMembers.teamId, teamIds))
+        : [];
+
+    const membersByTeamId = new Map<string, typeof additionalMembers>();
+    additionalMembers.forEach((member) => {
+      const currentMembers = membersByTeamId.get(member.teamId) ?? [];
+      currentMembers.push(member);
+      membersByTeamId.set(member.teamId, currentMembers);
+    });
+
+    const rows = registrationsData.flatMap((registration) => {
+      const baseRow = {
+        createdAt: registration.createdAt ? new Date(registration.createdAt).toISOString() : '',
+        eventName: registration.eventName,
+        registrationId: registration.registrationId,
+        status: registration.status,
+        teamName: registration.teamName || '',
+        totalFee: registration.totalFee ?? '',
+        transactionId: registration.transactionId || '',
+      };
+
+      const leaderRow: Array<string | number | null | undefined> = [
+        baseRow.registrationId,
+        baseRow.eventName,
+        baseRow.teamName,
+        'Leader',
+        registration.participantName,
+        registration.participantEmail,
+        registration.participantPhone,
+        registration.participantCollege,
+        registration.participantBranch,
+        registration.participantYear,
+        baseRow.status,
+        baseRow.totalFee,
+        baseRow.transactionId,
+        baseRow.createdAt,
+      ];
+
+      const extraRows = (registration.teamId ? membersByTeamId.get(registration.teamId) : undefined) ?? [];
+
+      return [
+        leaderRow,
+        ...extraRows.map((member) => [
+          baseRow.registrationId,
+          baseRow.eventName,
+          baseRow.teamName,
+          'Team Member',
+          member.name,
+          '',
+          member.phone,
+          member.college,
+          member.branch,
+          member.year,
+          baseRow.status,
+          baseRow.totalFee,
+          baseRow.transactionId,
+          baseRow.createdAt,
+        ]),
+      ];
+    });
+
+    const csv = buildCsv(
+      [
+        'Registration ID',
+        'Event',
+        'Team',
+        'Role',
+        'Name',
+        'Email',
+        'Phone',
+        'College',
+        'Branch',
+        'Year',
+        'Status',
+        'Total Fee',
+        'Transaction ID',
+        'Submitted At',
+      ],
+      rows,
+    );
+
+    return new NextResponse(csv, {
       status: 200,
       headers: {
+        'Content-Disposition': 'attachment; filename="kratos_registrations_export.csv"',
         'Content-Type': 'text/csv',
-        'Content-Disposition': 'attachment; filename="kratos_participants_export.csv"',
       },
     });
   } catch (error) {
-    console.error('Export Error:', error);
-    return new NextResponse('Export Failed. Unauthorized or Server Error.', { status: 500 });
+    console.error('Export error:', error);
+    return new NextResponse('Export failed.', { status: 500 });
   }
 }

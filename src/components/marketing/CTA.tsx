@@ -16,9 +16,9 @@ const CTA = () => {
           Registrations are now open. Choose your events, form your team, and be part of KRATOS 2026. Limited time to register.
         </p>
         <div className="flex justify-center">
-          <Link href="/auth/register">
+          <Link href="/register">
             <BrutalButton size="xl" className="hard-shadow-gold hover:shadow-[10px_10px_0px_0px_var(--primary-container)]">
-              Secure Your Spot
+              Register
             </BrutalButton>
           </Link>
         </div>

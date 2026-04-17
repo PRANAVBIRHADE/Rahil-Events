@@ -27,18 +27,21 @@ const Navbar = () => {
         <div className="hidden md:flex gap-8 font-display uppercase tracking-tighter font-bold items-center">
           <Link href="/#events" className="text-on-surface/60 hover:text-on-surface border-b-4 border-transparent hover:border-primary-container pb-1 transition-all duration-150 py-4">Events</Link>
           <Link href="/#schedule" className="text-on-surface/60 hover:text-on-surface border-b-4 border-transparent hover:border-primary-container pb-1 transition-all duration-150 py-4">Schedule</Link>
-          <Link href="/squads" className="text-primary hover:text-on-surface border-b-4 border-transparent hover:border-primary pb-1 transition-all duration-150 py-4 font-black italic">Join Team</Link>
           <Link href="/organizers" className="text-on-surface/60 hover:text-on-surface border-b-4 border-transparent hover:border-primary-container pb-1 transition-all duration-150 py-4">Organizers</Link>
           <Link href="/#about" className="text-on-surface/60 hover:text-on-surface border-b-4 border-transparent hover:border-primary-container pb-1 transition-all duration-150 py-4">About</Link>
           <Link href="/contact" className="text-on-surface/60 hover:text-on-surface border-b-4 border-transparent hover:border-primary-container pb-1 transition-all duration-150 py-4">Contact</Link>
-          <Link href="/#gallery" className="text-on-surface/60 hover:text-on-surface border-b-4 border-transparent hover:border-primary-container pb-1 transition-all duration-150 py-4">Gallery</Link>
         </div>
 
-        {/* Dashboard Align */}
+        {/* Action Buttons */}
         <div className="flex gap-4 z-50">
-          <Link href="https://kratos-events.vercel.app/auth/register" className="hidden md:block">
+          <Link href="/status" className="hidden md:block">
             <BrutalButton size="md" variant="outline" className="px-6 py-2">
-              Dashboard
+              Check Status
+            </BrutalButton>
+          </Link>
+          <Link href="/register" className="hidden md:block">
+            <BrutalButton size="md" className="px-6 py-2">
+              Register Now
             </BrutalButton>
           </Link>
           
@@ -60,15 +63,18 @@ const Navbar = () => {
           <div className="flex flex-col gap-10 font-display uppercase tracking-tighter font-black text-4xl text-center w-full px-8 overflow-y-auto">
             <Link href="/#events" onClick={closeMenu} className="hover:text-primary transition-colors border-b-4 border-on-surface/10 pb-4 mt-8">Events</Link>
             <Link href="/#schedule" onClick={closeMenu} className="hover:text-primary transition-colors border-b-4 border-on-surface/10 pb-4">Schedule</Link>
-            <Link href="/squads" onClick={closeMenu} className="hover:text-primary transition-colors border-b-4 border-on-surface/10 pb-4">Join Team</Link>
             <Link href="/organizers" onClick={closeMenu} className="hover:text-primary transition-colors border-b-4 border-on-surface/10 pb-4">Organizers</Link>
             <Link href="/#about" onClick={closeMenu} className="hover:text-primary transition-colors border-b-4 border-on-surface/10 pb-4">About</Link>
             <Link href="/contact" onClick={closeMenu} className="hover:text-primary transition-colors border-b-4 border-on-surface/10 pb-4">Contact</Link>
-            <Link href="/#gallery" onClick={closeMenu} className="hover:text-primary transition-colors border-b-4 border-on-surface/10 pb-4">Gallery</Link>
             
-            <Link href="https://kratos-events.vercel.app/auth/register" onClick={closeMenu} className="mt-8 w-full">
+            <Link href="/status" onClick={closeMenu} className="mt-8 w-full">
+              <BrutalButton size="xl" variant="outline" className="w-full">
+                Check Status
+              </BrutalButton>
+            </Link>
+            <Link href="/register" onClick={closeMenu} className="mt-4 w-full">
               <BrutalButton size="xl" className="w-full">
-                Dashboard
+                Register Now
               </BrutalButton>
             </Link>
           </div>

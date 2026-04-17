@@ -1,7 +1,7 @@
-// eslint-disable @next/next/no-img-element
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import BrutalCard from '@/components/ui/BrutalCard';
 import BrutalButton from '@/components/ui/BrutalButton';
 import { createOrganizer, updateOrganizer, deleteOrganizer } from '@/lib/actions';
@@ -181,7 +181,13 @@ export default function AdminOrganizersClient({ organizers }: { organizers: Orga
                     </CldUploadWidget>
                     {createImageUrl && (
                       <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <img src={createImageUrl} alt="Preview" className="w-10 h-10 brutal-border object-cover" />
+                        <Image
+                          src={createImageUrl}
+                          alt="Preview"
+                          width={40}
+                          height={40}
+                          className="w-10 h-10 brutal-border object-cover"
+                        />
                         <span className="text-[10px] font-mono truncate flex-1 opacity-60">{createImageUrl.split('/').pop()}</span>
                         <button type="button" onClick={() => setCreateImageUrl('')} className="text-red-600 hover:text-red-800">
                           <X size={14} />
@@ -254,7 +260,13 @@ export default function AdminOrganizersClient({ organizers }: { organizers: Orga
                       <tr key={org.id} className="hover:bg-primary-container/5 transition-colors">
                         <td className="p-3">
                           {org.imageUrl ? (
-                            <img src={org.imageUrl} alt="" className="w-10 h-10 object-cover brutal-border" />
+                            <Image
+                              src={org.imageUrl}
+                              alt={org.organizerName}
+                              width={40}
+                              height={40}
+                              className="w-10 h-10 object-cover brutal-border"
+                            />
                           ) : (
                             <div className="w-10 h-10 brutal-border bg-surface-container-low flex items-center justify-center text-[10px] font-black opacity-30">
                               N/A
@@ -409,7 +421,13 @@ export default function AdminOrganizersClient({ organizers }: { organizers: Orga
                   </CldUploadWidget>
                   {editImageUrl && (
                     <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <img src={editImageUrl} alt="Preview" className="w-10 h-10 brutal-border object-cover" />
+                      <Image
+                        src={editImageUrl}
+                        alt="Preview"
+                        width={40}
+                        height={40}
+                        className="w-10 h-10 brutal-border object-cover"
+                      />
                       <button type="button" onClick={() => setEditImageUrl('')} className="text-red-600 hover:text-red-800">
                         <X size={14} />
                       </button>
