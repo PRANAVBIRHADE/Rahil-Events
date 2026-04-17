@@ -438,11 +438,11 @@ export default function UnifiedRegistrationForm({
                         <div className="md:col-span-1">
                           <select
                             required
-                            value={member.college === 'M.P.G.I' ? 'M.P.G.I' : member.college ? 'Other' : ''}
+                            value={member.college === 'Matoshri Pratishthan Group of Institutions, Nanded' ? 'Matoshri Pratishthan Group of Institutions, Nanded' : member.college ? 'Other' : ''}
                             onChange={(currentEvent) => {
                               const val = currentEvent.target.value;
-                              if (val === 'M.P.G.I') {
-                                handleMemberChange(index, 'college', 'M.P.G.I');
+                              if (val === 'Matoshri Pratishthan Group of Institutions, Nanded') {
+                                handleMemberChange(index, 'college', 'Matoshri Pratishthan Group of Institutions, Nanded');
                               } else {
                                 handleMemberChange(index, 'college', '');
                               }
@@ -450,7 +450,7 @@ export default function UnifiedRegistrationForm({
                             className="brutal-input p-4 w-full bg-surface font-black uppercase text-sm h-full"
                           >
                             <option value="">-- College --</option>
-                            <option value="M.P.G.I">M.P.G.I</option>
+                            <option value="Matoshri Pratishthan Group of Institutions, Nanded">MPGI Nanded</option>
                             <option value="Other">Other College</option>
                           </select>
                         </div>
@@ -459,11 +459,11 @@ export default function UnifiedRegistrationForm({
                           <input
                             type="text"
                             placeholder="Type College Name..."
-                            disabled={member.college === 'M.P.G.I'}
-                            required={member.college !== 'M.P.G.I'}
-                            value={member.college === 'M.P.G.I' ? 'Maharana Pratap Group of Institutions (M.P.G.I)' : member.college}
+                            disabled={member.college === 'Matoshri Pratishthan Group of Institutions, Nanded'}
+                            required={member.college !== 'Matoshri Pratishthan Group of Institutions, Nanded'}
+                            value={member.college === 'Matoshri Pratishthan Group of Institutions, Nanded' ? 'Matoshri Pratishthan Group of Institutions, Nanded' : member.college}
                             onChange={(currentEvent) => handleMemberChange(index, 'college', currentEvent.target.value)}
-                            className={`brutal-input p-4 w-full font-bold text-sm h-full ${member.college === 'M.P.G.I' ? 'opacity-50 italic pointer-events-none bg-surface-container-low' : ''}`}
+                            className={`brutal-input p-4 w-full font-bold text-sm h-full ${member.college === 'Matoshri Pratishthan Group of Institutions, Nanded' ? 'opacity-50 italic pointer-events-none bg-surface-container-low' : ''}`}
                           />
                         </div>
                       </div>
