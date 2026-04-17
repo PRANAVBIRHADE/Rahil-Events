@@ -10,7 +10,8 @@ export default async function RegistrationPage(props: { searchParams: Promise<{ 
   const searchParams = await props.searchParams;
   const requestedEvent = searchParams.event?.trim() || '';
 
-  const allEventsRaw = await db.select().from(eventsTable).orderBy(asc(eventsTable.sortOrder), asc(eventsTable.name));
+  const allEventsRawSorted = await db.select().from(eventsTable).orderBy(asc(eventsTable.sortOrder), asc(eventsTable.name));
+  const allEventsRaw = [...allEventsRawSorted].reverse();
   const [settings] = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
 
   const allEvents = allEventsRaw.map((event) => ({
