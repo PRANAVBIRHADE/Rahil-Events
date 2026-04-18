@@ -165,6 +165,30 @@ export default async function AdminDashboard() {
           <BrutalCard shadow={true} shadowColor="black">
             <h3 className="text-xl font-black uppercase mb-6 border-b-2 border-on-surface pb-2">Admin Tools</h3>
             <div className="grid grid-cols-1 gap-4">
+              <Link href="/admin/desk" className="w-full">
+                <BrutalButton className="w-full justify-start bg-amber-50 border-amber-700 text-amber-900 font-black" variant="outline">
+                  <span className="material-symbols-outlined mr-3">point_of_sale</span>
+                  Volunteer Desk
+                </BrutalButton>
+              </Link>
+              <Link href="/admin/registrations" className="w-full">
+                <BrutalButton className="w-full justify-start" variant="outline">
+                  <span className="material-symbols-outlined mr-3">how_to_reg</span>
+                  All Registrations
+                </BrutalButton>
+              </Link>
+              <Link href="/admin/users" className="w-full">
+                <BrutalButton className="w-full justify-start" variant="outline">
+                  <span className="material-symbols-outlined mr-3">group</span>
+                  Manage Users
+                </BrutalButton>
+              </Link>
+              <Link href="/admin/results" className="w-full">
+                <BrutalButton className="w-full justify-start" variant="outline">
+                  <span className="material-symbols-outlined mr-3">emoji_events</span>
+                  Event Results
+                </BrutalButton>
+              </Link>
               <Link href="/admin/schedule" className="w-full">
                 <BrutalButton className="w-full justify-start" variant="outline">
                   <span className="material-symbols-outlined mr-3">event</span>
