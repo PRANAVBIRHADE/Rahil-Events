@@ -138,11 +138,10 @@ export default async function AdminDashboard() {
                       <td className="p-4 text-xs font-bold opacity-60 uppercase w-1/4 truncate max-w-[120px]">{registration.event}</td>
                       <td className="p-4 font-mono text-sm">INR {registration.amount ?? registration.fee}</td>
                       <td className="p-4">
-                        <span className={`px-2 py-0.5 border-2 text-[10px] font-black uppercase ${
-                          registration.status === 'APPROVED' ? 'bg-green-100 text-green-800 border-green-800' :
-                          registration.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800 border-yellow-800' :
-                            'bg-red-100 text-red-800 border-red-800'
-                        }`}>
+                        <span className={`px-2 py-0.5 border-2 text-[10px] font-black uppercase ${registration.status === 'APPROVED' ? 'bg-green-100 text-green-800 border-green-800' :
+                            registration.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800 border-yellow-800' :
+                              'bg-red-100 text-red-800 border-red-800'
+                          }`}>
                           {registration.status}
                         </span>
                       </td>
@@ -168,7 +167,7 @@ export default async function AdminDashboard() {
               <Link href="/admin/desk" className="w-full">
                 <BrutalButton className="w-full justify-start bg-amber-50 border-amber-700 text-amber-900 font-black" variant="outline">
                   <span className="material-symbols-outlined mr-3">point_of_sale</span>
-                  Volunteer Desk
+                  On-Spot Entries
                 </BrutalButton>
               </Link>
               <Link href="/admin/registrations" className="w-full">
