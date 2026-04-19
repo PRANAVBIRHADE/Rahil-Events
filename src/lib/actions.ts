@@ -504,6 +504,10 @@ export async function createRegistration(formData: FormData) {
   try {
     const feeSettings = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
     const feePerPerson = feeSettings.length > 0 && feeSettings[0].feePerPerson ? feeSettings[0].feePerPerson : 0;
+    const isPaused = feeSettings.length > 0 && feeSettings[0].registrationPaused;
+    if (isPaused) {
+      return { error: 'Registrations are temporarily closed due to technical maintenance' };
+    }
 
     const [event] = await db.select().from(events).where(eq(events.id, eventId));
     if (!event) return { error: 'Event not found.' };
@@ -1070,6 +1074,7 @@ export async function updateRegistrationSettings(formData: FormData) {
   }
 
   const registrationOpen = formData.get('registrationOpen') === 'on';
+  const registrationPaused = formData.get('registrationPaused') === 'on';
   const upiId = (formData.get('upiId') as string) || null;
   const feePerPersonRaw = formData.get('feePerPerson') as string;
   const feePerPerson = feePerPersonRaw ? parseInt(feePerPersonRaw) : 0;
@@ -1086,6 +1091,7 @@ export async function updateRegistrationSettings(formData: FormData) {
       await db.insert(systemSettings).values({
         id: 1,
         registrationOpen,
+        registrationPaused,
         upiId,
         feePerPerson,
         deadline,
@@ -1093,6 +1099,7 @@ export async function updateRegistrationSettings(formData: FormData) {
     } else {
       await db.update(systemSettings).set({
         registrationOpen,
+        registrationPaused,
         upiId,
         feePerPerson,
         deadline,

@@ -47,6 +47,11 @@ export async function submitRegistration(formData: RegistrationSubmission): Prom
   }
 
   const [settings] = await db.select().from(systemSettings).where(eq(systemSettings.id, 1)).limit(1);
+  const registrationPaused = settings?.registrationPaused ?? false;
+  if (registrationPaused) {
+    return { success: false, error: 'Registrations are temporarily closed due to technical maintenance' };
+  }
+
   const registrationOpen = settings?.registrationOpen ?? true;
   const deadline = settings?.deadline ?? null;
 

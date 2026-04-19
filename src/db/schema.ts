@@ -136,6 +136,7 @@ export const systemSettings = pgTable('system_settings', {
   resultsRevealTime: timestamp('results_reveal_time'),
   resultsVideoUrl: text('results_video_url'),
   registrationOpen: boolean('registration_open').default(true).notNull(),
+  registrationPaused: boolean('registration_paused').default(false).notNull(),
   upiId: text('upi_id'),
   feePerPerson: integer('fee_per_person').default(0).notNull(),
   deadline: timestamp('deadline'),

@@ -33,6 +33,7 @@ export default async function AdminSettingsPage() {
   const [settings] = await db.select().from(systemSettings).where(eq(systemSettings.id, 1));
 
   const registrationOpen = settings?.registrationOpen ?? true;
+  const registrationPaused = settings?.registrationPaused ?? false;
   const upiId = settings?.upiId ?? '9834147160@kotak811';
   const feePerPerson = settings?.feePerPerson ?? 0;
   const deadlineValue = toDateTimeLocalValue(settings?.deadline ?? null);
@@ -69,14 +70,28 @@ export default async function AdminSettingsPage() {
           'use server';
           await updateRegistrationSettings(formData);
         }} className="space-y-8">
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest opacity-60">Registration open</label>
-            <input
-              type="checkbox"
-              name="registrationOpen"
-              defaultChecked={registrationOpen}
-              className="w-6 h-6 accent-primary brutal-border"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest opacity-60">Registration open</label>
+              <br />
+              <input
+                type="checkbox"
+                name="registrationOpen"
+                defaultChecked={registrationOpen}
+                className="w-6 h-6 accent-primary brutal-border"
+              />
+            </div>
+            
+            <div className="space-y-2 border-l-4 border-yellow-500 pl-4 bg-yellow-50/10 py-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-yellow-600">Pause Registrations (Maintenance Mode)</label>
+              <p className="text-[10px] opacity-70 mb-2">Temporarily disable registration without closing the event.</p>
+              <input
+                type="checkbox"
+                name="registrationPaused"
+                defaultChecked={registrationPaused}
+                className="w-6 h-6 accent-yellow-600 brutal-border"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
