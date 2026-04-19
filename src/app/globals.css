@@ -52,6 +52,17 @@
   border: 2px solid var(--foreground);
 }
 
+@utility brutal-input {
+  border: 2px solid var(--foreground);
+  background-color: var(--background);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  &:focus, &:active {
+    box-shadow: 4px 4px 0px 0px var(--foreground);
+    transform: translate(-2px, -2px);
+  }
+}
+
 @utility hard-shadow {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 4px 4px 0px 0px var(--foreground);

@@ -341,12 +341,12 @@ export default function UnifiedRegistrationForm({
 
               {effectiveTeamMode ? (
                 <div className="mt-8">
-                  <label className="block text-xs font-black uppercase tracking-widest opacity-60 mb-2">Team Name</label>
+                  <label className="block text-xs md:text-sm font-black uppercase tracking-widest text-on-surface/80 mb-2">Team Name</label>
                   <input
                     type="text"
                     value={teamName}
                     onChange={(currentEvent) => setTeamName(currentEvent.target.value)}
-                    className="w-full bg-surface brutal-input p-4 text-xl font-bold uppercase placeholder:opacity-30"
+                    className="w-full bg-surface brutal-input p-4 text-xl font-bold uppercase placeholder:opacity-50"
                     placeholder="Enter team alias"
                     required={effectiveTeamMode}
                   />
@@ -395,40 +395,40 @@ export default function UnifiedRegistrationForm({
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                     <div className="space-y-1">
-                      <label className="block text-[10px] font-black uppercase tracking-[0.2em] opacity-50 ml-1">Full Name</label>
+                      <label className="block text-xs md:text-sm font-black uppercase tracking-widest text-on-surface/80 mb-1 ml-1">Full Name</label>
                       <input
                         type="text"
                         placeholder="John Doe"
                         required
                         value={member.name}
                         onChange={(currentEvent) => handleMemberChange(index, 'name', currentEvent.target.value)}
-                        className="brutal-input p-4 w-full font-bold text-lg placeholder:opacity-20"
+                        className="brutal-input p-4 w-full font-bold text-lg placeholder:opacity-50"
                       />
                     </div>
                     
                     {index === 0 ? (
                       <div className="space-y-1">
-                        <label className="block text-[10px] font-black uppercase tracking-[0.2em] opacity-50 ml-1">Email Address</label>
+                        <label className="block text-xs md:text-sm font-black uppercase tracking-widest text-on-surface/80 mb-1 ml-1">Email Address</label>
                         <input
                           type="email"
                           placeholder="john@example.com"
                           required
                           value={member.email}
                           onChange={(currentEvent) => handleMemberChange(index, 'email', currentEvent.target.value)}
-                          className="brutal-input p-4 w-full font-bold text-lg placeholder:opacity-20"
+                          className="brutal-input p-4 w-full font-bold text-lg placeholder:opacity-50"
                         />
                       </div>
                     ) : null}
 
                     <div className="space-y-1">
-                      <label className="block text-[10px] font-black uppercase tracking-[0.2em] opacity-50 ml-1">WhatsApp / Phone</label>
+                      <label className="block text-xs md:text-sm font-black uppercase tracking-widest text-on-surface/80 mb-1 ml-1">WhatsApp / Phone</label>
                       <input
                         type="tel"
                         placeholder="9876543210"
                         required
                         value={member.phone}
                         onChange={(currentEvent) => handleMemberChange(index, 'phone', currentEvent.target.value)}
-                        className="brutal-input p-4 w-full font-bold text-lg placeholder:opacity-20"
+                        className="brutal-input p-4 w-full font-bold text-lg placeholder:opacity-50"
                       />
                     </div>
 
@@ -470,7 +470,7 @@ export default function UnifiedRegistrationForm({
                     </div>
 
                     <div className="space-y-1">
-                      <label className="block text-[10px] font-black uppercase tracking-[0.2em] opacity-50 ml-1">Branch / Dept</label>
+                      <label className="block text-xs md:text-sm font-black uppercase tracking-widest text-on-surface/80 mb-1 ml-1">Branch / Dept</label>
                       <select
                         required
                         value={member.branch}
@@ -487,7 +487,7 @@ export default function UnifiedRegistrationForm({
                     </div>
 
                     <div className="space-y-1">
-                      <label className="block text-[10px] font-black uppercase tracking-[0.2em] opacity-50 ml-1">Current Year</label>
+                      <label className="block text-xs md:text-sm font-black uppercase tracking-widest text-on-surface/80 mb-1 ml-1">Current Year</label>
                       <select
                         required
                         value={member.year}
