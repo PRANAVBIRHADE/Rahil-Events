@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import BrutalButton from '@/components/ui/BrutalButton';
 import BrutalCard from '@/components/ui/BrutalCard';
-import { bulkUpdateRegistrationStatus } from '@/lib/actions';
+import { bulkUpdateRegistrationStatus, bulkDeleteRegistrations } from '@/lib/actions';
 
 type Registration = {
   amount: number | null;
@@ -81,18 +81,25 @@ export default function TrafficRegistryClient({
     setSelectedIds(new Set(registrations.map((registration) => registration.id)));
   };
 
-  const handleBulkAction = async (status: 'APPROVED' | 'REJECTED') => {
+  const handleBulkAction = async (status: 'APPROVED' | 'REJECTED' | 'DELETED') => {
     if (selectedIds.size === 0) {
       return;
     }
 
-    const actionLabel = status === 'APPROVED' ? 'approve' : 'reject';
+    const actionLabel = status === 'APPROVED' ? 'approve' : status === 'REJECTED' ? 'reject' : 'DELETE';
     if (!confirm(`Are you sure you want to ${actionLabel} ${selectedIds.size} registration(s)?`)) {
       return;
     }
 
     setIsUpdating(true);
-    const result = await bulkUpdateRegistrationStatus(Array.from(selectedIds), status);
+    let result;
+    
+    if (status === 'DELETED') {
+        result = await bulkDeleteRegistrations(Array.from(selectedIds));
+    } else {
+        result = await bulkUpdateRegistrationStatus(Array.from(selectedIds), status);
+    }
+    
     setIsUpdating(false);
 
     if ('error' in result) {
@@ -401,6 +408,15 @@ export default function TrafficRegistryClient({
                 className="bg-red-500 text-on-primary border-red-600 hover:bg-red-600 transition-colors"
               >
                 Reject
+              </BrutalButton>
+              <BrutalButton
+                onClick={() => handleBulkAction('DELETED')}
+                disabled={isUpdating}
+                variant="secondary"
+                size="sm"
+                className="bg-black text-white border-black hover:bg-gray-800 transition-colors"
+              >
+                Delete
               </BrutalButton>
               <BrutalButton
                 onClick={() => setSelectedIds(new Set())}

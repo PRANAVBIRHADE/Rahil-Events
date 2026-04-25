@@ -6,7 +6,8 @@ import BrutalCard from '@/components/ui/BrutalCard';
 import { db } from '@/db';
 import { events, registrations, teamMembers, users } from '@/db/schema';
 import { requireAdminPageAccess } from '@/lib/authz';
-import { updateRegistrationStatus } from '@/lib/actions';
+import { updateRegistrationStatus, deleteRegistration } from '@/lib/actions';
+import { redirect } from 'next/navigation';
 
 export default async function VerifyRegistrationPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdminPageAccess();
@@ -214,6 +215,23 @@ export default async function VerifyRegistrationPage({ params }: { params: Promi
                   Reset to Pending
                 </button>
               ) : null}
+            </form>
+            
+            <form 
+              action={async () => {
+                'use server';
+                await deleteRegistration(registration.id);
+                redirect('/admin/registrations');
+              }}
+              className="mt-4"
+            >
+              <button
+                type="submit"
+                className="w-full bg-black hover:bg-gray-800 text-white font-black uppercase tracking-widest py-4 border-2 border-surface transition-colors flex items-center justify-center"
+              >
+                <span className="material-symbols-outlined mr-2">delete</span>
+                Delete Entry
+              </button>
             </form>
           </div>
         </div>

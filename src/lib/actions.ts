@@ -919,8 +919,19 @@ export async function bulkDeleteRegistrations(ids: string[]) {
   }
 
   try {
-    await db.delete(registrations)
-      .where(inArray(registrations.id, ids));
+    for (const id of ids) {
+      const existing = await db.select().from(registrations).where(eq(registrations.id, id));
+      if (existing.length === 0) continue;
+
+      const existingTeamId = existing[0].teamId;
+      await db.delete(teamMessages).where(eq(teamMessages.registrationId, id));
+      await db.delete(registrations).where(eq(registrations.id, id));
+
+      if (existingTeamId) {
+        await db.delete(teamMembers).where(eq(teamMembers.teamId, existingTeamId as string));
+        await db.delete(teams).where(eq(teams.id, existingTeamId as string));
+      }
+    }
 
     revalidatePath('/admin/registrations');
     revalidatePath('/admin/dashboard');
@@ -929,6 +940,10 @@ export async function bulkDeleteRegistrations(ids: string[]) {
     console.error(error);
     return { error: 'Failed to perform bulk deletion.' };
   }
+}
+
+export async function deleteRegistration(id: string) {
+  return bulkDeleteRegistrations([id]);
 }
 
 
