@@ -249,6 +249,22 @@ async function seed() {
       schedule: 'Submission before Day 2 | Judging on Day 2 from 03:00 PM to 04:00 PM',
       prizeDetails: '1st: INR 1000 | 2nd: INR 500',
     },
+    {
+      name: 'Technical Rangoli',
+      slug: 'technical-rangoli',
+      category: 'Creative',
+      tagline: 'Where Art Meets Engineering',
+      description: 'Teams create rangoli designs based on technical themes such as circuits, AI, robotics, or engineering concepts, combining creativity with innovation.',
+      fee: 49,
+      format: 'TEAM',
+      isCommon: true,
+      teamSize: 4,
+      teamSizeMin: 1,
+      expectedParticipants: 30,
+      venue: 'Corridor',
+      schedule: null,
+      prizeDetails: null,
+    },
   ];
 
   await db.insert(schema.events).values(eventsData);
