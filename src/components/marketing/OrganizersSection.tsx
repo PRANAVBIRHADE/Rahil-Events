@@ -147,16 +147,16 @@ const OrganizersSection = () => {
               </div>
 
               <div className="pt-6 border-t border-on-surface/10">
-                <h3 className="text-lg font-black uppercase leading-none">PRANAV BIRADE</h3>
+                <h3 className="text-lg font-black uppercase leading-none">PRANAV BIRHADE</h3>
                 <p className="text-[10px] font-bold opacity-50 uppercase tracking-widest mt-1">FULL STACK DEVELOPER</p>
                 <a
-                  href="https://www.instagram.com/code_track_?igsh=c2NxYnJhcTJranNi"
+                  href="https://www.instagram.com/pranav.404error/"
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center gap-1.5 text-[10px] font-mono opacity-70 mt-3 hover:opacity-100 hover:text-[#D4AF37] transition-all lowercase"
                 >
                   <InstagramIcon />
-                  <span>@code_track_</span>
+                  <span>@pranav.404error</span>
                 </a>
               </div>
             </div>

@@ -17,7 +17,7 @@ const TEAM_DATA = {
   ],
   developers: [
     { name: 'Rahil Hussain', role: 'Frontend Developer', LinkedIn: 'https://www.linkedin.com/in/shaikh-rahil-hussain-a54348291' },
-    { name: 'Pranav Birade', role: 'Backend Developer', github: 'https://github.com/PRANAVBIRHADE' },
+    { name: 'Pranav Birhade', role: 'Backend Developer', github: 'https://github.com/PRANAVBIRHADE' },
   ]
 };
 

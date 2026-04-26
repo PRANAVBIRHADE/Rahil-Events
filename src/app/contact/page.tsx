@@ -112,9 +112,9 @@ export default function ContactPage() {
 
               <div className="pt-4 border-t border-on-surface/10">
                 <p className="text-[10px] font-black uppercase tracking-widest text-[#D4AF37] mb-1">FULL STACK DEVELOPER</p>
-                <p className="text-lg font-black uppercase leading-none">Pranav Birade</p>
+                <p className="text-lg font-black uppercase leading-none">Pranav Birhade</p>
                 <a
-                  href="https://www.instagram.com/code_track_?igsh=c2NxYnJhcTJranNi"
+                  href="https://www.instagram.com/pranav.404error/"
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center gap-1.5 text-xs font-mono opacity-70 mt-1 hover:opacity-100 hover:text-[#D4AF37] transition-all lowercase"
@@ -134,7 +134,7 @@ export default function ContactPage() {
                     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
                     <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
                   </svg>
-                  <span>code_track_</span>
+                  <span>pranav.404error</span>
                 </a>
               </div>
             </div>
