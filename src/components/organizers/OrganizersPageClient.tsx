@@ -398,7 +398,7 @@ const OrganizerModal = ({
           </p>
 
           {/* Instagram Integration */}
-          {(organizer.instagram || organizer.instagramUrl) && (
+          {(organizer.instagram) && (
             <motion.div
               whileHover={{ scale: 1.1, color: '#ff00ff' }}
               style={{
@@ -408,14 +408,15 @@ const OrganizerModal = ({
                 gap: '8px',
                 color: GLOW_COLOR,
                 marginBottom: '15px',
-                cursor: (organizer.instagram || organizer.instagramUrl || "").toLowerCase().includes('why') ? 'default' : 'pointer'
+                fontWeight: 900,
+                cursor: (organizer.instagram || "").toLowerCase().includes('why') ? 'default' : 'pointer'
               }}
               onClick={() => {
-                const url = organizer.instagram || organizer.instagramUrl || "";
+                const url = (organizer.instagram || "");
                 if (!url.toLowerCase().includes('why')) window.open(url, '_blank');
               }}
             >
-              {!(organizer.instagram || organizer.instagramUrl || "").toLowerCase().includes('why') ? (
+              {!(organizer.instagram || "").toLowerCase().includes('why') ? (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                   <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
@@ -425,9 +426,9 @@ const OrganizerModal = ({
                 <span style={{ fontSize: '13px', fontWeight: 900, color: '#ff00ff', letterSpacing: '2px' }}>[ NO_SOCIAL ]</span>
               )}
               <span style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '1px' }}>
-                { (organizer.instagram || organizer.instagramUrl || "").toLowerCase().includes('why') 
+                { (organizer.instagram || "").toLowerCase().includes('why') 
                     ? 'INSTA=WHY?' 
-                    : `@${(organizer.instagram || organizer.instagramUrl).split('instagram.com/')[1]?.split('/')[0]?.split('?')[0]}` 
+                    : `@${(organizer.instagram).split('instagram.com/')[1]?.split('/')[0]?.split('?')[0]}` 
                 }
               </span>
             </motion.div>
@@ -503,7 +504,6 @@ export default function OrganizersPageClient({ organizers }: OrganizersPageClien
           ...org,
           organizerName: 'Payal Wankhede',
           imageUrl: raniPhoto,
-          instagramUrl: 'why?',
           instagram: 'why?'
         };
       }

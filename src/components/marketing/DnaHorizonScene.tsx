@@ -524,7 +524,7 @@ export default function PostCreditsCinematic({ organizers }: { organizers: any[]
               </p>
 
               {/* Instagram Integration */}
-              {(activeOrg.instagramUrl || activeOrg.instagram) && (
+              {(activeOrg.instagram) && (
                 <motion.div
                   whileHover={{ scale: 1.1, color: '#ff00ff' }}
                   style={{
@@ -534,14 +534,14 @@ export default function PostCreditsCinematic({ organizers }: { organizers: any[]
                     gap: '8px',
                     color: GLOW_COLOR,
                     marginBottom: '15px',
-                    cursor: (activeOrg.instagramUrl || activeOrg.instagram || "").toLowerCase().includes('why') ? 'default' : 'pointer'
+                    cursor: (activeOrg.instagram || "").toLowerCase().includes('why') ? 'default' : 'pointer'
                   }}
                   onClick={() => {
-                    const url = activeOrg.instagramUrl || activeOrg.instagram || "";
+                    const url = activeOrg.instagram || "";
                     if (!url.toLowerCase().includes('why')) window.open(url, '_blank');
                   }}
                 >
-                  {!(activeOrg.instagramUrl || activeOrg.instagram || "").toLowerCase().includes('why') ? (
+                  {!(activeOrg.instagram || "").toLowerCase().includes('why') ? (
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
@@ -551,9 +551,9 @@ export default function PostCreditsCinematic({ organizers }: { organizers: any[]
                     <span style={{ fontSize: '12px', fontWeight: 900, color: '#ff00ff', letterSpacing: '2px' }}>[ NO_SOCIAL ]</span>
                   )}
                   <span style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '1px' }}>
-                    { (activeOrg.instagramUrl || activeOrg.instagram || "").toLowerCase().includes('why') 
+                    { (activeOrg.instagram || "").toLowerCase().includes('why') 
                         ? 'INSTA=WHY?' 
-                        : `@${(activeOrg.instagramUrl || activeOrg.instagram).split('instagram.com/')[1]?.split('/')[0]?.split('?')[0]}` 
+                        : `@${(activeOrg.instagram).split('instagram.com/')[1]?.split('/')[0]?.split('?')[0]}` 
                     }
                   </span>
                 </motion.div>
