@@ -119,14 +119,14 @@ function DNAHelix({ organizers, onSelect, activeOrg, isMobile }: any) {
     if (groupRef.current) {
       const baseSpeed = 0.12; // slightly slower overall
       const speedFactor = activeOrg ? 0.1 : 1; // 90% slower when exploded
-      
+
       // Auto-rotate the group to be more vertical/diagonal on mobile to fit the screen
       if (isMobile && !activeOrg) {
         groupRef.current.rotation.z = Math.PI / 2.5; // Rotate 72 degrees for vertical fit
       } else {
         groupRef.current.rotation.z = 0;
       }
-      
+
       groupRef.current.rotation.x = state.clock.elapsedTime * baseSpeed * speedFactor;
     }
   });
@@ -165,10 +165,10 @@ function DNAHelix({ organizers, onSelect, activeOrg, isMobile }: any) {
               <Html distanceFactor={18} position={[0, 2.5, 0]} center>
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ 
-                    opacity: activeOrg ? 0 : 1, 
+                  animate={{
+                    opacity: activeOrg ? 0 : 1,
                     scale: activeOrg ? 0.8 : 1,
-                    display: activeOrg ? 'none' : 'flex' 
+                    display: activeOrg ? 'none' : 'flex'
                   }}
                   transition={{ duration: 0.3 }}
                   style={{
@@ -213,7 +213,7 @@ function DNAHelix({ organizers, onSelect, activeOrg, isMobile }: any) {
                 </Html>
               )}
 
-                
+
             </Float>
           </group>
         ))}
@@ -285,71 +285,71 @@ export default function PostCreditsCinematic({ organizers }: { organizers: any[]
   const displayOrganizers = useMemo(() => {
     const list = organizers?.length ? [...organizers].slice(0, 8) : [];
     const dummyData = [
-      { 
-        id: 'shubham', 
-        organizerName: 'Shubham Mykal', 
-        role: 'Event Lead', 
-        description: 'Driving the vision of Kratos 2027 with absolute precision.', 
+      {
+        id: 'shubham',
+        organizerName: 'Shubham Mykal',
+        role: 'Event Lead',
+        description: 'Driving the vision of Kratos 2027 with absolute precision.',
         imageUrl: '/images/organizers/shubham.jpg',
         instagramUrl: 'https://www.instagram.com/shubham_chintu_25?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=='
       },
-      { 
-        id: 'sayali', 
-        organizerName: 'Sayali Patil', 
-        role: 'Creative Head', 
-        description: 'Mastermind behind the visual identity and aesthetic of Kratos.', 
+      {
+        id: 'sayali',
+        organizerName: 'Sayali Patil',
+        role: 'Creative Head',
+        description: 'Mastermind behind the visual identity and aesthetic of Kratos.',
         imageUrl: '/images/organizers/dummy-2.png',
         instagramUrl: 'https://www.instagram.com/by.sayaliii_?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=='
       },
-      { 
-        id: 'rahil', 
-        organizerName: 'Rahil Hussain', 
-        role: 'Frontend Lead', 
-        description: 'Crafting the immersive technical interfaces of the multiverse.', 
+      {
+        id: 'rahil',
+        organizerName: 'Rahil Hussain',
+        role: 'Frontend Lead',
+        description: 'Crafting the immersive technical interfaces of the multiverse.',
         imageUrl: '/images/organizers/dummy-0.png',
         instagramUrl: 'https://www.instagram.com/ifeelrahiii/?utm_source=ig_web_button_share_sheet'
       },
-      { 
-        id: 'pranav', 
-        organizerName: 'Pranav Birhade', 
-        role: 'Backend Architect', 
-        description: 'Ensuring absolute database integrity and high-speed performance.', 
+      {
+        id: 'pranav',
+        organizerName: 'Pranav Birhade',
+        role: 'Backend Architect',
+        description: 'Ensuring absolute database integrity and high-speed performance.',
         imageUrl: '/images/organizers/dummy-1.png',
         instagramUrl: 'https://www.instagram.com/pranav.404error/?__pwa=1#'
       },
-      { 
-        id: 'aashish', 
-        organizerName: 'Aashish Bhole', 
-        role: 'Head of Events', 
-        description: 'Managing operations and logistical excellence for Kratos.', 
+      {
+        id: 'aashish',
+        organizerName: 'Aashish Bhole',
+        role: 'Head of Events',
+        description: 'Managing operations and logistical excellence for Kratos.',
         imageUrl: '/images/organizers/dummy-3.png',
         instagramUrl: 'https://www.instagram.com/aashish.__47?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=='
       },
-      { 
-        id: 'samrat', 
-        organizerName: 'Samrat Kajbe', 
-        role: 'Technical Wing', 
-        description: 'Pushing the boundaries of innovation and technical systems.', 
+      {
+        id: 'samrat',
+        organizerName: 'Samrat Kajbe',
+        role: 'Technical Wing',
+        description: 'Pushing the boundaries of innovation and technical systems.',
         imageUrl: '/images/organizers/dummy-0.png',
         instagramUrl: 'https://www.instagram.com/k_.samrat?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=='
       },
-      { 
-        id: 'payal', 
-        organizerName: 'Payal Wankhede', 
-        role: 'Core Architect', 
-        description: 'Design lead focusing on immersive 3D experiences and visual flow.', 
+      {
+        id: 'vaibhavi',
+        organizerName: 'Vaibhavi Ade',
+        role: 'Core Architect',
+        description: 'Design lead focusing on immersive 3D experiences and visual flow.',
         imageUrl: '/images/organizers/dummy-2.png',
-        instagramUrl: 'why?' 
+        instagramUrl: 'why?'
       },
     ];
-    
+
     let i = 0;
     while (list.length < 8) {
       const dummy = dummyData[i % dummyData.length];
       const isNamedDummy = list.some(o => o.organizerName === dummy.organizerName);
-      list.push({ 
-        ...dummy, 
-        id: isNamedDummy ? `dummy-${list.length}` : dummy.id, 
+      list.push({
+        ...dummy,
+        id: isNamedDummy ? `dummy-${list.length}` : dummy.id,
         organizerName: isNamedDummy ? `${dummy.organizerName} ${Math.floor(list.length / 4) + 1}` : dummy.organizerName
       });
       i++;
@@ -359,15 +359,15 @@ export default function PostCreditsCinematic({ organizers }: { organizers: any[]
     const rani = list.find(org => org.organizerName?.toLowerCase().includes('rani'));
     const raniPhoto = rani?.imageUrl || '/images/organizers/dummy-2.png';
 
-    // Force override for Payal
+    // Force override for Vaibhavi
     return list.map(org => {
-      if (org.organizerName?.toLowerCase().includes('payal')) {
-        return { 
-          ...org, 
-          organizerName: 'Payal Wankhede',
+      if (org.organizerName?.toLowerCase().includes('vaibhavi')) {
+        return {
+          ...org,
+          organizerName: 'Vaibhavi Ade',
           imageUrl: raniPhoto,
-          instagramUrl: 'why?', 
-          instagram: 'why?' 
+          instagramUrl: 'why?',
+          instagram: 'why?'
         };
       }
       return org;
@@ -391,19 +391,19 @@ export default function PostCreditsCinematic({ organizers }: { organizers: any[]
     <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 9999 }}>
       <Canvas dpr={[1, 1.5]} gl={{ antialias: true }}>
         <Suspense fallback={null}>
-          <PerspectiveCamera 
-            makeDefault 
-            fov={isMobile ? 45 : 35} 
-            position={[0, 0, isMobile ? 80 : 50]} 
+          <PerspectiveCamera
+            makeDefault
+            fov={isMobile ? 45 : 35}
+            position={[0, 0, isMobile ? 80 : 50]}
           />
           <color attach="background" args={['#000000']} />
           <ambientLight intensity={0.5} />
           <pointLight position={[20, 20, 20]} intensity={1.5} />
           <pointLight position={[-20, -20, -20]} color={GLOW_COLOR} intensity={2.5} />
-          <DNAHelix 
-            organizers={displayOrganizers} 
-            onSelect={setActiveOrg} 
-            activeOrg={activeOrg} 
+          <DNAHelix
+            organizers={displayOrganizers}
+            onSelect={setActiveOrg}
+            activeOrg={activeOrg}
             isMobile={isMobile}
           />
           <CameraRig activeOrg={activeOrg} />
@@ -440,7 +440,7 @@ export default function PostCreditsCinematic({ organizers }: { organizers: any[]
               width: isMobile ? '90%' : '280px',
               maxWidth: '320px',
               // Increased height to allow larger photos
-              maxHeight: isMobile ? '80vh' : '62vh', 
+              maxHeight: isMobile ? '80vh' : '62vh',
               color: '#fff',
               boxShadow: `0 0 100px ${GLOW_COLOR}20, inset 0 0 30px ${GLOW_COLOR}05`,
               zIndex: 10000,
@@ -464,7 +464,7 @@ export default function PostCreditsCinematic({ organizers }: { organizers: any[]
               }}
             />
             {/* Top Close Button (Accessibility) */}
-            <button 
+            <button
               onClick={() => setActiveOrg(null)}
               style={{
                 position: 'absolute',
@@ -486,7 +486,7 @@ export default function PostCreditsCinematic({ organizers }: { organizers: any[]
             >✕</button>
 
             {/* Photo Section */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
@@ -580,16 +580,16 @@ export default function PostCreditsCinematic({ organizers }: { organizers: any[]
                     <span style={{ fontSize: '12px', fontWeight: 900, color: '#ff00ff', letterSpacing: '2px' }}>[ NO_SOCIAL ]</span>
                   )}
                   <span style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '1px' }}>
-                    { (activeOrg.instagram || "").toLowerCase().includes('why') 
-                        ? 'INSTA=WHY?' 
-                        : `@${(activeOrg.instagram).split('instagram.com/')[1]?.split('/')[0]?.split('?')[0]}` 
+                    {(activeOrg.instagram || "").toLowerCase().includes('why')
+                      ? 'INSTA=WHY?'
+                      : `@${(activeOrg.instagram).split('instagram.com/')[1]?.split('/')[0]?.split('?')[0]}`
                     }
                   </span>
                 </motion.div>
               )}
-              
-              <div style={{ 
-                height: '1px', 
+
+              <div style={{
+                height: '1px',
                 background: `linear-gradient(to right, transparent, ${GLOW_COLOR}, transparent)`,
                 margin: '10px 0',
                 opacity: 0.3
@@ -631,35 +631,35 @@ export default function PostCreditsCinematic({ organizers }: { organizers: any[]
 
       {/* Header – Cinematic & Centered */}
       <div style={{ position: 'absolute', top: '80px', left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none', textAlign: 'center', width: '100%' }}>
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }} 
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
         >
-          <h2 style={{ 
-            color: '#fff', 
-            fontSize: '48px', 
-            fontWeight: 900, 
-            margin: 0, 
-            letterSpacing: '0.1em', 
+          <h2 style={{
+            color: '#fff',
+            fontSize: '48px',
+            fontWeight: 900,
+            margin: 0,
+            letterSpacing: '0.1em',
             lineHeight: 1,
             textTransform: 'uppercase',
             textShadow: `0 0 20px rgba(255,255,255,0.2), 0 0 40px ${GLOW_COLOR}44`
           }}>
-            SEE YOU SOON ON <br/>
-            <span style={{ 
+            SEE YOU SOON ON <br />
+            <span style={{
               fontSize: '84px',
-              color: GLOW_COLOR, 
+              color: GLOW_COLOR,
               letterSpacing: '0.2em',
               textShadow: `0 0 30px ${GLOW_COLOR}, 0 0 60px ${GLOW_COLOR}aa`
             }}>KRATOS 2027</span>
           </h2>
-          <div style={{ 
-            color: GLOW_COLOR, 
-            fontSize: '10px', 
-            letterSpacing: '1.5em', 
-            textTransform: 'uppercase', 
-            marginTop: '25px', 
+          <div style={{
+            color: GLOW_COLOR,
+            fontSize: '10px',
+            letterSpacing: '1.5em',
+            textTransform: 'uppercase',
+            marginTop: '25px',
             fontWeight: 900,
             opacity: 0.6
           }}>KINETIC_OVERRIDE_ENABLED // EST. 2027</div>
