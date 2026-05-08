@@ -67,7 +67,7 @@ function KineticSegment({ basePosition, baseQuaternion, scatterDir, scatterRot, 
 /** ---------------------------------------------------------------
  *  DNA Helix – builds the geometry and places interactive nodes.
  * --------------------------------------------------------------- */
-function DNAHelix({ organizers, onSelect, activeOrg }: any) {
+function DNAHelix({ organizers, onSelect, activeOrg, isMobile }: any) {
   const groupRef = useRef<THREE.Group>(null);
   const count = 60;
   const length = 55;
@@ -119,6 +119,14 @@ function DNAHelix({ organizers, onSelect, activeOrg }: any) {
     if (groupRef.current) {
       const baseSpeed = 0.12; // slightly slower overall
       const speedFactor = activeOrg ? 0.1 : 1; // 90% slower when exploded
+      
+      // Auto-rotate the group to be more vertical/diagonal on mobile to fit the screen
+      if (isMobile && !activeOrg) {
+        groupRef.current.rotation.z = Math.PI / 2.5; // Rotate 72 degrees for vertical fit
+      } else {
+        groupRef.current.rotation.z = 0;
+      }
+      
       groupRef.current.rotation.x = state.clock.elapsedTime * baseSpeed * speedFactor;
     }
   });
@@ -366,18 +374,38 @@ export default function PostCreditsCinematic({ organizers }: { organizers: any[]
     });
   }, [organizers]);
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   if (!mounted) return <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 10000 }} />;
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 9999 }}>
       <Canvas dpr={[1, 1.5]} gl={{ antialias: true }}>
         <Suspense fallback={null}>
-          <PerspectiveCamera makeDefault fov={35} position={[0, 0, 50]} />
+          <PerspectiveCamera 
+            makeDefault 
+            fov={isMobile ? 45 : 35} 
+            position={[0, 0, isMobile ? 80 : 50]} 
+          />
           <color attach="background" args={['#000000']} />
           <ambientLight intensity={0.5} />
           <pointLight position={[20, 20, 20]} intensity={1.5} />
           <pointLight position={[-20, -20, -20]} color={GLOW_COLOR} intensity={2.5} />
-          <DNAHelix organizers={displayOrganizers} onSelect={setActiveOrg} activeOrg={activeOrg} />
+          <DNAHelix 
+            organizers={displayOrganizers} 
+            onSelect={setActiveOrg} 
+            activeOrg={activeOrg} 
+            isMobile={isMobile}
+          />
           <CameraRig activeOrg={activeOrg} />
           <Sparkles count={activeOrg ? 500 : 200} scale={70} size={1} speed={0.2} color={GLOW_COLOR} />
           <Environment preset="night" />
@@ -402,16 +430,17 @@ export default function PostCreditsCinematic({ organizers }: { organizers: any[]
               position: 'fixed',
               left: '50%',
               // Optimized position for larger photos
-              top: '42%',
+              top: isMobile ? '50%' : '42%',
               transform: 'translate(-50%, -50%)',
               background: 'rgba(0,15,30,0.94)',
               backdropFilter: 'blur(45px) saturate(180%)',
               borderRadius: '28px',
               border: `1.5px solid ${GLOW_COLOR}aa`,
-              padding: '20px',
-              width: '280px',
+              padding: isMobile ? '16px' : '20px',
+              width: isMobile ? '90%' : '280px',
+              maxWidth: '320px',
               // Increased height to allow larger photos
-              maxHeight: '62vh', 
+              maxHeight: isMobile ? '80vh' : '62vh', 
               color: '#fff',
               boxShadow: `0 0 100px ${GLOW_COLOR}20, inset 0 0 30px ${GLOW_COLOR}05`,
               zIndex: 10000,
