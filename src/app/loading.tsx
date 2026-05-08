@@ -1,56 +1,119 @@
 'use client';
-import React from 'react';
+
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Loading() {
+  const [hasStarted, setHasStarted] = useState(false);
+
   return (
-    <div className="fixed inset-0 z-[100] bg-primary-container flex flex-col items-center justify-center p-6 select-none overflow-hidden">
-      <div className="w-full max-w-2xl space-y-12 animate-in fade-in zoom-in duration-500">
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      zIndex: 100000,
+      background: '#000',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
+      fontFamily: 'Inter, system-ui, sans-serif'
+    }}>
+      {/* Background Cinematic Particles (Simplified) */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'radial-gradient(circle at center, rgba(0,255,255,0.05) 0%, transparent 70%)',
+        pointerEvents: 'none'
+      }} />
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        style={{ textAlign: 'center', zIndex: 10 }}
+      >
+        <h1 style={{
+          fontSize: 'clamp(40px, 8vw, 100px)',
+          fontWeight: 900,
+          color: '#fff',
+          textTransform: 'uppercase',
+          letterSpacing: '0.2em',
+          margin: 0,
+          textShadow: '0 0 30px rgba(0,255,255,0.3)'
+        }}>
+          KRATOS <span style={{ color: '#00ffff' }}>2027</span>
+        </h1>
         
-        {/* Header Section */}
-        <div className="text-center relative">
-          <h1 className="text-6xl md:text-9xl font-black italic uppercase tracking-tighter leading-none mb-4 text-on-surface">
-            KRATOS 2026
-          </h1>
-          <div className="h-4 bg-on-surface w-full mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]"></div>
-          <div className="flex justify-between items-center px-1 font-display font-black text-[10px] md:text-xs uppercase tracking-[0.2em] text-on-surface/80">
-            <span>Operational Mode</span>
-            <span className="animate-pulse">Initializing Terminal...</span>
-            <span>Precision Mandatory</span>
+        <div style={{ 
+          marginTop: '10px',
+          color: '#00ffff',
+          fontSize: '10px',
+          letterSpacing: '0.8em',
+          textTransform: 'uppercase',
+          opacity: 0.6,
+          fontWeight: 900
+        }}>
+          NEURAL_LINK_ESTABLISHING...
+        </div>
+
+        {!hasStarted ? (
+          <motion.button
+            whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(0,255,255,0.4)' }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setHasStarted(true)}
+            style={{
+              marginTop: '50px',
+              background: 'transparent',
+              border: '1px solid #00ffff',
+              color: '#00ffff',
+              padding: '12px 30px',
+              fontSize: '12px',
+              fontWeight: 900,
+              textTransform: 'uppercase',
+              letterSpacing: '3px',
+              cursor: 'pointer',
+              borderRadius: '4px',
+              transition: 'all 0.3s ease'
+            }}
+          >
+            Commence_Initiative
+          </motion.button>
+        ) : (
+          <div style={{ marginTop: '50px' }}>
+             <div style={{ 
+               width: '200px', 
+               height: '2px', 
+               background: 'rgba(0,255,255,0.1)', 
+               position: 'relative',
+               overflow: 'hidden'
+             }}>
+               <motion.div 
+                 initial={{ x: '-100%' }}
+                 animate={{ x: '100%' }}
+                 transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                 style={{ 
+                   position: 'absolute', 
+                   inset: 0, 
+                   background: 'linear-gradient(90deg, transparent, #00ffff, transparent)' 
+                 }}
+               />
+             </div>
+             <p style={{ color: '#00ffff', fontSize: '9px', marginTop: '10px', opacity: 0.5, letterSpacing: '2px' }}>
+               SYNCING_BROADCAST_SIGNAL...
+             </p>
           </div>
-        </div>
+        )}
+      </motion.div>
 
-        {/* Brutalist Scanner Animation */}
-        <div className="w-full border-8 border-on-surface bg-on-surface/5 h-32 overflow-hidden relative">
-          {/* Scanning Bar */}
-          <div className="absolute top-0 left-0 h-full w-24 bg-on-surface opacity-20 animate-[scan_2s_linear_infinite]"></div>
-          
-          {/* Progress Fill */}
-          <div className="h-full bg-on-surface opacity-10 animate-pulse"></div>
-          
-          <div className="absolute inset-0 flex items-center justify-center">
-             <span className="font-display font-black text-3xl md:text-5xl uppercase tracking-[0.4em] text-on-surface animate-pulse">
-               LOADING
-             </span>
-          </div>
-        </div>
-
-        {/* Footer Logic Status */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {['SYS_AUTH', 'DB_LINK', 'GEO_SCAN', 'UI_GEN'].map((step, i) => (
-            <div key={i} className="flex items-center gap-3 border-4 border-on-surface p-3 bg-surface">
-              <div className="w-3 h-3 bg-on-surface animate-ping"></div>
-              <span className="font-display font-black text-[10px] uppercase tracking-tighter">{step}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <style jsx global>{`
-        @keyframes scan {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(1000%); }
-        }
-      `}</style>
+      {/* Grid Pattern Overlay */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        backgroundImage: 'linear-gradient(rgba(0,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.03) 1px, transparent 1px)',
+        backgroundSize: '40px 40px',
+        pointerEvents: 'none'
+      }} />
     </div>
   );
 }

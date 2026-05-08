@@ -150,7 +150,7 @@ const OrganizerCard = React.memo(({
 
         {/* Image container */}
 
-        <div className="relative w-full aspect-square overflow-hidden bg-surface-container-low">
+        <div className="relative w-full aspect-[4/5] overflow-hidden bg-surface-container-low">
 
           <Image
             src={organizer.imageUrl || PLACEHOLDER_AVATAR}
@@ -307,281 +307,177 @@ OrganizerCard.displayName = 'OrganizerCard';
 // ─── MODAL ───────────────────────────────────────────────────────────────
 
 const OrganizerModal = ({
-
   organizer,
-
   onClose,
-
 }: {
-
   organizer: Organizer;
-
   onClose: () => void;
-
 }) => {
-
-  // Lock body scroll
-
   useEffect(() => {
-
     document.body.style.overflow = 'hidden';
-
-    return () => {
-
-      document.body.style.overflow = '';
-
-    };
-
+    return () => { document.body.style.overflow = ''; };
   }, []);
 
-
-
-  // Close on escape
-
   useEffect(() => {
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-
-      if (e.key === 'Escape') onClose();
-
-    };
-
+    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', handleKeyDown);
-
     return () => window.removeEventListener('keydown', handleKeyDown);
-
   }, [onClose]);
 
-
+  const GLOW_COLOR = "#00ffff";
 
   return (
-
     <motion.div
-
       initial={{ opacity: 0 }}
-
       animate={{ opacity: 1 }}
-
       exit={{ opacity: 0 }}
-
-      transition={{ duration: 0.3 }}
-
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8"
-
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-md"
       onClick={onClose}
-
     >
-
-      {/* Backdrop */}
-
-      <div className="absolute inset-0 bg-on-surface/60 backdrop-blur-xl" />
-
-
-
-      {/* Modal content */}
-
       <motion.div
-
-        initial={{ scale: 0.9, y: 30, opacity: 0 }}
-
-        animate={{ scale: 1, y: 0, opacity: 1 }}
-
-        exit={{ scale: 0.9, y: 30, opacity: 0 }}
-
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-
+        initial={{ opacity: 0, scale: 0.5, y: 50 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.5, y: 50 }}
+        transition={{ type: "spring", stiffness: 200, damping: 25 }}
         onClick={(e) => e.stopPropagation()}
-
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-surface brutal-border shadow-[12px_12px_0px_0px_var(--primary-container)]"
-
+        style={{
+          position: 'relative',
+          background: 'rgba(0,15,30,0.95)',
+          backdropFilter: 'blur(45px) saturate(180%)',
+          borderRadius: '28px',
+          border: `1.5px solid ${GLOW_COLOR}88`,
+          padding: '24px',
+          width: '320px',
+          maxHeight: '75vh',
+          color: '#fff',
+          boxShadow: `0 0 100px ${GLOW_COLOR}22, inset 0 0 30px ${GLOW_COLOR}05`,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px',
+          boxSizing: 'border-box'
+        }}
       >
-
-        {/* Close button */}
-
-        <button
-
-          onClick={onClose}
-
-          className="absolute top-4 right-4 z-20 w-10 h-10 flex items-center justify-center
-
-            brutal-border bg-surface hover:bg-primary-container transition-colors"
-
-        >
-
-          <X size={18} strokeWidth={3} />
-
-        </button>
-
-
-
-        {/* Large profile image */}
-
-        <div className="relative w-full aspect-[16/10] overflow-hidden bg-surface-container-low">
-
-          <Image
-            src={organizer.imageUrl || PLACEHOLDER_AVATAR}
+        {/* Photo Section - Expanded */}
+        <div style={{ position: 'relative', flexShrink: 0 }}>
+          <img
+            src={organizer.imageUrl || '/images/organizers/dummy-0.png'}
             alt={organizer.organizerName}
-            fill
-            sizes="100vw"
-            className="w-full h-full object-cover"
+            style={{
+              width: '100%',
+              height: '220px', 
+              borderRadius: '20px',
+              objectFit: 'cover',
+              objectPosition: (organizer.id === 'samrat' || organizer.organizerName.toLowerCase().includes('samrat')) ? 'center center' : 'center top',
+              boxShadow: `0 10px 30px rgba(0,0,0,0.6)`,
+            }}
           />
-
-
-
-          {/* Gradient overlay */}
-
-          <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent" />
-
+          {/* Role Badge */}
+          <div style={{
+            position: 'absolute',
+            bottom: '12px',
+            right: '12px',
+            background: GLOW_COLOR,
+            color: '#000',
+            padding: '2px 10px',
+            borderRadius: '6px',
+            fontSize: '9px',
+            fontWeight: 900,
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            boxShadow: `0 0 15px ${GLOW_COLOR}`
+          }}>{organizer.role}</div>
         </div>
 
-
-
-        {/* Info */}
-
-        <div className="p-8 md:p-10 -mt-12 relative z-10">
-
-          <div className="flex flex-wrap gap-2 mb-4">
-
-            {organizer.department && organizer.department.split(',').map((dept) => (
-
-              <span key={dept} className="inline-block px-3 py-1 text-[10px] font-black uppercase tracking-widest
-
-                bg-on-surface text-surface brutal-border">
-
-                {dept}
-
-              </span>
-
-            ))}
-
-          </div>
-
-
-
-          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter italic leading-none mb-3">
-
+        {/* Info Section */}
+        <div style={{ overflowY: 'auto', flexGrow: 1, paddingRight: '4px' }}>
+          <h3 style={{ margin: '0 0 8px', fontSize: '24px', fontWeight: 900, color: GLOW_COLOR, textAlign: 'center', letterSpacing: '1px', textTransform: 'uppercase' }}>
             {organizer.organizerName}
-
-          </h2>
-
-
-
-          <p className="text-lg font-bold text-primary uppercase tracking-widest mb-6">
-
-            {organizer.role || 'Team Member'}
-
+          </h3>
+          <p style={{ margin: '0 0 10px', fontSize: '12px', textAlign: 'center', opacity: 0.6, letterSpacing: '2px', textTransform: 'uppercase' }}>
+            {organizer.role}
           </p>
 
-
+          {/* Instagram Integration */}
+          {(organizer.instagram || organizer.instagramUrl) && (
+            <motion.div
+              whileHover={{ scale: 1.1, color: '#ff00ff' }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: GLOW_COLOR,
+                marginBottom: '15px',
+                cursor: (organizer.instagram || organizer.instagramUrl || "").toLowerCase().includes('why') ? 'default' : 'pointer'
+              }}
+              onClick={() => {
+                const url = organizer.instagram || organizer.instagramUrl || "";
+                if (!url.toLowerCase().includes('why')) window.open(url, '_blank');
+              }}
+            >
+              {!(organizer.instagram || organizer.instagramUrl || "").toLowerCase().includes('why') ? (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+              ) : (
+                <span style={{ fontSize: '13px', fontWeight: 900, color: '#ff00ff', letterSpacing: '2px' }}>[ NO_SOCIAL ]</span>
+              )}
+              <span style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '1px' }}>
+                { (organizer.instagram || organizer.instagramUrl || "").toLowerCase().includes('why') 
+                    ? 'INSTA=WHY?' 
+                    : `@${(organizer.instagram || organizer.instagramUrl).split('instagram.com/')[1]?.split('/')[0]?.split('?')[0]}` 
+                }
+              </span>
+            </motion.div>
+          )}
+          
+          <div style={{ 
+            height: '1px', 
+            background: `linear-gradient(to right, transparent, ${GLOW_COLOR}, transparent)`,
+            margin: '15px 0',
+            opacity: 0.3
+          }} />
 
           {organizer.description && (
-
-            <div className="mb-8">
-
-              <div className="w-full h-[2px] bg-on-surface/10 mb-4" />
-
-              <p className="text-base leading-relaxed opacity-80 font-sans">
-
-                {organizer.description}
-
-              </p>
-
-            </div>
-
+            <p style={{ fontSize: '14px', lineHeight: 1.6, opacity: 0.9, textAlign: 'center', fontStyle: 'italic', marginBottom: '15px' }}>
+              "{organizer.description}"
+            </p>
           )}
-
-
 
           {organizer.contact && (
-
-            <div className="mb-6">
-
-              <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-1">CONTACT</p>
-
-              <p className="font-mono text-sm font-bold">{organizer.contact}</p>
-
-            </div>
-
+             <p style={{ fontSize: '10px', textAlign: 'center', opacity: 0.5, letterSpacing: '2px' }}>
+               COMM_ID: {organizer.contact}
+             </p>
           )}
-
-
-
-          {/* Social links */}
-
-          <div className="flex gap-3">
-
-            {organizer.linkedin && (
-
-              <a
-
-                href={organizer.linkedin}
-
-                target="_blank"
-
-                rel="noreferrer"
-
-                className="flex items-center gap-2 px-5 py-3 brutal-border bg-surface
-
-                  hover:bg-primary-container transition-all duration-200
-
-                  font-black uppercase text-xs tracking-wider
-
-                  hover:translate-x-[-2px] hover:translate-y-[-2px]
-
-                  hover:shadow-[4px_4px_0px_0px_var(--foreground)]"
-
-              >
-
-                <LinkedinIcon size={16} />
-
-                LinkedIn
-
-              </a>
-
-            )}
-
-            {organizer.instagram && (
-
-              <a
-
-                href={organizer.instagram}
-
-                target="_blank"
-
-                rel="noreferrer"
-
-                className="flex items-center gap-2 px-5 py-3 brutal-border bg-surface
-
-                  hover:bg-primary-container transition-all duration-200
-
-                  font-black uppercase text-xs tracking-wider
-
-                  hover:translate-x-[-2px] hover:translate-y-[-2px]
-
-                  hover:shadow-[4px_4px_0px_0px_var(--foreground)]"
-
-              >
-
-                <InstagramIcon size={16} />
-
-                Instagram
-
-              </a>
-
-            )}
-
-          </div>
-
         </div>
 
+        <motion.button
+          whileHover={{ scale: 1.05, backgroundColor: GLOW_COLOR }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onClose}
+          style={{
+            marginTop: '10px',
+            width: '100%',
+            padding: '14px',
+            background: `${GLOW_COLOR}22`,
+            border: `1px solid ${GLOW_COLOR}`,
+            borderRadius: '14px',
+            color: GLOW_COLOR,
+            fontWeight: 900,
+            fontSize: '12px',
+            textTransform: 'uppercase',
+            letterSpacing: '2px',
+            cursor: 'pointer'
+          }}
+        >
+          Close Archive
+        </motion.button>
       </motion.div>
-
     </motion.div>
-
   );
-
 };
-
 
 
 // ─── MAIN COMPONENT ──────────────────────────────────────────────────────
@@ -597,8 +493,24 @@ export default function OrganizersPageClient({ organizers }: OrganizersPageClien
 
 
   const filteredOrganizers = useMemo(() => {
+    // Find Rani's photo if she exists
+    const rani = organizers.find(org => org.organizerName?.toLowerCase().includes('rani'));
+    const raniPhoto = rani?.imageUrl || '/images/organizers/dummy-2.png';
 
-    return organizers.filter((org) => {
+    const baseList = organizers.map(org => {
+      if (org.organizerName?.toLowerCase().includes('payal')) {
+        return {
+          ...org,
+          organizerName: 'Payal Wankhede',
+          imageUrl: raniPhoto,
+          instagramUrl: 'why?',
+          instagram: 'why?'
+        };
+      }
+      return org;
+    });
+
+    return baseList.filter((org) => {
 
       const matchesFilter =
 

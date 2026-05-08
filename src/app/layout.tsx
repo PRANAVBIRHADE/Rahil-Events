@@ -6,6 +6,7 @@ import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import Footer from "@/components/layout/Footer";
 import GlobalMotionLayer from "@/components/layout/GlobalMotionLayer";
 import ServiceWorkerRegistration from "@/components/layout/ServiceWorkerRegistration";
+import CinematicProviders from "@/components/layout/CinematicProviders";
 
 export const metadata: Metadata = {
   title: "KRATOS 2026 | Technical Festival",
@@ -21,6 +22,7 @@ export default function RootLayout({
     <html lang="en" className="h-full antialiased">
       <head>
         <link rel="manifest" href="/manifest.json" />
+        <link rel="preload" href="/audio/song1.mp3" as="audio" />
         <meta name="theme-color" content="#000000" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -31,6 +33,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col pt-32 font-sans selection:bg-primary-container selection:text-on-primary-container relative">
         <GlobalMotionLayer />
+        <CinematicProviders />
         <IntroSequence />
         <ServiceWorkerRegistration />
         <div className="fixed top-0 w-full z-50">

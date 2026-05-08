@@ -72,8 +72,16 @@ const OrganizersSection = () => {
               hidden: { opacity: 0, y: 30 },
               visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }
             }}
-            className="p-8 brutal-border bg-white hard-shadow-gold flex flex-col h-full min-h-[350px]"
+            whileHover={{ 
+              scale: 1.02, 
+              rotateX: 2, 
+              rotateY: -2,
+              boxShadow: `0 0 40px rgba(0, 255, 255, 0.3)` 
+            }}
+            className="p-8 brutal-border bg-white hard-shadow-gold flex flex-col h-full min-h-[350px] transition-all hover:border-[#00ffff] group relative overflow-hidden"
           >
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-10 pointer-events-none bg-[#00ffff] transition-opacity" />
+
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-8 block">
               CORE LEADERSHIP
             </span>
@@ -97,8 +105,16 @@ const OrganizersSection = () => {
               hidden: { opacity: 0, y: 30 },
               visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }
             }}
-            className="p-8 brutal-border bg-white hard-shadow-gold flex flex-col h-full min-h-[350px]"
+            whileHover={{ 
+              scale: 1.02, 
+              rotateX: 2, 
+              rotateY: -2,
+              boxShadow: `0 0 40px rgba(0, 255, 255, 0.3)` 
+            }}
+            className="p-8 brutal-border bg-white hard-shadow-gold flex flex-col h-full min-h-[350px] transition-all hover:border-[#00ffff] group relative overflow-hidden"
           >
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-10 pointer-events-none bg-[#00ffff] transition-opacity" />
+
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-8 block">
               COORDINATION TEAM
             </span>
@@ -125,8 +141,15 @@ const OrganizersSection = () => {
               hidden: { opacity: 0, y: 30 },
               visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }
             }}
-            className="p-8 brutal-border bg-white hard-shadow flex flex-col h-full min-h-[350px]"
+            whileHover={{ 
+              scale: 1.02, 
+              rotateX: 2, 
+              rotateY: -2,
+              boxShadow: `0 0 40px rgba(0, 255, 255, 0.3)` 
+            }}
+            className="p-8 brutal-border bg-white hard-shadow flex flex-col h-full min-h-[350px] transition-all hover:border-[#00ffff] group relative overflow-hidden"
           >
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-10 pointer-events-none bg-[#00ffff] transition-opacity" />
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-8 block">
               TECHNICAL WING
             </span>
