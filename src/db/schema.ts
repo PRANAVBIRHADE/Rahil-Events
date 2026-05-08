@@ -132,6 +132,7 @@ export const galleryPhotos = pgTable('gallery_photos', {
 
 export const systemSettings = pgTable('system_settings', {
   id: integer('id').primaryKey().default(1),
+  isSiteLocked: boolean('is_site_locked').default(false).notNull(),
   isGalleryLocked: boolean('is_gallery_locked').default(true),
   resultsRevealTime: timestamp('results_reveal_time'),
   resultsVideoUrl: text('results_video_url'),

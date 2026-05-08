@@ -92,6 +92,17 @@ export default async function AdminSettingsPage() {
                 className="w-6 h-6 accent-yellow-600 brutal-border"
               />
             </div>
+
+            <div className="space-y-2 border-l-4 border-red-500 pl-4 bg-red-500/10 py-2 md:col-span-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-red-500">POST CREDITS / SITE LOCK (DANGER)</label>
+              <p className="text-[10px] opacity-70 mb-2">Overrides the entire website and displays the 3D WebGL Post Credits scene.</p>
+              <input
+                type="checkbox"
+                name="isSiteLocked"
+                defaultChecked={settings?.isSiteLocked ?? false}
+                className="w-6 h-6 accent-red-600 brutal-border"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

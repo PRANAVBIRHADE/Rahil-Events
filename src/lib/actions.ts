@@ -1088,6 +1088,7 @@ export async function updateRegistrationSettings(formData: FormData) {
     return { error: getErrorMessage(error, 'Unauthorized. Admin access required.') };
   }
 
+  const isSiteLocked = formData.get('isSiteLocked') === 'on';
   const registrationOpen = formData.get('registrationOpen') === 'on';
   const registrationPaused = formData.get('registrationPaused') === 'on';
   const upiId = (formData.get('upiId') as string) || null;
@@ -1105,6 +1106,7 @@ export async function updateRegistrationSettings(formData: FormData) {
     if (existing.length === 0) {
       await db.insert(systemSettings).values({
         id: 1,
+        isSiteLocked,
         registrationOpen,
         registrationPaused,
         upiId,
@@ -1113,6 +1115,7 @@ export async function updateRegistrationSettings(formData: FormData) {
       });
     } else {
       await db.update(systemSettings).set({
+        isSiteLocked,
         registrationOpen,
         registrationPaused,
         upiId,
