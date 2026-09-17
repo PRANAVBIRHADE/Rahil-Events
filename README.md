@@ -1,494 +1,504 @@
-# 🎯 KRATOS 2026 Registration Platform
-
 <div align="center">
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Next.js](https://img.shields.io/badge/Next.js-16.2-black?logo=next.js)
-![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-336791?logo=postgresql)
+# ⚡ KRATOS 2026 Platform
 
-**A modern, fast, and scalable event registration platform built with Next.js and React 19**
+### Next-Generation Technical Festival Management & Registration Engine
 
-[🌐 Features](#-features) • [🚀 Quick Start](#-quick-start) • [📖 Documentation](#-documentation) • [🤝 Contributing](#-contributing)
+[![Next.js](https://img.shields.io/badge/Next.js-16.2.0-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.2.4-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Drizzle ORM](https://img.shields.io/badge/Drizzle_ORM-0.45.1-C5F74F?style=for-the-badge&logo=drizzle&logoColor=black)](https://orm.drizzle.team/)
+[![PostgreSQL](https://img.shields.io/badge/Neon_PostgreSQL-Serverless-00E599?style=for-the-badge&logo=postgresql&logoColor=white)](https://neon.tech/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+
+<p align="center">
+  <a href="#-key-features">Key Features</a> •
+  <a href="#-architecture">Architecture</a> •
+  <a href="#-quick-start">Quick Start</a> •
+  <a href="#-environment-variables">Environment</a> •
+  <a href="#-project-structure">Structure</a> •
+  <a href="#-routes--endpoints">Routes & APIs</a> •
+  <a href="#-operations-guide">Operations</a> •
+  <a href="#-deployment">Deployment</a>
+</p>
 
 </div>
 
 ---
 
-## 📋 Table of Contents
+## 📖 Overview
 
-- [Overview](#-overview)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Quick Start](#-quick-start)
-- [Installation](#-installation)
-- [Environment Variables](#-environment-variables)
-- [Project Structure](#-project-structure)
-- [API Routes](#-api-routes)
-- [Deployment](#-deployment)
-- [Staff Operations](#-staff-operations)
-- [Contributing](#-contributing)
-- [License](#-license)
+**KRATOS 2026** is a full-stack, enterprise-grade event management and participant registration platform custom-built for the annual engineering technical festival of **MPGI Engineering**. Engineered on **Next.js 16 (App Router)** and **React 19**, it pairs a high-performance neo-brutalist public web portal with a real-time administrative command center.
+
+The platform handles the entire festival lifecycle end-to-end: frictionless solo and team event registration, offline UPI payment verification with Cloudinary screenshot processing, dynamic multi-day schedule orchestration, gamified XP leveling, digital fast-entry passes with QR code generation, broadcast notifications over Email and WhatsApp, and high-throughput walk-in desk check-ins.
 
 ---
 
-## 🎨 Overview
+## ✨ Key Features
 
-**KRATOS 2026** is a comprehensive event registration platform designed for seamless participant onboarding, payment verification, and staff management. It features a clean public registration flow with a powerful staff review and approval system.
+### 🎓 Participant Experience
+- **Interactive 3D Multiverse Scene**: Three.js / React Three Fiber interactive DNA helix with kinetic scattering, live camera responsive framing, and particle systems.
+- **Dynamic Event Discovery (`/events`)**: Detailed event briefs, technical specifications, prize pools, venues, and flexible registration formats (Solo, Team, Solo/Pair).
+- **Frictionless Registration Flow (`/register`)**: Fast team and individual registrations with client-side validation, automated fee calculation, and Cloudinary-powered payment screenshot upload.
+- **Live Status Tracking (`/status`)**: Public real-time registration verification by phone number or transaction ID with instant status badges (`PENDING`, `APPROVED`, `REJECTED`).
+- **Participant Command Center (`/dashboard`)**:
+  - **Digital Fast-Entry Pass**: Dynamic SVG/Canvas ticket pass with unique QR code verification.
+  - **Personalized Schedule**: Chronological reporting timeline across Day 1 and Day 2.
+  - **Team Collaboration Chat**: Real-time team message room for registered squad members.
+  - **Event Gallery**: Participant photo sharing pipeline with role-gated upload access.
+- **Gamified Progression System**: Automated XP tracking (100 XP per registration, 200 XP per level), rank leveling, and real-time festival leaderboard (`/leaderboard`).
+- **Squad Finder (`/squads`)**: Social community board to recruit teammates and form rosters for competitive team events.
+- **Real-Time Presence**: Live active concurrent viewer counter heartbeat on public pages (`/api/presence`).
 
-Whether you're organizing a single event or managing multiple concurrent events with team registrations, KRATOS provides the tools to:
-
-- ✅ Collect and verify participant registrations
-- 💳 Manage payment proof uploads with validation
-- 📋 Review and approve submissions with detailed notes
-- 📊 Export registration data for reporting
-- 🪑 Handle event-day desk check-ins
-- 📱 Public status lookup for participants
-
----
-
-## 🚀 Features
-
-### For Participants
-
-| Feature | Description |
-|---------|-------------|
-| **Event Browsing** | Discover available events with full details at `/events` |
-| **Quick Registration** | Support for individual and team registrations |
-| **Payment Upload** | Secure screenshot upload with file validation |
-| **Status Tracking** | Check registration status with phone number or transaction ID |
-| **Real-time Updates** | Instant approval/rejection notifications |
-
-### For Staff
-
-| Feature | Description |
-|---------|-------------|
-| **Review Dashboard** | Centralized panel to review all registrations at `/admin/registrations` |
-| **Verification Workflow** | Approve, reject, or request clarifications with notes |
-| **CSV Exports** | Download participant data, user info, and payment proofs |
-| **Event-Day Operations** | Desk entry screen for on-site check-ins at `/admin/desk` |
-| **Admin Settings** | Configure UPI, fees, deadlines, and system health checks |
+### 🛡️ Administrative & Volunteer Operations (`/admin/*`)
+- **Role-Based Access Control (RBAC)**: Strict separation of privileges across `ADMIN`, `VOLUNTEER`, and `PARTICIPANT` roles enforced at Edge proxy (`proxy.ts`) and Server Action level.
+- **Review & Verification Queue (`/admin/registrations`, `/admin/verify/[id]`)**:
+  - Full audit of payment screenshots, transaction IDs, leader details, and team member manifests.
+  - One-click approval, rejection, and inline verification notes with automated status propagation.
+  - Bulk approval, rejection, and deletion operations for high-volume batches.
+- **Walk-in Fast-Track Desk (`/admin/desk`)**: Sub-10-second on-site registration terminal for chaotic venue walk-ins without requiring pre-created student accounts.
+- **Event Management Engine (`/admin/events`)**: Complete CRUD suite for event categories, team size constraints, registration fees, venues, and winner podium assignments.
+- **Festival Schedule Builder (`/admin/schedule`)**: Grid-based slot allocator for Day 1 and Day 2 events, stages, breaks, and venue assignments.
+- **Committee Directory Manager (`/admin/organizers`)**: Manage student leads, faculty coordinators, departments, and social profiles.
+- **Campaign Notification Hub (`/admin/settings`)**: Multi-channel broadcast dispatcher supporting mass and event-filtered Email (SMTP) and WhatsApp (Twilio) messages.
+- **One-Click CSV Data Exports (`/api/admin/export`, `/api/admin/proofs`)**:
+  - `dataset=participants`: Comprehensive manifest including team members, contacts, and transaction IDs.
+  - `dataset=users`: Full user registry with academic branch, year, college, and XP level.
+  - `/api/admin/proofs`: Consolidated payment verification ledger.
+- **Emergency Kill Switch & Lockdown**: System-wide configuration toggles to pause registrations (`REGISTRATION_KILL_SWITCH`), freeze media galleries, or broadcast urgent marquee alerts.
 
 ---
 
-## 🛠 Tech Stack
+## 🏗️ Architecture
 
-| Category | Technology |
-|----------|------------|
-| **Frontend** | Next.js 16.2, React 19, TypeScript 5 |
-| **Styling** | Tailwind CSS 4, Framer Motion |
-| **Database** | Drizzle ORM, Neon PostgreSQL |
-| **Authentication** | NextAuth v5 (staff-only) |
-| **File Uploads** | Cloudinary Upload Widget |
-| **Notifications** | SMTP (email), Twilio (WhatsApp) — optional |
-| **3D Graphics** | Three.js, React Three Fiber (hero animations) |
-| **QR Codes** | QRCode.React, html5-qrcode |
-| **Build Tools** | ESLint 9, TypeScript Compiler |
+```mermaid
+flowchart TD
+    subgraph Client["Client Tier"]
+        Browser["Desktop & Mobile Browser"]
+        PWA["PWA Service Worker & Manifest"]
+    end
+
+    subgraph Edge["Edge & Security Layer"]
+        Proxy["Proxy Route Guardian (src/proxy.ts)"]
+        RateLimit["Sliding Window Rate Limiter (src/lib/rate-limit.ts)"]
+    end
+
+    subgraph AppRouter["Next.js 16 App Router (React 19)"]
+        PublicPages["Public Pages (/, /events, /register, /status, /dashboard)"]
+        AdminPages["Admin Portal (/admin/registrations, /admin/desk, /admin/events)"]
+        ServerActions["Server Actions (src/lib/actions.ts)"]
+        APIRoutes["Route Handlers (/api/admin/export, /api/presence, /api/team)"]
+    end
+
+    subgraph Services["External & Data Services"]
+        NeonDB[("Neon Serverless PostgreSQL\n(Drizzle ORM)")]
+        Cloudinary["Cloudinary CDN\n(Proof & Media Storage)"]
+        AuthJS["Auth.js v5\n(Google OAuth + Credentials)"]
+        Nodemailer["Nodemailer\n(SMTP Email Campaigns)"]
+        Twilio["Twilio REST API\n(WhatsApp Broadcasts)"]
+    end
+
+    Browser --> Proxy
+    PWA --> Proxy
+    Proxy --> RateLimit
+    RateLimit --> PublicPages
+    RateLimit --> AdminPages
+    PublicPages --> ServerActions
+    AdminPages --> ServerActions
+    PublicPages --> APIRoutes
+    AdminPages --> APIRoutes
+
+    ServerActions --> NeonDB
+    ServerActions --> Cloudinary
+    ServerActions --> AuthJS
+    ServerActions --> Nodemailer
+    ServerActions --> Twilio
+    APIRoutes --> NeonDB
+```
 
 ---
 
-## 🎯 Quick Start
+## 💻 Tech Stack
+
+| Layer | Technologies | Purpose |
+|:---|:---|:---|
+| **Core Framework** | Next.js 16.2.0 (App Router), React 19.2.4 | Server Components, Server Actions, React Compiler optimization |
+| **Language & Typing** | TypeScript 5.x | End-to-end type safety across schemas, actions, and UI |
+| **Styling & Design** | Tailwind CSS 4, Lucide React, Neo-brutalist Design | Responsive cyberpunk aesthetic with custom border layouts |
+| **3D & Animation** | Three.js 0.184, @react-three/fiber 9, Drei 10, Framer Motion 12, GSAP 3 | Interactive 3D DNA multiverse scene and kinetic transitions |
+| **Database & ORM** | Neon Serverless PostgreSQL, Drizzle ORM 0.45.1, Drizzle Kit 0.31.10 | Scalable relational database with automated schema migrations |
+| **Authentication** | Auth.js v5 (beta.30), bcryptjs, @auth/drizzle-adapter | Session-based JWT authentication, Google OAuth, Credential hashing |
+| **Asset Storage** | Cloudinary (next-cloudinary) | Unsigned direct client uploads for UPI payment proofs and gallery |
+| **Notifications** | Nodemailer 7 (SMTP), Twilio REST API | Automated transactional alerts and administrative mass campaigns |
+| **Utilities & Export** | qrcode.react, html5-qrcode, html2canvas | Ticket pass generation, QR verification, and canvas image capture |
+
+---
+
+## 🚀 Quick Start
+
+Follow these steps to clone, configure, and boot the development environment locally.
 
 ### Prerequisites
+- **Node.js**: `v20.x` or later (`v18.x` minimum)
+- **npm**: `v9.x` or later (or `pnpm` / `yarn`)
+- **PostgreSQL Database**: [Neon](https://neon.tech) serverless Postgres instance (recommended) or local PostgreSQL `15+`
+- **Cloudinary Account**: Free tier cloud for handling payment screenshots
 
-- Node.js 18+
-- npm 9+ or yarn
-- PostgreSQL database (Neon recommended)
-- Cloudinary account for media uploads
-
-### 60-Second Setup
-
+### 1. Clone the Repository
 ```bash
-# 1. Clone and install
-git clone <repository-url>
-cd kratos-platform
-npm install
-
-# 2. Set up environment
-cp .env.example .env.local
-# Edit .env.local with your values (see next section)
-
-# 3. Seed initial admin account
-npm run seed:admin
-
-# 4. Start development server
-npm run dev
+git clone https://github.com/PRANAVBIRHADE/Rahil-Events.git
+cd Rahil-Events
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see your platform running.
-
----
-
-## 📦 Installation
-
-### Step 1: Install Dependencies
-
+### 2. Install Dependencies
 ```bash
 npm install
 ```
 
-### Step 2: Configure Environment Variables
-
-Create `.env.local` in the project root:
-
+### 3. Configure Environment Variables
+Create a local environment file from the provided template:
 ```bash
 cp .env.example .env.local
 ```
 
-See the [Environment Variables](#-environment-variables) section below for complete details.
+Edit `.env.local` and configure your database and authentication secrets:
+```env
+# Database connection string (Neon Postgres)
+DATABASE_URL="postgres://user:password@ep-example-pooler.neon.tech/kratos?sslmode=require"
 
-### Step 3: Initialize Database
+# NextAuth secret key (generate with: openssl rand -base64 32)
+AUTH_SECRET="your-generated-32-char-random-secret"
+NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 
-```bash
-# Create tables using Drizzle migrations
-npm run db:migrate
+# Cloudinary unsigned upload configuration
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="your-cloud-name"
+NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET="your-unsigned-upload-preset"
 
-# Seed the first admin account
-npm run seed:admin
+# Initial administrator bootstrap credentials
+SEED_ADMIN_EMAIL="admin@kratos.fest"
+SEED_ADMIN_PASSWORD="YourSecurePassword123!"
 ```
 
-### Step 4: Start Development Server
+### 4. Run Database Migrations
+Push the Drizzle relational schema to your PostgreSQL database:
+```bash
+npx drizzle-kit migrate
+```
 
+### 5. Seed the Super Administrator Account
+Bootstrap the initial administrative account using the CLI seed runner:
+```bash
+npm run seed:admin
+```
+> **Output:**
+> ```
+> 🚀 Bootstrapping admin account: admin@kratos.fest...
+> ✅ Admin account created successfully!
+> 👉 You can now log in at /auth/adminlogin
+> ```
+
+### 6. Start the Development Server
 ```bash
 npm run dev
 ```
 
-The application will start at `http://localhost:3000`.
-
-### Production Build
-
-```bash
-npm run build
-npm start
-```
+Open [http://localhost:3000](http://localhost:3000) in your browser. Access the staff control portal at [http://localhost:3000/auth/adminlogin](http://localhost:3000/auth/adminlogin).
 
 ---
 
 ## 🔐 Environment Variables
 
-### Required Variables
+| Variable | Required | Context | Description & Example |
+|:---|:---:|:---|:---|
+| `DATABASE_URL` | **Yes** | Server | PostgreSQL connection string (`postgresql://user:pass@host/db?sslmode=require`) |
+| `AUTH_SECRET` | **Yes** | Server | Secret for signing Auth.js JWT tokens (`openssl rand -base64 32`) |
+| `NEXT_PUBLIC_SITE_URL` | **Yes** | Client/Server | Canonical web URL (`http://localhost:3000` or `https://kratos.mpgi.in`) |
+| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` | **Yes** | Client | Cloudinary cloud account name |
+| `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` | **Yes** | Client | Unsigned upload preset for image and payment uploads |
+| `SEED_ADMIN_EMAIL` | **Yes** | CLI Tool | Email for `npm run seed:admin` (default: `admin@kratos.fest`) |
+| `SEED_ADMIN_PASSWORD` | **Yes** | CLI Tool | Strong password for bootstrapped administrator |
+| `ADMIN_SETUP_KEY` | Optional | Server | Master registration token to create staff via `/auth/adminregister` |
+| `AUTH_GOOGLE_ID` | Optional | Server | Google Cloud OAuth Client ID for social sign-in |
+| `AUTH_GOOGLE_SECRET` | Optional | Server | Google Cloud OAuth Client Secret |
+| `SMTP_HOST` | Optional | Server | SMTP mail host (`smtp.gmail.com` or `smtp.resend.com`) |
+| `SMTP_PORT` | Optional | Server | SMTP mail port (`587` for TLS or `465` for SSL) |
+| `SMTP_USER` | Optional | Server | SMTP username / sender account |
+| `SMTP_PASS` | Optional | Server | SMTP password or app-specific password |
+| `SMTP_FROM` | Optional | Server | Sender address header (e.g. `KRATOS 2026 <noreply@kratos.fest>`) |
+| `TWILIO_ACCOUNT_SID` | Optional | Server | Twilio Account SID for WhatsApp broadcasts |
+| `TWILIO_AUTH_TOKEN` | Optional | Server | Twilio Auth Token |
+| `TWILIO_WHATSAPP_FROM` | Optional | Server | Twilio WhatsApp sender number (`whatsapp:+14155238886`) |
+| `REGISTRATION_KILL_SWITCH` | Optional | Server | Emergency toggle (`true` / `false`) pausing all registrations |
+| `REGISTRATION_KILL_SWITCH_MESSAGE` | Optional | Server | Custom outage banner displayed to students |
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection string (Neon) | `postgresql://user:pass@host/db` |
-| `AUTH_SECRET` | NextAuth secret for session encryption | `your-secure-random-string` |
-| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` | Cloudinary cloud identifier | `my-cloud-name` |
-| `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` | Unsigned upload preset name | `my-upload-preset` |
-| `NEXT_PUBLIC_SITE_URL` | Public URL of deployed site | `https://kratos.example.com` |
-
-### Bootstrap Variables (First-Time Setup)
-
-| Variable | Description |
-|----------|-------------|
-| `SEED_ADMIN_EMAIL` | Initial staff admin email |
-| `SEED_ADMIN_PASSWORD` | Initial staff admin password |
-
-### Optional Variables
-
-| Variable | Purpose |
-|----------|---------|
-| `ADMIN_SETUP_KEY` | Key required to create new staff accounts without existing admin |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` | Email notifications |
-| `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_WHATSAPP_NUMBER` | WhatsApp notifications |
-| `REGISTRATION_KILL_SWITCH` | Set to `true` to pause all registrations |
-| `REGISTRATION_KILL_SWITCH_MESSAGE` | Custom message shown when registrations are closed |
-
-### Example `.env.local`
+<details>
+<summary><b>Example <code>.env.local</code> Template</b></summary>
 
 ```bash
 # Database
-DATABASE_URL=postgresql://postgres:password@localhost:5432/kratos
+DATABASE_URL="postgresql://kratos_owner:npg_secret@ep-cool-base-12345.ap-southeast-1.aws.neon.tech/kratos?sslmode=require"
 
-# NextAuth
-AUTH_SECRET=$(openssl rand -base64 32)
+# NextAuth v5
+AUTH_SECRET="f6c8d76e4c730245089e9beaf14c62e5849842f1f50a49856ad8cbefc8d6264e"
+NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 
-# Cloudinary
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=my-cloud
-NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=kratos-uploads
+# Cloudinary Storage
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="kratos-fest"
+NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET="kratos_receipts"
 
-# Site
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+# Administrative Bootstrap
+SEED_ADMIN_EMAIL="admin@kratos.fest"
+SEED_ADMIN_PASSWORD="SuperSecretAdminPassword2026!"
+ADMIN_SETUP_KEY="kratos-committee-bootstrap-token"
 
-# Bootstrap
-SEED_ADMIN_EMAIL=admin@example.com
-SEED_ADMIN_PASSWORD=secure-initial-password
+# Multi-channel Dispatcher (Optional)
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="587"
+SMTP_USER="kratos2k26.mpgi@gmail.com"
+SMTP_PASS="xxxx xxxx xxxx xxxx"
+SMTP_FROM="KRATOS 2026 <kratos2k26.mpgi@gmail.com>"
+
+TWILIO_ACCOUNT_SID="ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+TWILIO_AUTH_TOKEN="your_auth_token_here"
+TWILIO_WHATSAPP_FROM="whatsapp:+14155238886"
+
+# Emergency Safety Controls (Optional)
+REGISTRATION_KILL_SWITCH="false"
+REGISTRATION_KILL_SWITCH_MESSAGE="Registrations are temporarily paused for server maintenance."
 ```
+</details>
 
 ---
 
 ## 📁 Project Structure
 
 ```
-kratos-platform/
+Rahil-Events/
 ├── src/
-│   ├── app/                    # Next.js App Router
-│   │   ├── (public)/          # Public pages (landing, events, register, status)
-│   │   ├── admin/             # Staff dashboard and management
-│   │   │   ├── registrations/ # Review and approve submissions
-│   │   │   ├── desk/          # Event-day check-in
-│   │   │   ├── settings/      # Configuration panel
-│   │   │   └── verify/        # Individual registration review
-│   │   ├── auth/              # Authentication pages
-│   │   ├── api/               # API routes
-│   │   │   ├── auth/          # NextAuth configuration
-│   │   │   ├── admin/         # Staff API endpoints
-│   │   │   └── export/        # CSV export endpoints
-│   │   └── layout.tsx         # Root layout
-│   ├── components/            # React components
-│   │   ├── ui/               # Reusable UI components
-│   │   ├── forms/            # Form components
-│   │   └── sections/         # Page sections
-│   ├── lib/                  # Utilities and helpers
-│   │   ├── db/              # Database client
-│   │   ├── auth/            # Auth helpers
-│   │   └── utils/           # Utility functions
-│   ├── schema/              # Drizzle ORM database schema
-│   └── types/               # TypeScript type definitions
-├── public/                  # Static assets
-│   ├── images/             # Hero and section images
-│   └── branding/           # Logo and favicon
-├── scripts/
-│   └── seed-admin.ts       # Database seeding script
-├── package.json
-├── tsconfig.json
-├── tailwind.config.ts
-└── README.md
+│   ├── app/                      # Next.js 16 App Router hierarchy
+│   │   ├── (public pages)        # /, /events, /register, /status, /leaderboard, /squads, /about
+│   │   ├── admin/                # Staff portal (/dashboard, /registrations, /verify, /desk, /events)
+│   │   ├── auth/                 # Auth flows (/login, /register, /adminlogin, /adminregister)
+│   │   ├── dashboard/            # Participant portal (fast-entry QR pass, schedule, team chat)
+│   │   ├── api/                  # Edge & Server Route Handlers
+│   │   │   ├── admin/export/     # CSV stream generator for participants and users
+│   │   │   ├── admin/proofs/     # Payment proof verification ledger export
+│   │   │   ├── auth/             # Auth.js route handlers ([...nextauth])
+│   │   │   ├── presence/         # Dynamic concurrent viewer counter
+│   │   │   └── team/[id]/        # Real-time team messaging endpoints
+│   │   ├── layout.tsx            # Root HTML layout with providers & motion wrappers
+│   │   └── globals.css           # Tailwind CSS 4 configuration and global tokens
+│   ├── components/               # Modular React 19 UI component library
+│   │   ├── admin/                # Verification tables, modals, broadcast & walk-in forms
+│   │   ├── dashboard/            # Ticket passes, QR generators, team chat, gallery uploader
+│   │   ├── layout/               # Navbar, Footer, Announcement marquee, Providers
+│   │   ├── marketing/            # Hero, DnaHorizonScene (Three.js), Schedule, Countdown
+│   │   └── ui/                   # Brutalist buttons, cards, badges, inputs, QR components
+│   ├── db/                       # Drizzle ORM configuration & relational data model
+│   │   ├── index.ts              # Neon database client connection pooler
+│   │   └── schema.ts             # PostgreSQL schemas (users, events, registrations, teams, etc.)
+│   ├── lib/                      # Core backend utilities & application logic
+│   │   ├── actions.ts            # Next.js Server Actions (CRUD, registration, audit)
+│   │   ├── authz.ts              # RBAC route guards & session verification assertions
+│   │   ├── env.ts                # Environment variable parsing and capability detection
+│   │   ├── notifications.ts      # Multi-channel campaign dispatcher (Email & WhatsApp)
+│   │   ├── rate-limit.ts         # Sliding-window IP-based rate limiter
+│   │   ├── registration.ts       # Registration calculation and state helpers
+│   │   ├── schedule.ts           # Festival schedule sorting and indexing
+│   │   ├── utils.ts              # Style merging (clsx + tailwind-merge)
+│   │   └── xp.ts                 # Gamification XP calculator & leveling engine
+│   ├── auth.ts                   # Auth.js configuration (Google + Credentials handlers)
+│   ├── proxy.ts                  # Edge route protection & role redirection proxy
+│   └── types/                    # TypeScript interfaces and module augmentations
+├── drizzle/                      # Drizzle SQL migration files (0000 - 0005)
+├── public/                       # Static public assets (logos, images, PWA manifest, sw.js)
+├── scripts/                      # Operational CLI scripts (seed-admin, update-fee, etc.)
+├── .env.example                  # Reference environment variable template
+├── drizzle.config.ts             # Drizzle Kit migration & connection settings
+├── next.config.ts                # Next.js compiler flags, security headers & image domains
+├── package.json                  # Dependencies, engine constraints & execution scripts
+└── tsconfig.json                 # TypeScript compiler configuration
 ```
 
 ---
 
-## 🌐 API Routes
+## 🌐 Routes & Endpoints
 
-### Public Routes
-
-| Path | Method | Description |
-|------|--------|-------------|
-| `/` | GET | Landing page with hero section |
-| `/events` | GET | Browse available events |
-| `/register` | GET/POST | Event registration form |
-| `/status` | GET | Check registration status by phone/transaction ID |
+### Public Web Experience
+| Route | Method | Access | Description |
+|:---|:---:|:---:|:---|
+| `/` | GET | Public | Festival landing page with 3D DNA multiverse, live counter & marquee |
+| `/events` | GET | Public | Event discovery catalog with category filters and rules |
+| `/events/[slug]` | GET | Public | Deep-dive event specification, prizes, schedule, and team limits |
+| `/events/[slug]/register` | GET/POST | Public | Direct event registration form with team members input |
+| `/register` | GET/POST | Public | Global registration wizard with UPI QR and Cloudinary receipt uploader |
+| `/status` | GET | Public | Public participant lookup by phone number or transaction ID |
+| `/leaderboard` | GET | Public | Gamification rankings and top participant XP leaderboard |
+| `/squads` | GET/POST | Public | Squad matchmaking board to find teammates for group competitions |
+| `/about` | GET | Public | Festival heritage, MPGI institution details, and vision |
+| `/contact` | GET | Public | Official support contacts, location maps, and inquiries |
+| `/organizers` | GET | Public | Faculty coordinators, technical leads, and student committee |
+| `/dashboard` | GET | Participant | Protected student hub: digital fast-entry pass, timeline, and team chat |
 
 ### Authentication Routes
+| Route | Method | Access | Description |
+|:---|:---:|:---:|:---|
+| `/auth/login` | GET/POST | Public | Student login with Google OAuth or credentials |
+| `/auth/register` | GET/POST | Public | Student account registration |
+| `/auth/adminlogin` | GET/POST | Public | Staff portal sign-in (restricted to `ADMIN` and `VOLUNTEER`) |
+| `/auth/adminregister` | GET/POST | Key Protected | Privileged staff signup gated by `ADMIN_SETUP_KEY` |
 
-| Path | Method | Description |
-|------|--------|-------------|
-| `/auth/adminlogin` | GET/POST | Staff login page |
-| `/auth/callback/credentials` | POST | NextAuth callback |
+### Administrative Command Center (`/admin/*`)
+| Route | Method | Role Required | Description |
+|:---|:---:|:---:|:---|
+| `/admin/dashboard` | GET | Staff | Operational overview, registration charts, and festival metrics |
+| `/admin/registrations` | GET | Staff | Live registry with status filters, search, and bulk operations |
+| `/admin/verify/[id]` | GET/POST | Staff | Detailed receipt audit, team verification, and approval/rejection |
+| `/admin/desk` | GET/POST | Staff | Fast-track walk-in desk for instantaneous on-site registrations |
+| `/admin/events` | GET/POST | Admin | CRUD management for events, pricing, venues, and team rules |
+| `/admin/schedule` | GET/POST | Admin | Multi-day schedule slot grid builder |
+| `/admin/organizers` | GET/POST | Admin | Committee members directory and social link manager |
+| `/admin/results` | GET/POST | Admin | YouTube livestream embeds, timed winner podium releases |
+| `/admin/users` | GET/POST | Admin | User management and role escalations (`VOLUNTEER`, `ADMIN`) |
+| `/admin/settings` | GET/POST | Admin | System kill switch, UPI configuration, deadlines, and image overrides |
 
-### Admin Routes
-
-| Path | Method | Description |
-|------|--------|-------------|
-| `/admin/dashboard` | GET | Admin home/statistics |
-| `/admin/registrations` | GET | List all registrations |
-| `/admin/verify/[id]` | GET/POST | Review and approve/reject |
-| `/admin/desk` | GET/POST | Event-day check-in |
-| `/admin/settings` | GET/POST | Configuration and health checks |
-
-### API Endpoints
-
-| Path | Method | Description |
-|------|--------|-------------|
-| `/api/admin/export?dataset=participants` | GET | Export participants CSV |
-| `/api/admin/export?dataset=users` | GET | Export users CSV |
-| `/api/admin/proofs` | GET | Export payment proofs CSV |
-| `/api/auth/signin` | POST | Authenticate staff user |
-
----
-
-## 📋 Pre-Deployment Checklist
-
-Before deploying to production, complete these steps:
-
-### 1. Environment Setup
-
-- [ ] Set all required environment variables in your deployment platform (Vercel, Railway, Render, etc.)
-- [ ] Verify PostgreSQL database is accessible and migrated
-- [ ] Confirm Cloudinary cloud name and unsigned preset are configured
-
-### 2. Initial Admin Account
-
-- [ ] Run `npm run seed:admin` to create first admin
-- [ ] Verify login at `/auth/adminlogin` works with seeded credentials
-
-### 3. Configuration Review
-
-- [ ] Open `/admin/settings` and verify:
-  - [ ] Registration open/closed status
-  - [ ] UPI ID for receiving payments
-  - [ ] Fee per person (if applicable)
-  - [ ] Registration deadline date/time
-  - [ ] All deployment checks show ✅
-
-### 4. Test End-to-End Flow
-
-Execute the complete registration workflow:
-
-```
-1. Register as individual   → /register
-2. Register as team        → /register (team option)
-3. Upload payment proof    → Screenshot upload
-4. Check status           → /status
-5. Approve from admin     → /admin/registrations
-6. Re-check status        → /status (should show approved)
-```
-
-### 5. Export Verification
-
-- [ ] Download participants CSV at `/api/admin/export?dataset=participants`
-- [ ] Download users CSV at `/api/admin/export?dataset=users`
-- [ ] Download payment proofs at `/api/admin/proofs`
-- [ ] Verify all data is correctly formatted
-
-### 6. Staff Access
-
-- [ ] Create additional staff accounts if needed via `/admin/settings`
-- [ ] Share `/auth/adminlogin` link with review team
-- [ ] Document approval SLA expectations
+### API Route Handlers
+| Endpoint | Method | Role Required | Description |
+|:---|:---:|:---:|:---|
+| `/api/admin/export?dataset=participants` | GET | Staff | Streams full CSV of registrations, leader info, and team members |
+| `/api/admin/export?dataset=users` | GET | Staff | Streams full CSV of registered student profiles |
+| `/api/admin/proofs` | GET | Staff | Streams CSV audit ledger of payment proofs and transaction IDs |
+| `/api/presence` | GET/POST | Public | Ingests client presence heartbeat; returns live viewer count |
+| `/api/team/[id]/messages` | GET/POST | Participant | Retrieves and broadcasts messages inside a team's private channel |
 
 ---
 
-## 👥 Staff Operations
+## 🛠️ Operations Guide
 
-### Approving Registrations
+### 1. Payment Verification & Registration Approval
+1. Staff member signs in at `/auth/adminlogin`.
+2. Navigate to **Registrations** (`/admin/registrations`).
+3. Click **Review** on any `PENDING` registration.
+4. Verify the student details, team members, entered UPI Transaction ID, and payment screenshot preview.
+5. Enter verification notes (optional) and select **Approve Registration** or **Reject Registration**.
+6. The status immediately reflects on the participant's `/status` lookup and unlocks their `/dashboard` entry pass.
 
-1. Sign in at `/auth/adminlogin`
-2. Navigate to `/admin/registrations`
-3. Click a registration to view details:
-   - Event information
-   - Participant name, phone, email
-   - Team members (if team registration)
-   - Transaction ID
-   - Payment screenshot
-4. Add optional verification notes
-5. Click **Approve Registration** or **Reject Registration**
-6. Participant will see updated status at `/status`
+### 2. Event-Day On-Site Walk-In Desk (`/admin/desk`)
+> [!NOTE]
+> The primary on-site operational check-in is the manual fast-track workflow at `/admin/desk`. This screen is engineered for high-throughput entry desk lines, bypassing account creation.
 
-### Event-Day Check-In
+1. Open `/admin/desk` on any organizer tablet or mobile browser.
+2. Select the target event from the dropdown.
+3. Input the participant name, phone number, and academic details.
+4. Add extra team members dynamically if registering a group.
+5. Click **Submit Walk-In Entry** to immediately confirm and issue entry records.
 
-At the venue, use the desk entry screen:
-
-1. Open `/admin/desk` on a staff device
-2. Select the event
-3. Enter participant name and phone number
-4. Confirm check-in
-5. Optional: Add extra team members if they arrive late
-
-### Data Export
-
-Download data while signed in as staff:
-
+### 3. Data Extraction & Reporting
+Download live festival reports while signed in as staff:
 ```bash
-# All participants and team compositions
-curl https://your-site.com/api/admin/export?dataset=participants
+# Export all participants & team manifests
+curl -b "authjs.session-token=<TOKEN>" "http://localhost:3000/api/admin/export?dataset=participants" -o participants.csv
 
-# User contact information
-curl https://your-site.com/api/admin/export?dataset=users
+# Export student contact directory
+curl -b "authjs.session-token=<TOKEN>" "http://localhost:3000/api/admin/export?dataset=users" -o users.csv
 
-# Payment proof submissions
-curl https://your-site.com/api/admin/proofs
+# Export payment verification ledger
+curl -b "authjs.session-token=<TOKEN>" "http://localhost:3000/api/admin/proofs" -o payment_proofs.csv
 ```
+
+### 4. Emergency Kill Switch Procedure
+If event capacity is reached or technical maintenance is required:
+1. Open `/admin/settings` as an Admin and toggle **Registration Paused**, OR
+2. Set the environment variable `REGISTRATION_KILL_SWITCH="true"` in your hosting provider and redeploy.
+3. Configure `REGISTRATION_KILL_SWITCH_MESSAGE` to display custom instructions to students.
 
 ---
 
-## 🚀 Deployment
+## 🧰 Available Scripts
 
-### Supported Platforms
+| Script | Command | Purpose |
+|:---|:---|:---|
+| **Development** | `npm run dev` | Launches the Next.js local development server on `http://localhost:3000` |
+| **Production Build** | `npm run build` | Compiles TypeScript, runs React Compiler, and builds optimized production bundle |
+| **Production Start** | `npm run start` | Boots the compiled Next.js production server |
+| **Code Linting** | `npm run lint` | Executes ESLint 9 across all project files |
+| **Admin Seeding** | `npm run seed:admin` | CLI runner to bootstrap or elevate the super admin account |
+| **Database Migrations** | `npx drizzle-kit migrate` | Applies pending SQL migrations from `./drizzle` to PostgreSQL |
+| **Database Push** | `npx drizzle-kit push` | Directly pushes schema changes from `src/db/schema.ts` to database |
+| **Drizzle Studio** | `npx drizzle-kit studio` | Opens an interactive visual database browser in your browser |
 
-KRATOS 2026 is optimized for serverless deployment:
+---
 
-- **Vercel** (recommended for Next.js) — [Deploy Guide](DEPLOYMENT.md#vercel)
-- **Railway** (with PostgreSQL) — [Deploy Guide](DEPLOYMENT.md#railway)
-- **Render** — [Deploy Guide](DEPLOYMENT.md#render)
-- **Self-hosted** (Docker-ready) — [Deploy Guide](DEPLOYMENT.md#self-hosted)
+## 🚢 Deployment
 
-### Quick Deploy to Vercel
+The platform is architected for modern serverless and containerized deployment targets (Vercel, Railway, Render, AWS).
 
+### Recommended: Deploying to Vercel
+
+1. Push your repository to GitHub:
+   ```bash
+   git push origin main
+   ```
+2. Import the repository into the [Vercel Dashboard](https://vercel.com).
+3. In **Settings → Environment Variables**, add the production values for:
+   - `DATABASE_URL` (Neon PostgreSQL pooled connection string)
+   - `AUTH_SECRET` (generate with `openssl rand -base64 32`)
+   - `NEXT_PUBLIC_SITE_URL` (e.g. `https://kratos.mpgi.in`)
+   - `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`
+   - `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET`
+   - Optional notification and emergency variables (`SMTP_*`, `TWILIO_*`)
+4. Set Build Command to `npm run build` and Output Directory to `.next`.
+5. Run the database migrations before promoting to production:
+   ```bash
+   npx drizzle-kit migrate
+   ```
+6. Deploy the project.
+
+### Self-Hosted / Node.js Production Run
 ```bash
-# 1. Push code to GitHub
-git push origin main
+# Build the application
+npm run build
 
-# 2. Visit vercel.com and connect your repository
-# 3. Add environment variables in Vercel dashboard
-# 4. Deploy!
+# Start the standalone server
+NODE_ENV=production npm run start -p 3000
 ```
-
-See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed platform-specific instructions.
 
 ---
 
-## 📚 Documentation
+## 🔒 Security & Best Practices
 
-| Document | Purpose |
-|----------|---------|
-| **[ADMIN_GUIDE.md](ADMIN_GUIDE.md)** | Complete staff operations manual |
-| **[real_data.md](real_data.md)** | Pre-deployment data preparation checklist |
-| **[DEPLOYMENT.md](DEPLOYMENT.md)** | Platform-specific deployment guides *(TODO)* |
-
----
-
-## 🔧 Available Scripts
-
-```bash
-# Development
-npm run dev           # Start dev server at http://localhost:3000
-
-# Production
-npm run build         # Create optimized production build
-npm start            # Start production server
-
-# Database
-npm run seed:admin   # Seed initial admin account
-
-# Code Quality
-npm run lint         # Run ESLint on all files
-npm run lint:fix     # Auto-fix linting issues
-
-# Database Migrations (with Drizzle)
-npm run db:generate  # Generate migration files
-npm run db:migrate   # Apply pending migrations
-```
+- **Role Guard Isolation**: All administrative endpoints and Server Actions enforce strict role verification (`isStaffRole` and `assertAdminAction`). Unauthorized access attempts automatically redirect to `/auth/adminlogin` or `/dashboard`.
+- **Sliding-Window Rate Limiting**: Critical endpoints (e.g., account registration, staff sign-in attempts) are protected against credential stuffing and abuse using an in-memory IP rate limiter (`src/lib/rate-limit.ts`).
+- **HTTP Security Headers**: Strict CSP, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, and `Referrer-Policy: strict-origin-when-cross-origin` configured natively in `next.config.ts`.
+- **Database Connection Pooling**: Utilizes `@neondatabase/serverless` over WebSockets / HTTP for lightweight, connection-safe serverless execution without pool exhaustion.
+- **Safe Media Storage**: Only signed URLs or preset-validated Cloudinary assets are rendered. Domain patterns are locked to `res.cloudinary.com` in `next.config.ts`.
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions! Here's how to get started:
+Contributions are welcomed from the community and organizing committee members.
 
-### Development Workflow
-
-1. **Fork and clone** the repository
-2. **Create a branch** for your feature:
+1. **Fork the Repository**
+2. **Create a Feature Branch**:
    ```bash
-   git checkout -b feature/my-feature
+   git checkout -b feature/amazing-feature
    ```
-3. **Make changes** and test thoroughly
-4. **Commit with clear messages**:
+3. **Commit Changes**: Follow Conventional Commits:
    ```bash
-   git commit -m "feat: add new feature description"
+   git commit -m "feat: add real-time QR attendance scanner"
    ```
-5. **Push and create a Pull Request**
-
-### Code Standards
-
-- Follow TypeScript best practices
-- Use Tailwind CSS for styling
-- Keep components focused and reusable
-- Add comments for complex logic
-- Test new features before submitting
-
-### Commit Convention
-
-We follow conventional commits:
-
-- `feat:` New feature
-- `fix:` Bug fix
-- `docs:` Documentation
-- `style:` Formatting changes
-- `refactor:` Code restructuring
-- `test:` Adding tests
-- `chore:` Build or dependency updates
+4. **Ensure Code Quality**:
+   ```bash
+   npm run lint
+   npm run build
+   ```
+5. **Push to the Branch**:
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+6. **Open a Pull Request** with a detailed explanation of your changes.
 
 ---
 
@@ -498,51 +508,14 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 ---
 
-## 👨‍💻 Credits & Maintainers
+## 👥 Maintainers & Credits
 
-**KRATOS 2026** was built with:
+**KRATOS 2026 Platform** is maintained by:
 
-- **Next.js** & **React 19** for the modern frontend
-- **Drizzle ORM** & **PostgreSQL** for reliable data management
-- **NextAuth** for secure authentication
-- **Tailwind CSS** & **Framer Motion** for beautiful UI
-- **Cloudinary** for media management
-
-### Contributors
-
-<!-- TODO: Update with actual contributor list -->
-- Lead Developer: [@rahil-events]
-- Design & UX: [Your Team]
-
----
-
-## 🐛 Reporting Issues
-
-Found a bug or have a feature request?
-
-1. Check [existing issues](https://github.com/your-org/kratos-2026/issues)
-2. [Create a new issue](https://github.com/your-org/kratos-2026/issues/new) with:
-   - Clear title and description
-   - Steps to reproduce (for bugs)
-   - Expected vs actual behavior
-   - Screenshots if applicable
-
----
-
-## 📞 Support
-
-For questions or support:
-
-- 📧 Email: rahilhussain431601@gmail.com
-- 📖 Documentation: Check [ADMIN_GUIDE.md](ADMIN_GUIDE.md)
-
----
+- **Lead Developer**: **Rahil Hussain** ([@ifeelrahiii](https://www.instagram.com/ifeelrahiii)) • [rahilhussain431601@gmail.com](mailto:rahilhussain431601@gmail.com)
+- **Co-Lead Developer**: **Pranav Birhade** ([@PRANAVBIRHADE](https://github.com/PRANAVBIRHADE)) • ([@code_track_](https://www.instagram.com/code_track_))
+- **Organizing Body**: MPGI Engineering Technical Committee • [kratos2k26.mpgi@gmail.com](mailto:kratos2k26.mpgi@gmail.com)
 
 <div align="center">
-
-**Built with ❤️ for seamless event registration,**
-**Built by Rahil & Team**
-
-[⬆ Back to top](#-kratos-2026-registration-platform)
-
+<sub>Built with ❤️ for the students and organizers of KRATOS 2026.</sub>
 </div>
